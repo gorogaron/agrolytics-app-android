@@ -153,16 +153,14 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         if (toSlab) {
             btn_select?.animateSlide(300L,0f,(btn_select.width).toFloat(),1.0f)
             //tv_selected?.animateTextChange(200L, "Papírlap")
-            tv_selected.text = "Papírlap"
-            tv_slab?.fadeOut(300L)?.subscribe()
-            tv_rod?.fadeIn(300L)?.subscribe()
+            //tv_slab?.fadeOut(300L)?.subscribe()
+            //tv_rod?.fadeIn(300L)?.subscribe()
             sessionManager.mode = "slab"
         } else {
             //tv_selected?.animateTextChange(200L, "Méterrúd")
-            tv_selected.text = "Méterrúd"
             btn_select?.animateSlide(300L,0f,0f,1.0f)
-            tv_rod?.fadeOut(300L)?.subscribe()
-            tv_slab?.fadeIn(300L)?.subscribe()
+            //tv_rod?.fadeOut(300L)?.subscribe()
+            //tv_slab?.fadeIn(300L)?.subscribe()
             sessionManager.mode = "rod"
         }
     }

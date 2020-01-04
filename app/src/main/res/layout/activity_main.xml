@@ -159,6 +159,17 @@
                         app:layout_constraintTop_toBottomOf="@id/btn_open_camera">
 
                         <RelativeLayout
+                            android:id="@+id/btn_select"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="4dp"
+                            android:layout_toStartOf="@+id/v_separator"
+                            android:background="@drawable/rounded_button">
+                        </RelativeLayout>
+
+                        <RelativeLayout
                             android:id="@+id/container_rod"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
@@ -169,10 +180,9 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_centerInParent="true"
-                                android:alpha="0"
                                 android:text="Méterrúd"
                                 android:textColor="@android:color/white"
-                                android:textSize="16sp" />
+                                android:textSize="16sp"/>
 
                         </RelativeLayout>
 
@@ -182,26 +192,7 @@
                             android:layout_height="match_parent"
                             android:layout_centerHorizontal="true" />
 
-                        <RelativeLayout
-                            android:id="@+id/btn_select"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginTop="4dp"
-                            android:layout_marginBottom="4dp"
-                            android:layout_toStartOf="@+id/v_separator"
-                            android:background="@drawable/rounded_button">
 
-                            <TextView
-                                android:id="@+id/tv_selected"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_centerInParent="true"
-                                android:text="Méterrúd"
-                                android:textColor="@android:color/white"
-                                android:textSize="16sp" />
-
-                        </RelativeLayout>
 
                         <RelativeLayout
                             android:id="@+id/container_slab"
