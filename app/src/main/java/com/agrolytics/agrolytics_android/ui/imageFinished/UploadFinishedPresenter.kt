@@ -70,7 +70,7 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
                             val uploadTask = forestryRef?.putBytes(bytes)
                             uploadTask?.addOnSuccessListener {
                                 val metadata = StorageMetadata.Builder()
-                                    .setCacheControl("max-age=3600")
+                                    .setCacheControl("max-age=604800")
                                     .build()
 
                                 forestryRef!!.updateMetadata(metadata).addOnSuccessListener { metadata ->
