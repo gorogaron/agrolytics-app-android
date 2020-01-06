@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Agrolytics</string>
     <string name="woodworks_image_content_description">Woodworks Image</string>
-    <string name="add_photo_message">Készíts képet oldalról a méterfáról, és mi megmérjük mekkora a térfogata</string>
+    <string name="add_photo_message">Készíts, vagy tallóz képet a sarangról!</string>
     <string name="is_fill_correct_message">Helyes a képen látható kijelölés?</string>
-    <string name="final_state_explanation_message">a farakás térfogata</string>
+    <string name="final_state_explanation_message">a sarang térfogata.</string>
     <string name="wood_volume_value">%1$.2f m³</string>
     <string name="create_new_button_text">KÉSZÍTEK ÚJAT</string>
     <string name="errorMessage">Hiba történt</string>
@@ -58,7 +58,7 @@
     <string name="slow_internet">Lassú internetkapcsolat</string>
     <string name="slow_internet_message">Az internetkapcsoalt túl lassú. Szeretnéd elmenteni a képet a telefon memóriába vagy vessük el?</string>
     <string name="length">Hossz: 1</string>
-    <string name="len">Hossz:</string>
+    <string name="len">Hossz\u0020 </string>
     <string name="leng">Hossz</string>
     <string name="logs_volume">a farakás térfogata</string>
     <string name="item_id">ID</string>
