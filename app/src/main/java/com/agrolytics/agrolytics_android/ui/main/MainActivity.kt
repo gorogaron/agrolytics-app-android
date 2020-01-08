@@ -41,6 +41,7 @@ import android.graphics.BitmapFactory
 import android.location.Location
 import android.net.ConnectivityManager
 import android.util.Log
+import com.agrolytics.agrolytics_android.ui.guide.GuideActivity
 import com.agrolytics.agrolytics_android.ui.login.LoginActivity
 import com.agrolytics.agrolytics_android.utils.*
 import com.agrolytics.agrolytics_android.ui.rodSelector.RodSelectorActivity
@@ -83,7 +84,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
 
         btn_open_camera.setOnClickListener(this)
         btn_open_gallery.setOnClickListener(this)
-        btn_info.setOnClickListener(this)
+        btn_guide.setOnClickListener(this)
         drawerHomeBtn.setOnClickListener(this)
         tv_show_old_length.setOnClickListener(this)
         container_images.setOnClickListener(this)
@@ -129,7 +130,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
             R.id.btn_open_camera -> openCamera()
             R.id.btn_open_gallery -> openGallery()
             R.id.drawerHomeBtn -> drawer_layout.openDrawer(GravityCompat.START)
-            R.id.btn_info -> openActivity(MenuItem.INFO)
+            R.id.btn_guide -> openActivity(MenuItem.GUIDE)
             R.id.container_images -> openActivity(MenuItem.IMAGES)
             R.id.container_info -> openActivity(MenuItem.INFO)
             R.id.container_main_menu -> openActivity(MenuItem.MAIN)
@@ -289,6 +290,11 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
             MenuItem.INFO -> {
                 if (MenuItem.INFO.tag != TAG) {
                     startActivity(InfoActivity::class.java, Bundle(), true)
+                }
+            }
+            MenuItem.GUIDE -> {
+                if (MenuItem.GUIDE.tag != TAG) {
+                    startActivity(GuideActivity::class.java, Bundle(), true)
                 }
             }
         }

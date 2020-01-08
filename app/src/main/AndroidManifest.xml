@@ -52,6 +52,9 @@
             android:name=".ui.info.InfoActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.guide.GuideActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.login.LoginActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".ui.rodSelector.RodSelectorActivity"

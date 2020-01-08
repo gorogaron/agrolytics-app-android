@@ -25,16 +25,13 @@
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
 
-    <string name="dummy_company_info">
-        \n
-        Itt a céges adatok fognak megjelenni\n
-        Itt a céges adatok fognak megjelenni\n
-        Itt a céges adatok fognak megjelenni\n
-        Itt a céges adatok fognak megjelenni\n
-        Itt a céges adatok fognak megjelenni\n
-        Itt a céges adatok fognak megjelenni\n
-        Itt a céges adatok fognak megjelenni\n
-        Itt a céges adatok fognak megjelenni\n
+    <string name="guide">
+        A mérés pontosságát növelheti, ha fényképezés során ügyelünk a képi torzításokból adodó hatások minimalizálására.
+        Ennek érdekében a következőkre érdemes odafigyelni: \n \n
+        \u0009 &#8226; A sarang szemből legyen fotózva\n
+        \u0009 &#8226; Fénnyel szembe, vagy rossz látási viszonyok mellett ne fotózzunk\n
+        \u0009 &#8226; Referencia objektumként lehetőleg méterrudat használjunk\n
+        \u0009 &#8226; A készített fotón a kijelölt rész a lehető legkisebb legyen (csak a sarangot tartalmazza)\n
     </string>
 
     <!-- TODO: Remove or change this placeholder text -->

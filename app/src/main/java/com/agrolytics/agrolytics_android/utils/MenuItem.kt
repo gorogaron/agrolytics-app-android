@@ -5,5 +5,6 @@ enum class MenuItem(var tag: String) {
 	IMAGES("ImagesActivity"),
 	MAP("MapActivity"),
 	LENGTH("LengthActivity"),
-	INFO("InfoActivity")
+	INFO("InfoActivity"),
+	GUIDE("GuideActivity")
 }
