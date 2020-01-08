@@ -21,7 +21,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
-        versionName "1.0-final"
+        versionName "1.0 Beta"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -29,7 +29,7 @@ android {
             buildConfigField 'String', 'BASE_URL', '"http://noether.ddns.net/ww/"'
         }
         release {
-            minifyEnabled false
+            minifyEnabled true
             buildConfigField 'String', 'BASE_URL', '"http://noether.ddns.net/ww/"'
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.agrolytics
