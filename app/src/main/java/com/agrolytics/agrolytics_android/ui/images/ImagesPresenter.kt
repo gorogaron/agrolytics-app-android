@@ -241,7 +241,9 @@ class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
             serverPath = document["imageRef"] as String?,
             userID = document["userID"] as String?,
             leaderID = document["leaderID"] as String?,
-            forestryID = document["forestryID"] as String?
+            forestryID = document["forestryID"] as String?,
+            thumbnailPath = document["thumbnailRef"] as String?,
+            thumbnailUrl = document["thumbnailUrl"] as String?
         )
     }
 
@@ -356,6 +358,9 @@ class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
                 ?.delete()
                 ?.addOnSuccessListener {
                     item.serverPath?.let {
+                        deleteFromStorage(it, imageList.last() == item, item)
+                    }
+                    item.thumbnailPath?.let {
                         deleteFromStorage(it, imageList.last() == item, item)
                     }
                 }

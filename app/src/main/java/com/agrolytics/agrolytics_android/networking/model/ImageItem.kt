@@ -58,7 +58,13 @@ data class ImageItem(
     var rodLength: Double? = null,
 
     @ColumnInfo(name = "rod_length_pixel")
-    var rodLengthPixel: Int? = null
+    var rodLengthPixel: Int? = null,
+
+    @ColumnInfo(name = "thumbnail_path")
+    var thumbnailPath: String? = null,
+
+    @ColumnInfo(name = "thumbnail_url")
+    var thumbnailUrl: String? = null
 
 ) : Parcelable {
 
@@ -84,7 +90,9 @@ data class ImageItem(
         parcel.readString(),
         parcel.readString(),
         parcel.readValue(Double::class.java.classLoader) as? Double,
-        parcel.readValue(Int::class.java.classLoader) as? Int
+        parcel.readValue(Int::class.java.classLoader) as? Int,
+        parcel.readString(),
+        parcel.readString()
     ) {
         isChecked = parcel.readByte() != 0.toByte()
     }
@@ -108,6 +116,8 @@ data class ImageItem(
         parcel.writeValue(rodLength)
         parcel.writeValue(rodLengthPixel)
         parcel.writeByte(if (isChecked) 1 else 0)
+        parcel.writeString(thumbnailPath)
+        parcel.writeString(thumbnailUrl)
     }
 
     override fun describeContents(): Int {

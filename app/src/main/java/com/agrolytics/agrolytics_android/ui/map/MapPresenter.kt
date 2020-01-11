@@ -142,7 +142,9 @@ class MapPresenter: BasePresenter<MapScreen>() {
 			serverPath = document["imageRef"] as String?,
 			userID = document["userID"] as String?,
 			leaderID = document["leaderID"] as String?,
-			forestryID = document["forestryID"] as String?)
+			forestryID = document["forestryID"] as String?,
+			thumbnailPath = document["thumbnailRef"] as String?,
+			thumbnailUrl = document["thumbnailUrl"] as String?)
 	}
 
 	fun getAllLocalImage() {
