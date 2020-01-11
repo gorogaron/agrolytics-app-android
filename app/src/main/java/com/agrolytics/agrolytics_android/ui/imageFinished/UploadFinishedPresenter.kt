@@ -1,5 +1,6 @@
 package com.agrolytics.agrolytics_android.ui.imageFinished
 
+import android.graphics.Bitmap
 import android.util.Log
 import com.agrolytics.agrolytics_android.base.BasePresenter
 import com.agrolytics.agrolytics_android.networking.model.ImageItem
@@ -9,6 +10,7 @@ import com.agrolytics.agrolytics_android.utils.BitmapUtils
 import com.agrolytics.agrolytics_android.utils.Util
 import com.google.firebase.storage.StorageMetadata
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.doAsyncResult
 import org.jetbrains.anko.uiThread
 import java.io.File
 import java.io.FileInputStream
@@ -59,52 +61,61 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
                 ?.addOnSuccessListener {
                     forestryName = it["name"] as String
 
-                    val forestryRef = reference?.child("$forestryName/$imageName")
-
+                    val forestryRef = reference?.child("$forestryName/masked/$imageName")
+                    val thumbnailForestryRef = reference?.child("$forestryName/thumbnail/$imageName")
                     responseImageUpload?.image?.let { imageBase64 ->
 
                         val bitmap = BitmapUtils.getImage(imageBase64)
                         val bytes = BitmapUtils.getBytes(bitmap)
 
-                        if (bytes != null) {
-                            val uploadTask = forestryRef?.putBytes(bytes)
-                            uploadTask?.addOnSuccessListener {
-                                val metadata = StorageMetadata.Builder()
-                                    .setCacheControl("max-age=604800")
-                                    .build()
+                        val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 64, 48, true);
+                        val resizedBytes = BitmapUtils.getBytes(resizedBitmap)
 
-                                forestryRef!!.updateMetadata(metadata).addOnSuccessListener { metadata ->
-                                    // metadata.contentType should be null
-                                    it.storage.downloadUrl.addOnSuccessListener { imageUri ->
-                                        Log.d(TAG, " downloadURL: $imageUri")
-                                        uploadImageToFireStore(
-                                            imageUri.toString(),
-                                            responseImageUpload,
-                                            path,
-                                            fragment,
-                                            "$forestryName/$imageName"
-                                        )
+                        if (bytes != null && resizedBytes != null) {
+                            val thumbnailUploadTask = thumbnailForestryRef?.putBytes(resizedBytes)
+                            thumbnailUploadTask?.addOnSuccessListener {uploadThumbnailImageTaskSnapshot ->
+                                uploadThumbnailImageTaskSnapshot.storage.downloadUrl.addOnSuccessListener { thumbnailUrl ->
+                                    val metadata = StorageMetadata.Builder()
+                                        .setCacheControl("max-age=604800")
+                                        .build()
+                                    thumbnailForestryRef!!.updateMetadata(metadata).addOnSuccessListener {
+                                        val uploadTask = forestryRef?.putBytes(bytes)
+                                        uploadTask?.addOnSuccessListener {uploadImageTaskSnapshot ->
+                                            val metadata = StorageMetadata.Builder()
+                                                .setCacheControl("max-age=604800")
+                                                .build()
+                                            forestryRef!!.updateMetadata(metadata).addOnSuccessListener { metadata ->
+                                                // metadata.contentType should be null
+                                                uploadImageTaskSnapshot.storage.downloadUrl.addOnSuccessListener { imageUri ->
+                                                    Log.d(TAG, " downloadURL: $imageUri")
+                                                    uploadImageToFireStore(
+                                                        imageUri.toString(),
+                                                        responseImageUpload,
+                                                        path,
+                                                        fragment,
+                                                        "$forestryName/masked/$imageName",
+                                                        "$forestryName/thumbnail/$imageName",
+                                                        thumbnailUrl.toString()
+                                                    )
+                                                }.addOnFailureListener { error ->
+                                                    handleAsyncError(error, responseImageUpload, path, fragment);
+                                                }
+                                            }.addOnFailureListener {error ->
+                                                handleAsyncError(error, responseImageUpload, path, fragment);
+                                            }
+                                        }?.addOnFailureListener { error ->
+                                            handleAsyncError(error, responseImageUpload, path, fragment);
+                                        }
                                     }.addOnFailureListener { error ->
-                                        saveUploadedImageItem(responseImageUpload, path, fragment, null, null)
-                                        screen?.hideLoading()
-                                        screen?.showToast("Upload failed, we saved it locally. You can try again in Images menu.")
-                                        error.printStackTrace()
+                                        handleAsyncError(error, responseImageUpload, path, fragment);
                                     }
                                 }.addOnFailureListener {error ->
-                                    saveUploadedImageItem(responseImageUpload, path, fragment, null, null)
-                                    screen?.hideLoading()
-                                    screen?.showToast("Upload failed, we saved it locally. You can try again in Images menu.")
-                                    error.printStackTrace()
+                                    handleAsyncError(error, responseImageUpload, path, fragment);
                                 }
+                            }?.addOnFailureListener {error ->
+                                handleAsyncError(error, responseImageUpload, path, fragment);
                             }
-                                ?.addOnFailureListener { error ->
-                                    saveUploadedImageItem(responseImageUpload, path, fragment, null, null)
-                                    screen?.hideLoading()
-                                    screen?.showToast("Upload failed, we saved it locally. You can try again in Images menu.")
-                                    error.printStackTrace()
-                                }
                         }
-
                     }
                 }
                 ?.addOnFailureListener { it.printStackTrace() }
@@ -113,12 +124,26 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
         }
     }
 
+    private fun handleAsyncError(
+        error: Exception,
+        responseImageUpload: ResponseImageUpload?,
+        path: String?,
+        fragment: UploadFinishedFragment
+    ) {
+        saveUploadedImageItem(responseImageUpload, path, fragment, null, null)
+        screen?.hideLoading()
+        screen?.showToast("Upload failed, we saved it locally. You can try again in Images menu.")
+        error.printStackTrace()
+    }
+
     private fun uploadImageToFireStore(
         url: String?,
         responseImageUpload: ResponseImageUpload?,
         path: String?,
         fragment: UploadFinishedFragment,
-        imageRef: String?
+        imageRef: String?,
+        thumbnailRef: String?,
+        thumbnailUrl: String?
     ) {
         val imageDocument = hashMapOf(
             "time" to Util.getCurrentDateString(),
@@ -132,7 +157,9 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
             "imageRef" to imageRef,
             "userID" to sessionManager?.userID,
             "leaderID" to sessionManager?.leaderID,
-            "forestryID" to sessionManager?.forestryID
+            "forestryID" to sessionManager?.forestryID,
+            "thumbnailRef" to thumbnailRef,
+            "thumbnailUrl" to thumbnailUrl
         )
 
         fireStoreDB?.db?.collection("images")
@@ -185,4 +212,5 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
             }
         }
     }
+
 }
