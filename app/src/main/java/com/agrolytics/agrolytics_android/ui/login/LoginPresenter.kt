@@ -1,5 +1,6 @@
 package com.agrolytics.agrolytics_android.ui.login
 
+import android.app.AlertDialog
 import android.content.Context
 import android.util.Log
 import com.agrolytics.agrolytics_android.base.BasePresenter
@@ -119,15 +120,27 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
                                 }
                             }
                             .addOnFailureListener {
-                                screen?.showToast("Something went wrong.")
+                                logout()
                             }
                     } else {
-                        screen?.showToast("Something went wrong.")
+                        logout()
                     }
                 }
                 ?.addOnFailureListener { exception ->
-                    screen?.showToast("Something went wrong.")
+                    logout()
                 }
+        }
+    }
+
+    private fun logout() {
+        doAsync {
+            roomModule?.database?.clearAllTables()
+            uiThread {
+                screen?.hideLoading()
+                screen?.showAlertDialog()
+                FirebaseAuth.getInstance().signOut()
+                sessionManager?.clearSession()
+            }
         }
     }
 

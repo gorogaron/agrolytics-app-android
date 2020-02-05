@@ -1,5 +1,6 @@
 package com.agrolytics.agrolytics_android.ui.login
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -59,5 +60,15 @@ class LoginActivity: BaseActivity(), LoginScreen {
         finish()
         Log.d("LoginActivity","onPause")
         super.onPause()
+    }
+
+    override fun showAlertDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Hiba")
+        builder.setMessage("Gond van a szerverünkkel. Kérem a problémát jelezze a contact@agrolytics.hu email címen, vagy a +36306122653 telefonszámon.")
+        builder.setNeutralButton("OK"){_,_ ->
+        }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
     }
 }
