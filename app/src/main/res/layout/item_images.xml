@@ -13,6 +13,7 @@
         android:layout_alignParentStart="true"
         android:layout_marginStart="12dp"
         android:visibility="gone"
+        android:buttonTint="@color/greenDark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

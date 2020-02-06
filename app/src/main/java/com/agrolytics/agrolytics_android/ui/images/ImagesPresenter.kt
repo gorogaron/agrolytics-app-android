@@ -64,35 +64,21 @@ class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
                 } else {
                     for (document in value!!.documentChanges) {
                         val imageItem = createImageItem(document.document)
-                        saveImage(imageItem)
-                        fireBaseList.add(imageItem)
+                        val alreadyContains = fireBaseList.filter { it.id == imageItem.id }.isNotEmpty()
+                        if (!alreadyContains) {
+                            saveImage(imageItem)
+                            fireBaseList.add(imageItem)
+                        }
                     }
                 }
-
                 loadImagesFromFireBase()
             }
     }
 
+
     private fun subscribeLeaderImages() {
         screen?.showLoading()
         getLeaderImages()
-//		fireStoreDB?.db?.collection("images")
-//				?.whereEqualTo("leaderID", sessionManager?.userID)
-//				?.addSnapshotListener { value, e ->
-//					if (e != null) {
-//						e.printStackTrace()
-//						return@addSnapshotListener
-//					}
-//
-//					if (value!!.documentChanges.size == 1) {
-//						for (document in value.documentChanges) {
-//							val imageItem = createImageItem(document.document)
-//							saveImage(imageItem)
-//							fireBaseList.add(imageItem)
-//						}
-//						loadImagesFromFireBase()
-//					}
-//				}
     }
 
     private fun getLeaderImages() {
@@ -101,16 +87,22 @@ class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
             ?.get()?.addOnSuccessListener {
                 for (document in it) {
                     val imageItem = createImageItem(document)
-                    saveImage(imageItem)
-                    fireBaseList.add(imageItem)
+                    val alreadyContains = fireBaseList.filter { it.id == imageItem.id }.isNotEmpty()
+                    if (!alreadyContains) {
+                        saveImage(imageItem)
+                        fireBaseList.add(imageItem)
+                    }
                 }
                 fireStoreDB?.db?.collection("images")
                     ?.whereEqualTo("userID", sessionManager?.userID)
                     ?.get()?.addOnSuccessListener {
                         for (document in it) {
                             val imageItem = createImageItem(document)
-                            saveImage(imageItem)
-                            fireBaseList.add(imageItem)
+                            val alreadyContains = fireBaseList.filter { it.id == imageItem.id }.isNotEmpty()
+                            if (!alreadyContains) {
+                                saveImage(imageItem)
+                                fireBaseList.add(imageItem)
+                            }
                         }
                         fireStoreDB?.db?.collection("images")
                             ?.whereEqualTo("leaderID", sessionManager?.userID)
@@ -156,13 +148,17 @@ class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
                 } else {
                     for (document in value!!.documentChanges) {
                         val imageItem = createImageItem(document.document)
-                        saveImage(imageItem)
-                        fireBaseList.add(imageItem)
+                        val alreadyContains = fireBaseList.filter { it.id == imageItem.id }.isNotEmpty()
+                        if (!alreadyContains) {
+                            saveImage(imageItem)
+                            fireBaseList.add(imageItem)
+                        }
                     }
                 }
                 loadImagesFromFireBase()
             }
     }
+
 
     fun getImages(isPushedToServer: Boolean) {
         var images: List<ImageItem>
