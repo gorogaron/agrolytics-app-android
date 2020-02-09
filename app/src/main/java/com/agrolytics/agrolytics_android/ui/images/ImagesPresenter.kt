@@ -121,7 +121,6 @@ class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
                                             fireBaseList.add(imageItem)
                                         }
                                     }
-                                    loadImagesFromFireBase()
                                 }
                             }
                         loadImagesFromFireBase()
