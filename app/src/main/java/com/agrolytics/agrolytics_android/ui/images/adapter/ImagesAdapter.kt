@@ -20,7 +20,8 @@ class ImagesAdapter(private val listener: OnImageListener,
                     private val savedLength: Float): RecyclerView.Adapter<ImagesAdapter.ImagesHolder>() {
 
 	var itemList = mutableListOf<ImageItem>()
-	var deleteShown = false
+	var deleteShown : Boolean = false
+	lateinit var slidingNeeded : BooleanArray
 
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImagesHolder {
 		val view = LayoutInflater.from(parent.context)
@@ -96,7 +97,13 @@ class ImagesAdapter(private val listener: OnImageListener,
 			}
 
 			if (deleteShown) {
-				container_data.animateSlide(300L,0f,(180).toFloat(),1.0f)
+				if (slidingNeeded[position] == true){
+					container_data.animateSlide(300L,0f,(180).toFloat(),1.0f)
+					slidingNeeded[position] = false
+				}
+				else{
+					container_data.x = 180f
+				}
 				check_box.visibility = View.VISIBLE
 			} else {
 				container_data.animateSlide(300L,0f,0f,1.0f)
@@ -111,6 +118,7 @@ class ImagesAdapter(private val listener: OnImageListener,
 
 	fun showDeleteBoxes() {
 		deleteShown = !deleteShown
+		if (deleteShown) slidingNeeded.fill(true) else slidingNeeded.fill(false)
 		notifyDataSetChanged()
 	}
 
@@ -161,6 +169,10 @@ class ImagesAdapter(private val listener: OnImageListener,
 	fun setList(itemList: List<ImageItem>) {
 		this.itemList.clear()
 		this.itemList.addAll(itemList)
+
+		this.slidingNeeded = BooleanArray(this.itemList.size)
+		this.slidingNeeded.fill(false)
+
 		notifyDataSetChanged()
 	}
 
