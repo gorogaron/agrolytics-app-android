@@ -26,11 +26,11 @@ android {
     }
     buildTypes {
         debug {
-            buildConfigField 'String', 'BASE_URL', '"http://noether.ddns.net/ww/"'
+            buildConfigField 'String', 'BASE_URL', '"https://us-central1-webhost-7bf8f.cloudfunctions.net/"'
         }
         release {
             minifyEnabled true
-            buildConfigField 'String', 'BASE_URL', '"http://noether.ddns.net/ww/"'
+            buildConfigField 'String', 'BASE_URL', '"https://us-central1-webhost-7bf8f.cloudfunctions.net/"'
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.agrolytics
         }

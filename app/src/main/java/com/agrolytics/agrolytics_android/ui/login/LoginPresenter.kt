@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.util.Log
 import com.agrolytics.agrolytics_android.base.BasePresenter
+import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.utils.Util
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -27,7 +28,13 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
                     ?.addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             val user = auth?.currentUser
-                            getUser(user)
+                            user?.getIdToken(false)?.addOnSuccessListener { userToken ->
+                                appServer?.updateApiService(userToken.token)
+                                getUser(user)
+                            }!!.addOnFailureListener { e ->
+                                Log.w(TAG, "Error getting user token", e)
+                                screen?.hideLoading()
+                            }
                         } else {
                             screen?.showToast("Hibás email vagy jelszó")
                             screen?.hideLoading()

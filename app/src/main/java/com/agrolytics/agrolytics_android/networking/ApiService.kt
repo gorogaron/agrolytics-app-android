@@ -14,15 +14,23 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.POST
 import java.util.concurrent.TimeUnit
+import com.agrolytics.agrolytics_android.utils.SessionManager
+import org.koin.android.ext.android.inject
 
 interface ApiService {
-
-	@POST("process")
+	@POST("processImage")
 	fun uploadImage(@Body body: ImageUploadRequest): Observable<Response<ResponseImageUpload>>
 
 	companion object Factory {
+
+		var userToken: String? = null
+
 		private fun getBaseUrl(): String {
 			return BuildConfig.BASE_URL
+		}
+
+		fun updateUserToken (newToken: String?){
+			userToken = newToken
 		}
 
 		fun create(): ApiService {
@@ -31,6 +39,10 @@ interface ApiService {
 					.addHeader(
 						"Content-Type",
 						"application/json; charset=UTF-8"
+					)
+					.addHeader(
+						"Authorization",
+						"Bearer $userToken"
 					)
 					.addHeader(
 						"Accept",

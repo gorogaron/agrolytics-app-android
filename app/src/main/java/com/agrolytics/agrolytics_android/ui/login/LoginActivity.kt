@@ -9,6 +9,7 @@ import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.base.BaseActivity
 import com.agrolytics.agrolytics_android.database.firebase.FireStoreDB
 import com.agrolytics.agrolytics_android.database.tables.RoomModule
+import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.google.firebase.auth.FirebaseAuth
@@ -22,6 +23,7 @@ class LoginActivity: BaseActivity(), LoginScreen {
     private val sessionManager: SessionManager by inject()
     private val fireStoreDB: FireStoreDB by inject()
     private val roomModule: RoomModule by inject()
+    private val appServer: AppServer by inject()
 
     private var auth: FirebaseAuth? = null
 
@@ -32,7 +34,7 @@ class LoginActivity: BaseActivity(), LoginScreen {
         auth = FirebaseAuth.getInstance()
 
         presenter.addView(this)
-        presenter.addInjections(arrayListOf(sessionManager, fireStoreDB, auth!!, roomModule))
+        presenter.addInjections(arrayListOf(sessionManager, fireStoreDB, auth!!, roomModule, appServer))
 
         btn_login.setOnClickListener { presenter.login(et_email?.text?.toString(), et_password?.text?.toString()) }
     }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import com.agrolytics.agrolytics_android.base.BasePresenter
+import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.ui.login.LoginActivity
 import com.agrolytics.agrolytics_android.utils.Util
 import com.google.firebase.auth.FirebaseAuth
@@ -24,7 +25,12 @@ class SplashPresenter(val context: Context): BasePresenter<SplashScreen>() {
     fun checkExpire(currentUser: FirebaseUser?) {
         currentUser?.let {
             if (Util.isNetworkAvailable(context)) {
-                getUser(currentUser)
+                currentUser.getIdToken(false).addOnSuccessListener { userToken ->
+                    appServer?.updateApiService(userToken.token)
+                    getUser(currentUser)
+                }.addOnFailureListener { e ->
+                    screen?.showToast("Something went wrong.")
+                }
             } else {
                 val timer = Observable.timer(1000, TimeUnit.MILLISECONDS)
                     .subscribeOn(Schedulers.io())
