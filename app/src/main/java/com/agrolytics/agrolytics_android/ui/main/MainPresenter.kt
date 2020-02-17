@@ -40,26 +40,12 @@ class MainPresenter(private val context: Context): BasePresenter<MainScreen>() {
 	}
 
 	private fun createImageUploadRequest(path: String?, rodLength: Double?, rodLengthPixels: Int?): ImageUploadRequest {
-		val file = File(path)
 		val imageUploadRequest = ImageUploadRequest()
 		imageUploadRequest.processType = sessionManager?.mode
 		imageUploadRequest.rodLength = rodLength
 		imageUploadRequest.rodLengthPixel = rodLengthPixels
 		imageUploadRequest.image = path
-		//imageUploadRequest.image = "random base64"
 		return imageUploadRequest
-	}
-
-	private fun convertImageFileToBase64(file: File): String {
-		return FileInputStream(file).use { inputStream ->
-			ByteArrayOutputStream().use { outputStream ->
-				Base64OutputStream(outputStream, Base64.DEFAULT).use { base64FilterStream ->
-					inputStream.copyTo(base64FilterStream)
-					base64FilterStream.flush()
-					outputStream.toString()
-				}
-			}
-		}
 	}
 
 	fun uploadImage(path: String?, base64: String?, rodLength: Double?, rodLengthPixels: Int?) {
@@ -116,22 +102,4 @@ class MainPresenter(private val context: Context): BasePresenter<MainScreen>() {
 			roomModule?.database?.imageItemDao()?.addImage(imageItem)
 		}
 	}
-
-	private fun getOutputMediaFile(): File? {
-		val mediaStorageDir = File(
-				Environment.getExternalStorageDirectory().toString()
-						+ "/Android/data/"
-						+ context.applicationContext.packageName
-						+ "/Files"
-		)
-		if (!mediaStorageDir.exists()) {
-			if (!mediaStorageDir.mkdirs()) {
-				return null
-			}
-		}
-		val timeStamp = SimpleDateFormat("ddMMyyyy_HHmm").format(Date())
-		val mImageName = "MI_$timeStamp.jpg"
-		return File(mediaStorageDir.path + File.separator + mImageName)
-	}
-
 }

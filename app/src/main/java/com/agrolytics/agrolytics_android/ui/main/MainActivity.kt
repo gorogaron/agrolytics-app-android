@@ -153,15 +153,9 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
     private fun changeType(toSlab: Boolean) {
         if (toSlab) {
             btn_select?.animateSlide(300L,0f,(btn_select.width).toFloat(),1.0f)
-            //tv_selected?.animateTextChange(200L, "Papírlap")
-            //tv_slab?.fadeOut(300L)?.subscribe()
-            //tv_rod?.fadeIn(300L)?.subscribe()
             sessionManager.mode = "slab"
         } else {
-            //tv_selected?.animateTextChange(200L, "Méterrúd")
             btn_select?.animateSlide(300L,0f,0f,1.0f)
-            //tv_rod?.fadeOut(300L)?.subscribe()
-            //tv_slab?.fadeIn(300L)?.subscribe()
             sessionManager.mode = "rod"
         }
     }
@@ -424,7 +418,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
             }
             CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE -> {
                 val resultPath = CropImage.getActivityResult(data)?.uri?.path
-                val pickedImage = CropImage.getActivityResult(data)?.originalUri
                 if (resultCode == Activity.RESULT_OK && resultPath != null) {
                     if (sessionManager.mode == "rod") {
                         val intent = Intent(this, RodSelectorActivity::class.java)
