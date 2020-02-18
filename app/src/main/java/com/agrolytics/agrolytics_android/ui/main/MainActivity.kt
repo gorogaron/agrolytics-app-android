@@ -193,6 +193,19 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
     private fun checkInternetAndGpsConnection() {
         if (Util.isNetworkAvailable(this)) {
             btn_internet.setImageResource(R.drawable.ic_wifi_on)
+
+            //This is needed to retreive user token when during app startup
+            //auto-login was successful, but there was not internet connection.
+            if (appServer.getUserToken() == null){
+                var auth = FirebaseAuth.getInstance()
+                var currentUser = auth.currentUser
+                currentUser?.getIdToken(false)?.addOnSuccessListener { userToken ->
+                    appServer.updateApiService(userToken.token)
+                }?.addOnFailureListener { e ->
+                    //TODO
+                }
+            }
+
         } else {
             btn_internet.setImageResource(R.drawable.ic_wifi_off)
         }
