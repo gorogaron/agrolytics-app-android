@@ -24,6 +24,12 @@ object Detector {
     private var intValues: IntArray? = null
     private var output: Array<Array<Array<FloatArray>>>? = null
 
+    object Result {
+        var mask: Bitmap? = null
+        var input: Bitmap? = null
+        var maskedInput: Bitmap? = null
+        var numOfWoodPixels: Int? = null
+    }
 
     private fun loadModelFile(filename: String): MappedByteBuffer {
         var fileDescriptor: AssetFileDescriptor = assetManager!!.openFd(filename)
@@ -52,7 +58,7 @@ object Detector {
         try {
             for (i in 0 until input_width){
                 for (j in 0 until input_height){
-                    val pixelValue = intValues!![i * input_width + j]
+                    val pixelValue = intValues!![j * input_width + i]
                     imgData!!.putFloat((pixelValue shr 16 and 0xFF) / 255f)
                     imgData!!.putFloat((pixelValue shr 8 and 0xFF) / 255f)
                     imgData!!.putFloat((pixelValue and 0xFF) / 255f)
@@ -86,6 +92,32 @@ object Detector {
             }
         }
 
-        return output;
+        Result.input = resizedInput
+        Result.mask = output
+        Result.maskedInput = visualizeMask()
+        //Result.numOfWoodPixels = countWoodPixels(Result.mask)
+        return Result.maskedInput!!
+    }
+
+    fun visualizeMask(): Bitmap{
+
+        var maskedInput = Result.input
+        for (i in 0 until input_width){
+            for (j in 0 until input_height) {
+                val pixelValue = intValues!![j * input_width + i]
+                val R = pixelValue and 0xff0000 shr 16
+                val G = pixelValue and 0x00ff00 shr 8
+                val B = pixelValue and 0x0000ff shr 0
+                if (Result.mask!!.getPixel(i, j) == Color.WHITE){
+                    val alpha = 0.5f
+                    val newR = alpha * 255 + (1-alpha) * R
+                    val newG = alpha * 0 + (1-alpha) * G
+                    val newB = alpha * 0 + (1-alpha) * B
+                    maskedInput!!.setPixel(i, j, Color.rgb(newR.toInt(), newG.toInt(), newB.toInt()))
+                }
+            }
+        }
+
+        return maskedInput!!
     }
 }
