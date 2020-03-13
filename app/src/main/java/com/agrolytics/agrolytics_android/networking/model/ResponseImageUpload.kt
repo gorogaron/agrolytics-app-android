@@ -12,6 +12,11 @@ class ResponseImageUpload() : Parcelable {
         image = parcel.readString()
     }
 
+    constructor(b64: String, volume: String) : this() {
+        result = volume
+        image = b64
+    }
+
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(result)
         parcel.writeString(image)

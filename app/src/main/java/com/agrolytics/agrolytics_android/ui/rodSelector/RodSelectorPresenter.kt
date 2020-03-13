@@ -1,5 +1,6 @@
 package com.agrolytics.agrolytics_android.ui.rodSelector
 
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Base64
@@ -7,16 +8,20 @@ import android.util.Base64OutputStream
 import com.agrolytics.agrolytics_android.base.BasePresenter
 import com.agrolytics.agrolytics_android.networking.model.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
+import com.agrolytics.agrolytics_android.networking.model.ResponseImageUpload
 import com.agrolytics.agrolytics_android.utils.BitmapUtils
+import com.agrolytics.agrolytics_android.utils.Detector
 import com.agrolytics.agrolytics_android.utils.Util
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.net.SocketTimeoutException
 import java.util.concurrent.TimeoutException
+import kotlin.math.pow
 
 class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScreen>() {
 
@@ -30,13 +35,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
     fun uploadImage(path: String?, bitmap: Bitmap?, rodLength: Double, rodLengthPixels: Int) {
         this.path = path
         if (!Util.isNetworkAvailable(context)) {
-            activity?.let {
-                screen?.showAlertDialog(
-                    "Nincs internet kapcsolat",
-                    "Jelenleg nincs internetkapcsolat. Szeretnéd elmenteni a képet?",
-                    it, true, "Mentés"
-                )
-            }
+            handleNoInternet(bitmap!!, rodLength, rodLengthPixels)
         } else {
             screen?.showLoading()
             val imageUploadRequest = createImageUploadRequest(bitmap, rodLength, rodLengthPixels)
@@ -46,7 +45,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
                 ?.subscribe({ response ->
                     if (response.isSuccessful) {
                         response.body()?.let {
-                            screen?.successfulUpload(it, path)
+                            screen?.successfulUpload(it, path, "online")
                         }
                     } else {
                         screen?.showToast(response.message())
@@ -102,15 +101,30 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
         return imageUploadRequest
     }
 
-    private fun convertImageFileToBase64(file: File): String {
-        return FileInputStream(file).use { inputStream ->
-            ByteArrayOutputStream().use { outputStream ->
-                Base64OutputStream(outputStream, Base64.DEFAULT).use { base64FilterStream ->
-                    inputStream.copyTo(base64FilterStream)
-                    base64FilterStream.flush()
-                    outputStream.toString()
-                }
-            }
+    private fun handleNoInternet(bitmap: Bitmap, rodLength: Double, rodLengthPixels: Int){
+        activity?.let{
+            val builder = AlertDialog.Builder(it)
+            builder.setTitle("Nincs internetkapcsolat")
+            builder.setMessage("Nem megfelelő az internetkapcsolat. A képet lementheti későbbi feldolgozásra, vagy használhatja az offline " +
+                    "mérést. Ekkor a kép nem kerül mentésre, és az eredmény pontatlanabb.")
+            builder.setNeutralButton("Kilépés"){_,_ -> }
+            builder.setPositiveButton("Mentés"){_,_ ->  it.positiveButtonClicked()}
+            builder.setNegativeButton("Offline mérés"){_,_ -> startOfflineDetection(bitmap, rodLength, rodLengthPixels)}
+            builder.setCancelable(true)
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
         }
     }
+
+    private fun startOfflineDetection(bitmap: Bitmap, rodLength: Double, rodLengthPixels: Int){
+        screen?.showLoading()
+        doAsync {var seg = Detector.segmentOffline(bitmap!!)
+            uiThread {
+                val volume = rodLength.pow(2) / rodLengthPixels.toFloat().pow(2) * Detector.Result.numOfWoodPixels
+                var result = ResponseImageUpload(BitmapUtils.bitmapToBase64(seg)!!, volume.toString())
+                screen?.successfulUpload(result!!, path, "offline")
+                screen?.hideLoading()
+            } }
+    }
+
 }

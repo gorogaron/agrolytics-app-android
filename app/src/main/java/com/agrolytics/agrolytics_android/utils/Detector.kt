@@ -28,7 +28,7 @@ object Detector {
         var mask: Bitmap? = null
         var input: Bitmap? = null
         var maskedInput: Bitmap? = null
-        var numOfWoodPixels: Int? = null
+        var numOfWoodPixels: Int = 0
     }
 
     private fun loadModelFile(filename: String): MappedByteBuffer {
@@ -99,7 +99,7 @@ object Detector {
         return Result.maskedInput!!
     }
 
-    fun visualizeMask(): Bitmap{
+    private fun visualizeMask(): Bitmap{
 
         var maskedInput = Result.input
         for (i in 0 until input_width){
@@ -109,6 +109,7 @@ object Detector {
                 val G = pixelValue and 0x00ff00 shr 8
                 val B = pixelValue and 0x0000ff shr 0
                 if (Result.mask!!.getPixel(i, j) == Color.WHITE){
+                    Result.numOfWoodPixels = Result.numOfWoodPixels + 1
                     val alpha = 0.5f
                     val newR = alpha * 255 + (1-alpha) * R
                     val newG = alpha * 0 + (1-alpha) * G

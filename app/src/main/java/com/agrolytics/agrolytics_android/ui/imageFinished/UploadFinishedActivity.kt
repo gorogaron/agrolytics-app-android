@@ -136,7 +136,9 @@ class UploadFinishedActivity : BaseActivity(), UploadFinishedScreen {
 
 	override fun onAcceptClicked(responseImageUpload: ResponseImageUpload?, path: String?,
 								 fragment: UploadFinishedFragment, id: String?) {
-		presenter.uploadImageToStorage(responseImageUpload, path, fragment)
+
+		val processMethod = intent.extras.getString(ConfigInfo.METHOD)
+		presenter.uploadImageToStorage(responseImageUpload, path, fragment, processMethod)
 		presenter.deleteImageFromLocalDatabase(id)
 	}
 

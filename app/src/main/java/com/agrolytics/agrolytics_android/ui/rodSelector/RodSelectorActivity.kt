@@ -77,7 +77,8 @@ class RodSelectorActivity : BaseActivity(), RodSelectorScreen, BaseActivity.OnDi
 		createRodDialog()
 	}
 
-	override fun successfulUpload(imageUpload: ResponseImageUpload, path: String?) {
+	//Not a good function name...
+	override fun successfulUpload(imageUpload: ResponseImageUpload, path: String?, method: String) {
 		imageUpload.image?.let {
 			if (it.isNotEmpty()) {
 				val intent = Intent(this, UploadFinishedActivity::class.java)
@@ -87,6 +88,7 @@ class RodSelectorActivity : BaseActivity(), RodSelectorScreen, BaseActivity.OnDi
 				path?.let { pathList.add(path) }
 				UploadFinishedActivity.responseList = responses
 				intent.putStringArrayListExtra(ConfigInfo.PATH, pathList)
+				intent.putExtra(ConfigInfo.METHOD, method)
 				startActivity(intent)
 				finish()
 			} else {

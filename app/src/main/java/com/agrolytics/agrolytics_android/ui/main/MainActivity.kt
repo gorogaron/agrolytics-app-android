@@ -82,6 +82,8 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         presenter.addInjections(arrayListOf(appServer, roomModule, sessionManager))
         presenter.setActivity(this)
 
+        Detector.init(assets)
+
         btn_open_camera.setOnClickListener(this)
         btn_open_gallery.setOnClickListener(this)
         btn_guide.setOnClickListener(this)

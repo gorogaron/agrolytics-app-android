@@ -44,83 +44,120 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
         }
     }
 
-    fun uploadImageToStorage(responseImageUpload: ResponseImageUpload?, path: String?, fragment: UploadFinishedFragment) {
-        screen?.showLoading()
+    fun uploadImageToStorage(responseImageUpload: ResponseImageUpload?, path: String?, fragment: UploadFinishedFragment, processMethod: String) {
+        if (processMethod == "online") { //Only uploade image to firebase in case of online processing
+            screen?.showLoading()
 
-        val reference = fireStoreDB?.storage?.reference
-        val file = File(path)
-        val imageName = file.name
-        val imageRef = reference?.child(imageName)
+            val reference = fireStoreDB?.storage?.reference
+            val file = File(path)
+            val imageName = file.name
+            val imageRef = reference?.child(imageName)
+            sessionManager?.forestryID?.let { forestryID ->
 
-        sessionManager?.forestryID?.let { forestryID ->
+                var forestryName = ""
 
-            var forestryName = ""
+                fireStoreDB?.db?.collection("forestry")?.document(forestryID)
+                    ?.get()
+                    ?.addOnSuccessListener {
+                        forestryName = it["name"] as String
 
-            fireStoreDB?.db?.collection("forestry")?.document(forestryID)
-                ?.get()
-                ?.addOnSuccessListener {
-                    forestryName = it["name"] as String
+                        val forestryRef = reference?.child("$forestryName/masked/$imageName")
+                        val thumbnailForestryRef =
+                            reference?.child("$forestryName/thumbnail/$imageName")
+                        responseImageUpload?.image?.let { imageBase64 ->
 
-                    val forestryRef = reference?.child("$forestryName/masked/$imageName")
-                    val thumbnailForestryRef = reference?.child("$forestryName/thumbnail/$imageName")
-                    responseImageUpload?.image?.let { imageBase64 ->
+                            val bitmap = BitmapUtils.getImage(imageBase64)
+                            val bytes = BitmapUtils.getBytes(bitmap)
 
-                        val bitmap = BitmapUtils.getImage(imageBase64)
-                        val bytes = BitmapUtils.getBytes(bitmap)
+                            val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 64, 48, true);
+                            val resizedBytes = BitmapUtils.getBytes(resizedBitmap)
 
-                        val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 64, 48, true);
-                        val resizedBytes = BitmapUtils.getBytes(resizedBitmap)
-
-                        if (bytes != null && resizedBytes != null) {
-                            val thumbnailUploadTask = thumbnailForestryRef?.putBytes(resizedBytes)
-                            thumbnailUploadTask?.addOnSuccessListener {uploadThumbnailImageTaskSnapshot ->
-                                uploadThumbnailImageTaskSnapshot.storage.downloadUrl.addOnSuccessListener { thumbnailUrl ->
-                                    val metadata = StorageMetadata.Builder()
-                                        .setCacheControl("max-age=604800")
-                                        .build()
-                                    thumbnailForestryRef!!.updateMetadata(metadata).addOnSuccessListener {
-                                        val uploadTask = forestryRef?.putBytes(bytes)
-                                        uploadTask?.addOnSuccessListener {uploadImageTaskSnapshot ->
-                                            val metadata = StorageMetadata.Builder()
-                                                .setCacheControl("max-age=604800")
-                                                .build()
-                                            forestryRef!!.updateMetadata(metadata).addOnSuccessListener { metadata ->
-                                                // metadata.contentType should be null
-                                                uploadImageTaskSnapshot.storage.downloadUrl.addOnSuccessListener { imageUri ->
-                                                    Log.d(TAG, " downloadURL: $imageUri")
-                                                    uploadImageToFireStore(
-                                                        imageUri.toString(),
+                            if (bytes != null && resizedBytes != null) {
+                                val thumbnailUploadTask =
+                                    thumbnailForestryRef?.putBytes(resizedBytes)
+                                thumbnailUploadTask?.addOnSuccessListener { uploadThumbnailImageTaskSnapshot ->
+                                    uploadThumbnailImageTaskSnapshot.storage.downloadUrl.addOnSuccessListener { thumbnailUrl ->
+                                        val metadata = StorageMetadata.Builder()
+                                            .setCacheControl("max-age=604800")
+                                            .build()
+                                        thumbnailForestryRef!!.updateMetadata(metadata)
+                                            .addOnSuccessListener {
+                                                val uploadTask = forestryRef?.putBytes(bytes)
+                                                uploadTask?.addOnSuccessListener { uploadImageTaskSnapshot ->
+                                                    val metadata = StorageMetadata.Builder()
+                                                        .setCacheControl("max-age=604800")
+                                                        .build()
+                                                    forestryRef!!.updateMetadata(metadata)
+                                                        .addOnSuccessListener { metadata ->
+                                                            // metadata.contentType should be null
+                                                            uploadImageTaskSnapshot.storage.downloadUrl.addOnSuccessListener { imageUri ->
+                                                                Log.d(
+                                                                    TAG,
+                                                                    " downloadURL: $imageUri"
+                                                                )
+                                                                uploadImageToFireStore(
+                                                                    imageUri.toString(),
+                                                                    responseImageUpload,
+                                                                    path,
+                                                                    fragment,
+                                                                    "$forestryName/masked/$imageName",
+                                                                    "$forestryName/thumbnail/$imageName",
+                                                                    thumbnailUrl.toString()
+                                                                )
+                                                            }.addOnFailureListener { error ->
+                                                                handleAsyncError(
+                                                                    error,
+                                                                    responseImageUpload,
+                                                                    path,
+                                                                    fragment
+                                                                );
+                                                            }
+                                                        }.addOnFailureListener { error ->
+                                                        handleAsyncError(
+                                                            error,
+                                                            responseImageUpload,
+                                                            path,
+                                                            fragment
+                                                        );
+                                                    }
+                                                }?.addOnFailureListener { error ->
+                                                    handleAsyncError(
+                                                        error,
                                                         responseImageUpload,
                                                         path,
-                                                        fragment,
-                                                        "$forestryName/masked/$imageName",
-                                                        "$forestryName/thumbnail/$imageName",
-                                                        thumbnailUrl.toString()
-                                                    )
-                                                }.addOnFailureListener { error ->
-                                                    handleAsyncError(error, responseImageUpload, path, fragment);
+                                                        fragment
+                                                    );
                                                 }
-                                            }.addOnFailureListener {error ->
-                                                handleAsyncError(error, responseImageUpload, path, fragment);
-                                            }
-                                        }?.addOnFailureListener { error ->
-                                            handleAsyncError(error, responseImageUpload, path, fragment);
+                                            }.addOnFailureListener { error ->
+                                            handleAsyncError(
+                                                error,
+                                                responseImageUpload,
+                                                path,
+                                                fragment
+                                            );
                                         }
                                     }.addOnFailureListener { error ->
-                                        handleAsyncError(error, responseImageUpload, path, fragment);
+                                        handleAsyncError(
+                                            error,
+                                            responseImageUpload,
+                                            path,
+                                            fragment
+                                        );
                                     }
-                                }.addOnFailureListener {error ->
+                                }?.addOnFailureListener { error ->
                                     handleAsyncError(error, responseImageUpload, path, fragment);
                                 }
-                            }?.addOnFailureListener {error ->
-                                handleAsyncError(error, responseImageUpload, path, fragment);
                             }
                         }
                     }
-                }
-                ?.addOnFailureListener { it.printStackTrace() }
-        } ?: run {
-            screen?.showToast("Hiányzó erdész azonosító. Kérlek próbáld meg később.")
+                    ?.addOnFailureListener { it.printStackTrace() }
+            } ?: run {
+                screen?.showToast("Hiányzó erdész azonosító. Kérlek próbáld meg később.")
+            }
+        }
+        else{ //Offline processing
+            screen?.updateView(fragment)
+            screen?.showToast("Figyelem! A számolt térfogat nem jó a képméret miatt.")
         }
     }
 
@@ -187,21 +224,6 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
                 Log.w(TAG, "Error writing document", e)
             }
 
-//        fireStoreDB?.db?.collection("images")?.document()
-//            ?.set(imageDocument)
-//            ?.addOnSuccessListener {
-//                screen?.hideLoading()
-//                screen?.showToast("Upload finished")
-//                screen?.updateView(fragment)
-//                saveUploadedImageItem(responseImageUpload, path, fragment)
-//                Log.d(TAG, "DocumentSnapshot successfully written!")
-//            }
-//            ?.addOnFailureListener { e ->
-//                saveUploadedImageItem(responseImageUpload, path, fragment, null)
-//                screen?.hideLoading()
-//                screen?.showToast("Upload failed, we saved it locally. You try again in Images menu.")
-//                Log.w(TAG, "Error writing document", e)
-//            }
     }
 
     fun deleteImageFromLocalDatabase(id: String?) {
