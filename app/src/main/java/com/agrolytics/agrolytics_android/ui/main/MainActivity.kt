@@ -95,9 +95,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         container_map.setOnClickListener(this)
         container_set_length.setOnClickListener(this)
         container_sign_out.setOnClickListener(this)
-        container_rod.setOnClickListener(this)
-        container_slab.setOnClickListener(this)
-        btn_select_mode.setOnClickListener(this)
 
         checkInternetAndGpsConnection()
 
@@ -109,11 +106,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
 
         checkPermissions(false, true)
 
-        if (sessionManager.mode == "rod") {
-            changeType(false)
-        } else {
-            changeType(false)
-        }
     }
 
     override fun onResume() {
@@ -140,9 +132,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
             R.id.container_set_length -> openActivity(MenuItem.LENGTH)
             R.id.tv_show_old_length -> openActivity(MenuItem.LENGTH)
             R.id.container_sign_out -> signOut()
-            R.id.btn_select_mode -> showSelectorPopUp()
-            R.id.container_rod -> changeType(false)
-            R.id.container_slab -> changeType(true)
         }
     }
 
@@ -150,16 +139,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         val intentFiler = IntentFilter()
         intentFiler.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
         registerReceiver(networkChangeReceiver, intentFiler)
-    }
-
-    private fun changeType(toSlab: Boolean) {
-        if (toSlab) {
-            btn_select?.animateSlide(300L,0f,(btn_select.width).toFloat(),1.0f)
-            sessionManager.mode = "slab"
-        } else {
-            btn_select?.animateSlide(300L,0f,0f,1.0f)
-            sessionManager.mode = "rod"
-        }
     }
 
     private fun listenNetworkStatus() {
@@ -384,21 +363,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
             }).check()
     }
 
-    private fun showSelectorPopUp() {
-        androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle(title)
-            .setMessage("Válaszd ki a kijelölés módját!")
-            .setPositiveButton("Méterrúd") { dialog, which ->
-                btn_select_mode.text = "Méterrúd"
-                sessionManager.mode = "rod"
-            }
-            .setNegativeButton("Papírlap") { dialog, which ->
-                btn_select_mode.text = "Papírlap"
-                sessionManager.mode = "slab"
-            }
-            .setCancelable(false)
-            .show()
-    }
 
     override fun onStop() {
         super.onStop()
@@ -434,25 +398,17 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
             CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE -> {
                 val resultPath = CropImage.getActivityResult(data)?.uri?.path
                 if (resultCode == Activity.RESULT_OK && resultPath != null) {
-                    if (sessionManager.mode == "rod") {
-                        val intent = Intent(this, RodSelectorActivity::class.java)
-                        intent.putExtra(ConfigInfo.PATH, resultPath)
+                    val intent = Intent(this, RodSelectorActivity::class.java)
+                    intent.putExtra(ConfigInfo.PATH, resultPath)
 
-                        val options = BitmapFactory.Options()
-                        options.inScaled = false
-                        options.inJustDecodeBounds = false
-                        val bmp = BitmapFactory.decodeFile(resultPath, options)
+                    val options = BitmapFactory.Options()
+                    options.inScaled = false
+                    options.inJustDecodeBounds = false
+                    val bmp = BitmapFactory.decodeFile(resultPath, options)
 
-                        RodSelectorActivity.bitmap = bmp
+                    RodSelectorActivity.bitmap = bmp
 
-                        startActivity(intent)
-                    } else {
-                        val defaultBitmap = BitmapFactory.decodeFile(resultPath)
-                        val resizedBitmap = Bitmap.createScaledBitmap(defaultBitmap, 640, 480, true)
-                        resizedBitmap?.let {
-                            presenter.uploadImage(resultPath, BitmapUtils.bitmapToBase64(resizedBitmap), null, null)
-                        }
-                    }
+                    startActivity(intent)
                 } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                     showToast("Something went wrong. Please try again.")
                 }

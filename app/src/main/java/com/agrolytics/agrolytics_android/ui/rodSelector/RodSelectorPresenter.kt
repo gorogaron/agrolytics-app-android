@@ -94,7 +94,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
     private fun createImageUploadRequest(bitmap: Bitmap?, rodLength: Double, rodLengthPixels: Int): ImageUploadRequest {
         //val file = File(path)
         val imageUploadRequest = ImageUploadRequest()
-        imageUploadRequest.processType = sessionManager?.mode
+        imageUploadRequest.processType = "rod" //TODO: remove processtype from body
         imageUploadRequest.rodLength = rodLength
         imageUploadRequest.rodLengthPixel = rodLengthPixels
         bitmap?.let { imageUploadRequest.image = BitmapUtils.bitmapToBase64(bitmap) }

@@ -311,13 +311,9 @@ class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
         val file = File(item.localPath)
         val imageUploadRequest = ImageUploadRequest()
         imageUploadRequest.image = convertImageFileToBase64(file)
-        if (item.selectionMode != null && item.selectionMode == "rod") {
-            imageUploadRequest.processType = "rod"
-            imageUploadRequest.rodLength = item.rodLength
-            imageUploadRequest.rodLengthPixel = item.rodLengthPixel
-        } else {
-            imageUploadRequest.processType = "slab"
-        }
+        imageUploadRequest.processType = "rod"  //TODO: remove processtype from Json object
+        imageUploadRequest.rodLength = item.rodLength
+        imageUploadRequest.rodLengthPixel = item.rodLengthPixel
         return imageUploadRequest
     }
 
