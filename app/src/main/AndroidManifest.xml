@@ -55,6 +55,9 @@
             android:name=".ui.guide.GuideActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.cropper.CropperActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.login.LoginActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".ui.rodSelector.RodSelectorActivity"

@@ -1,27 +1,15 @@
 //package com.example.polycrop //TODO: FIX PACKAGE NAME
 
-import android.app.PendingIntent.getActivity
 import android.content.Context
-import android.content.res.Resources
 import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import android.widget.Toast
 import android.graphics.BitmapFactory
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
-import android.view.Display
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.minus
-import java.lang.Double.min
-import java.lang.Exception
 import kotlin.math.min
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import java.lang.Double.max
-import kotlin.math.max
+import com.agrolytics.agrolytics_android.R
+
 
 
 class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
@@ -43,7 +31,7 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
 
     init {
 
-        bitmap = BitmapFactory.decodeResource(resources, R.drawable.fekvo)
+        bitmap = BitmapFactory.decodeResource(resources, R.drawable.dummy)
         finalImg = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888) //TODO : REMOVE!!!
         polyPointPaint.isAntiAlias = true
         polyPointPaint.color = Color.WHITE

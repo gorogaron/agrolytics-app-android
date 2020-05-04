@@ -41,6 +41,7 @@ import android.graphics.BitmapFactory
 import android.location.Location
 import android.net.ConnectivityManager
 import android.util.Log
+import com.agrolytics.agrolytics_android.ui.cropper.CropperActivity
 import com.agrolytics.agrolytics_android.ui.guide.GuideActivity
 import com.agrolytics.agrolytics_android.ui.login.LoginActivity
 import com.agrolytics.agrolytics_android.utils.*
@@ -306,10 +307,11 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
     }
 
     private fun startCropImageActivity() {
-        CropImage.activity()
+        startActivity(CropperActivity::class.java, Bundle(), true)
+        /*CropImage.activity()
             .setAspectRatio(640, 480)
             .setGuidelines(CropImageView.Guidelines.ON)
-            .start(this)
+            .start(this)*/
     }
 
     private fun startCamera() {
