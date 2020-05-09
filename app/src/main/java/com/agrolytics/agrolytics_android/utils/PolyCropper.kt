@@ -1,20 +1,20 @@
-//package com.example.polycrop //TODO: FIX PACKAGE NAME
+package com.agrolytics.agrolytics_android.utils
 
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import android.graphics.BitmapFactory
 import android.graphics.Bitmap
 import kotlin.math.min
-import com.agrolytics.agrolytics_android.R
 
 
 
 class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
-    val bitmap : Bitmap
+    var bitmap : Bitmap? = null
+    var finalImg : Bitmap? = null
+
     val borderPaint = Paint()
     val polyPointPaint = Paint()
     val polyPathPaint = Paint()
@@ -27,12 +27,8 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
     var dstRect = Rect()
 
     var done = false
-    var finalImg : Bitmap
 
     init {
-
-        bitmap = BitmapFactory.decodeResource(resources, R.drawable.dummy)
-        finalImg = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888) //TODO : REMOVE!!!
         polyPointPaint.isAntiAlias = true
         polyPointPaint.color = Color.WHITE
         polyPointPaint.strokeWidth = 4f
@@ -57,21 +53,26 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
         borderPaint.strokeJoin = Paint.Join.ROUND
     }
 
+    fun setImageBitmap(img: Bitmap){
+        bitmap = img
+        finalImg = Bitmap.createBitmap(bitmap!!.width, bitmap!!.height, Bitmap.Config.ARGB_8888) //TODO : REMOVE!!!
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         if (!done) {
-            val wRatio = this.width.toFloat() / bitmap.width.toFloat()
-            val hRatio = this.height.toFloat() / bitmap.height.toFloat()
+            val wRatio = this.width.toFloat() / bitmap!!.width.toFloat()
+            val hRatio = this.height.toFloat() / bitmap!!.height.toFloat()
             val scalingRatio = min(wRatio, hRatio)
 
 
-            srcRect = Rect(0, 0, bitmap.width, bitmap.height)
+            srcRect = Rect(0, 0, bitmap!!.width, bitmap!!.height)
             dstRect = Rect(
                 0,
                 0,
-                (bitmap.width * scalingRatio).toInt(),
-                (bitmap.height * scalingRatio).toInt()
+                (bitmap!!.width * scalingRatio).toInt(),
+                (bitmap!!.height * scalingRatio).toInt()
             )
             val horizontalOffset = (this.width - dstRect.right) / 2
             val verticalOffset = (this.height - dstRect.bottom) / 2
@@ -118,17 +119,17 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
             }
         }
         else{
-            val wRatio = this.width.toFloat() / bitmap.width.toFloat()
-            val hRatio = this.height.toFloat() / bitmap.height.toFloat()
+            val wRatio = this.width.toFloat() / bitmap!!.width.toFloat()
+            val hRatio = this.height.toFloat() / bitmap!!.height.toFloat()
             val scalingRatio = min(wRatio, hRatio)
 
 
-            srcRect = Rect(0, 0, bitmap.width, bitmap.height)
+            srcRect = Rect(0, 0, bitmap!!.width, bitmap!!.height)
             dstRect = Rect(
                 0,
                 0,
-                (bitmap.width * scalingRatio).toInt(),
-                (bitmap.height * scalingRatio).toInt()
+                (bitmap!!.width * scalingRatio).toInt(),
+                (bitmap!!.height * scalingRatio).toInt()
             )
             val horizontalOffset = (this.width - dstRect.right) / 2
             val verticalOffset = (this.height - dstRect.bottom) / 2
@@ -196,7 +197,7 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
 
         var path = getTransformedPathFromPoints(polyPoints, xOffset, yOffset)
         var bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        bitmap.eraseColor(Color.TRANSPARENT)
+        bitmap!!.eraseColor(Color.TRANSPARENT)
         var maskCanvas = Canvas(bitmap)
         var paint = Paint()
         paint.setColor(Color.BLACK)

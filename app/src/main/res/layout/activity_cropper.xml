@@ -8,7 +8,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="#222222">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar"
@@ -31,7 +32,39 @@
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_arrow_back"
                     android:tint="@android:color/white" />
-
+                <TextView
+                    android:id="@+id/polycropper"
+                    android:paddingLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="#ffffff"
+                    android:text="POLYGON"
+                    android:tint="@android:color/white" />
+                <TextView
+                    android:id="@+id/rectanglecropper"
+                    android:paddingLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="#ffffff"
+                    android:text="RECTANGLE"
+                    android:tint="@android:color/white" />
+                <LinearLayout
+                    android:gravity="right"
+                    android:paddingRight="25dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/crop"
+                        android:paddingLeft="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="right"
+                        android:textColor="#ffffff"
+                        android:text="CROP"
+                        android:tint="@android:color/white" />
+                </LinearLayout>
 
             </androidx.appcompat.widget.Toolbar>
 
@@ -39,10 +72,16 @@
 
         <com.theartofdev.edmodo.cropper.CropImageView
             xmlns:custom="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/cropImageView"
+            android:id="@+id/rectangle_cropper_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:visibility="gone"/>
+
+        <com.agrolytics.agrolytics_android.utils.PolyCropper
+            android:id="@+id/poly_cropper_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
     </LinearLayout>
 

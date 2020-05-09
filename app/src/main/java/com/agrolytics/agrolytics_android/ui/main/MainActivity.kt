@@ -46,6 +46,8 @@ import com.agrolytics.agrolytics_android.ui.guide.GuideActivity
 import com.agrolytics.agrolytics_android.ui.login.LoginActivity
 import com.agrolytics.agrolytics_android.utils.*
 import com.agrolytics.agrolytics_android.ui.rodSelector.RodSelectorActivity
+import com.agrolytics.agrolytics_android.utils.ConfigInfo.CROPPER
+import com.agrolytics.agrolytics_android.utils.ConfigInfo.PICK_IMAGE
 import com.agrolytics.agrolytics_android.utils.networkListener.EventBus
 import com.agrolytics.agrolytics_android.utils.networkListener.NetworkChangeReceiver
 import com.agrolytics.agrolytics_android.utils.networkListener.NetworkStatus
@@ -54,7 +56,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.uiThread
+import java.io.InputStream
 import java.lang.Exception
 import java.lang.IllegalArgumentException
 
@@ -292,7 +296,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
 
     private fun openGallery() {
         if (cameraPermGiven() && storagePermGiven() && locationPermGiven()) {
-            startCropImageActivity()
+            pickImage()
         } else {
             checkPermissions(false, false)
         }
@@ -306,12 +310,10 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         }
     }
 
-    private fun startCropImageActivity() {
-        startActivity(CropperActivity::class.java, Bundle(), true)
-        /*CropImage.activity()
-            .setAspectRatio(640, 480)
-            .setGuidelines(CropImageView.Guidelines.ON)
-            .start(this)*/
+    private fun pickImage() {
+      intent = Intent(Intent.ACTION_GET_CONTENT)
+      intent.setType("image/*")
+      startActivityForResult(intent, PICK_IMAGE)
     }
 
     private fun startCamera() {
@@ -350,7 +352,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
                         if (isCamera) {
                             startCamera()
                         } else {
-                            startCropImageActivity()
+                            pickImage()
                         }
                     }
                     updateLocation()
@@ -365,6 +367,11 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
             }).check()
     }
 
+    fun startCropper(imgUri: Uri){
+        val intent = Intent(this, CropperActivity::class.java)
+        intent.putExtra("IMAGE", imgUri)
+        startActivityForResult(intent, CROPPER)
+    }
 
     override fun onStop() {
         super.onStop()
@@ -414,6 +421,20 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
                 } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                     showToast("Something went wrong. Please try again.")
                 }
+            }
+            PICK_IMAGE -> {
+                try {
+                    var imageUri = data!!.getData();
+                    startCropper(imageUri)
+                }
+                catch (e: Exception){
+                    showToast("Hiba a kép megnyitása közben.")
+                }
+
+            //Now you can do whatever y
+            }
+            CROPPER -> {
+                var imageUri = data!!.extras.getString("URI")
             }
         }
     }

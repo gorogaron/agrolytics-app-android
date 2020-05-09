@@ -4,6 +4,8 @@ object ConfigInfo {
 	const val STORAGE_CODE = 100
 	const val CAMERA_CODE = 101
 	const val CAMERA_CAPTURE = 102
+	const val PICK_IMAGE = 103
+	const val CROPPER = 104
 	const val IMAGE = "image"
 	const val PATH = "path"
 	const val ORIGINAL_HEIGHT = "original_height"
