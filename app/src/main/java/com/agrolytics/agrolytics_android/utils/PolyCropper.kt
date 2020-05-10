@@ -6,6 +6,10 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.graphics.Bitmap
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
 import kotlin.math.min
 
 
@@ -25,8 +29,6 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
 
     var srcRect = Rect()
     var dstRect = Rect()
-
-    var done = false
 
     init {
         polyPointPaint.isAntiAlias = true
@@ -60,87 +62,55 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        val wRatio = this.width.toFloat() / bitmap!!.width.toFloat()
+        val hRatio = this.height.toFloat() / bitmap!!.height.toFloat()
+        val scalingRatio = min(wRatio, hRatio)
 
-        if (!done) {
-            val wRatio = this.width.toFloat() / bitmap!!.width.toFloat()
-            val hRatio = this.height.toFloat() / bitmap!!.height.toFloat()
-            val scalingRatio = min(wRatio, hRatio)
+        srcRect = Rect(0, 0, bitmap!!.width, bitmap!!.height)
+        dstRect = Rect(0, 0, (bitmap!!.width * scalingRatio).toInt(), (bitmap!!.height * scalingRatio).toInt())
+        val horizontalOffset = (this.width - dstRect.right) / 2
+        val verticalOffset = (this.height - dstRect.bottom) / 2
+        dstRect.left = dstRect.left + horizontalOffset
+        dstRect.right = dstRect.right + horizontalOffset
+        dstRect.top = dstRect.top + verticalOffset
+        dstRect.bottom = dstRect.bottom + verticalOffset
+        //Drawing image
+        canvas.drawBitmap(bitmap, srcRect, dstRect, borderPaint)
 
-
-            srcRect = Rect(0, 0, bitmap!!.width, bitmap!!.height)
-            dstRect = Rect(
-                0,
-                0,
-                (bitmap!!.width * scalingRatio).toInt(),
-                (bitmap!!.height * scalingRatio).toInt()
-            )
-            val horizontalOffset = (this.width - dstRect.right) / 2
-            val verticalOffset = (this.height - dstRect.bottom) / 2
-            dstRect.left = dstRect.left + horizontalOffset
-            dstRect.right = dstRect.right + horizontalOffset
-            dstRect.top = dstRect.top + verticalOffset
-            dstRect.bottom = dstRect.bottom + verticalOffset
-            //Drawing image
-            canvas.drawBitmap(bitmap, srcRect, dstRect, borderPaint)
-
-            if (polyFinished) {
-                var maskWidth = (dstRect.right - dstRect.left)
-                var maskHeight = (dstRect.bottom - dstRect.top)
-                var bitmap =
-                    createPolyMask(polyPoints, maskWidth, maskHeight, dstRect.left, dstRect.top)
-                canvas.drawBitmap(bitmap, Rect(0, 0, maskWidth, maskHeight), dstRect, null)
-            }
-
-            polyPath.reset()
-            for ((index, point) in polyPoints.withIndex()) {
-                if (index == 0) {
-                    polyPath.moveTo(point.x.toFloat(), point.y.toFloat())
-                } else {
-                    polyPath.lineTo(point.x.toFloat(), point.y.toFloat())
-                }
-            }
-
-            if (polyFinished) {
-                polyPath.lineTo(polyPoints[0].x.toFloat(), polyPoints[0].y.toFloat())
-            }
-
-            canvas.drawPath(polyPath, polyPathPaint)
-
-            for ((index, point) in polyPoints.withIndex()) {
-                polyPointPaint.style = Paint.Style.FILL
-                if (index == selectedPointIdx) {
-                    polyPointPaint.color = Color.WHITE
-                } else {
-                    polyPointPaint.color = Color.WHITE
-                }
-                polyPointPaint.setShadowLayer(1f, 2f, 2f, Color.BLACK)
-                //polyPointPaint.alpha = 175
-                canvas.drawCircle(point.x.toFloat(), point.y.toFloat(), 20f, polyPointPaint)
-            }
-        }
-        else{
-            val wRatio = this.width.toFloat() / bitmap!!.width.toFloat()
-            val hRatio = this.height.toFloat() / bitmap!!.height.toFloat()
-            val scalingRatio = min(wRatio, hRatio)
-
-
-            srcRect = Rect(0, 0, bitmap!!.width, bitmap!!.height)
-            dstRect = Rect(
-                0,
-                0,
-                (bitmap!!.width * scalingRatio).toInt(),
-                (bitmap!!.height * scalingRatio).toInt()
-            )
-            val horizontalOffset = (this.width - dstRect.right) / 2
-            val verticalOffset = (this.height - dstRect.bottom) / 2
-            dstRect.left = dstRect.left + horizontalOffset
-            dstRect.right = dstRect.right + horizontalOffset
-            dstRect.top = dstRect.top + verticalOffset
-            dstRect.bottom = dstRect.bottom + verticalOffset
-            //Drawing image
-            canvas.drawBitmap(finalImg, srcRect, dstRect, borderPaint)
+        //Drawing transparent black bg around finished polygon
+        if (polyFinished) {
+            var maskWidth = (dstRect.right - dstRect.left)
+            var maskHeight = (dstRect.bottom - dstRect.top)
+            var bitmap = createPolyMask(polyPoints, maskWidth, maskHeight, dstRect.left, dstRect.top)
+            canvas.drawBitmap(bitmap, Rect(0, 0, maskWidth, maskHeight), dstRect, null)
         }
 
+        polyPath.reset()
+        for ((index, point) in polyPoints.withIndex()) {
+            if (index == 0) {
+                polyPath.moveTo(point.x.toFloat(), point.y.toFloat())
+            } else {
+                polyPath.lineTo(point.x.toFloat(), point.y.toFloat())
+            }
+        }
+
+        if (polyFinished) {
+            polyPath.lineTo(polyPoints[0].x.toFloat(), polyPoints[0].y.toFloat())
+        }
+
+        canvas.drawPath(polyPath, polyPathPaint)
+
+        for ((index, point) in polyPoints.withIndex()) {
+            polyPointPaint.style = Paint.Style.FILL
+            if (index == selectedPointIdx) {
+                polyPointPaint.color = Color.WHITE
+            } else {
+                polyPointPaint.color = Color.WHITE
+            }
+            polyPointPaint.setShadowLayer(1f, 2f, 2f, Color.BLACK)
+            //polyPointPaint.alpha = 175
+            canvas.drawCircle(point.x.toFloat(), point.y.toFloat(), 20f, polyPointPaint)
+        }
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -243,9 +213,6 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
         croppedCanvas.drawPaint(blackPaint)
         var boundingRect = Rect(minX, minY, maxX, maxY)
         croppedCanvas.drawBitmap(finalImg, boundingRect, Rect(0, 0,croppedCanvas.width, croppedCanvas.height), blackPaint)
-
-        done = true
-        invalidate()
         return croppedImg
     }
 
@@ -274,7 +241,13 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
         val xScale = srcRect.right/(dstRect.right-dstRect.left).toFloat()
         val yScale = srcRect.bottom/(dstRect.bottom - dstRect.top).toFloat()
 
-        var transformedPolyPoints = polyPoints
+        var transformedPolyPoints = ArrayList<Point>()
+
+        for (p in polyPoints){
+            var x = p.x
+            var y = p.y
+            transformedPolyPoints.add(Point(x, y))
+        }
 
         for (point in transformedPolyPoints) {
             point.x = ((point.x - xOffset)*xScale).toInt()
@@ -283,4 +256,5 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
 
         return transformedPolyPoints
     }
+
 }

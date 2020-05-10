@@ -47,15 +47,26 @@ class CropperActivity: BaseActivity(), View.OnClickListener {
             poly_cropper_view.visibility = View.GONE
             rectangle_cropper_view.visibility = View.VISIBLE
         }
-        crop.setOnClickListener{
-            val intent = Intent(this, RodSelectorActivity::class.java)
-            intent.putExtra(ConfigInfo.PATH, imageUri.path)
-            RodSelectorActivity.bitmap = image
-            startActivity(intent)
-        }
+        crop.setOnClickListener { cropImg() }
     }
 
     override fun onClick(v: View?) {
+    }
+
+    fun cropImg(){
+        lateinit var croppedImg : Bitmap
+        if (rectangle_cropper_view.visibility == View.VISIBLE){
+            croppedImg = rectangle_cropper_view.getCroppedImage()
+        }
+        else{
+            croppedImg = poly_cropper_view.crop()
+        }
+        var cropImgUri = BitmapToTempUri(croppedImg, "cropped_img")
+
+        val intent = Intent(this, RodSelectorActivity::class.java)
+        intent.putExtra(ConfigInfo.PATH, cropImgUri?.path)
+        RodSelectorActivity.bitmap = croppedImg
+        startActivity(intent)
     }
 
     fun BitmapToTempUri(inImage: Bitmap, title: String): Uri? {

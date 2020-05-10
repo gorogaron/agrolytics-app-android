@@ -370,7 +370,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
     fun startCropper(imgUri: Uri){
         val intent = Intent(this, CropperActivity::class.java)
         intent.putExtra("IMAGE", imgUri)
-        startActivityForResult(intent, CROPPER)
+        startActivity(intent)
     }
 
     override fun onStop() {
@@ -396,30 +396,9 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
                     )
                     val uri = presenter.getImageUri(thumbnail)
                     Log.d("HGXQR", "MAIN ACTIVITY UNCROPPED bitmap height" + thumbnail.height)
-                    CropImage.activity(uri)
-                        .setAspectRatio(640, 480)
-                        .setGuidelines(CropImageView.Guidelines.ON)
-                        .start(this)
+                    startCropper(uri)
                 } catch (e: Exception) {
                     e.printStackTrace()
-                }
-            }
-            CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE -> {
-                val resultPath = CropImage.getActivityResult(data)?.uri?.path
-                if (resultCode == Activity.RESULT_OK && resultPath != null) {
-                    val intent = Intent(this, RodSelectorActivity::class.java)
-                    intent.putExtra(ConfigInfo.PATH, resultPath)
-
-                    val options = BitmapFactory.Options()
-                    options.inScaled = false
-                    options.inJustDecodeBounds = false
-                    val bmp = BitmapFactory.decodeFile(resultPath, options)
-
-                    RodSelectorActivity.bitmap = bmp
-
-                    startActivity(intent)
-                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                    showToast("Something went wrong. Please try again.")
                 }
             }
             PICK_IMAGE -> {
@@ -430,11 +409,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
                 catch (e: Exception){
                     showToast("Hiba a kép megnyitása közben.")
                 }
-
-            //Now you can do whatever y
-            }
-            CROPPER -> {
-                var imageUri = data!!.extras.getString("URI")
             }
         }
     }
