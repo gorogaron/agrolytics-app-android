@@ -12,6 +12,7 @@ import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import kotlin.math.min
 import android.graphics.BlurMaskFilter
+import android.graphics.Color.parseColor
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 
 
@@ -45,7 +46,6 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
         polyPathPaint.style = Paint.Style.STROKE
         polyPathPaint.strokeCap = Paint.Cap.ROUND
         polyPathPaint.strokeJoin = Paint.Join.ROUND
-        polyPathPaint.setShadowLayer(1f,2f,2f,Color.BLACK)
         polyPathPaint.color = Color.WHITE
         polyPathPaint.alpha = 200
         polyPathPaint.strokeWidth = 3f
@@ -101,6 +101,9 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
                 var y2 = polyPoints[index].y.toFloat()
 
                 canvas.drawLine(x1, y1, x2, y2, polyPathPaint)
+                polyPathPaint.color = parseColor("#444444")
+                canvas.drawLine(x1+3, y1+3, x2+3, y2+3, polyPathPaint)
+                polyPathPaint.color = Color.WHITE
             }
         }
 
@@ -120,8 +123,11 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
             } else {
                 polyPointPaint.color = Color.WHITE
             }
-            polyPointPaint.setShadowLayer(1f, 2f, 2f, Color.BLACK)
+            polyPointPaint.color = parseColor("#444444")
+            canvas.drawCircle(point.x.toFloat() + 3, point.y.toFloat() + 3, 20f, polyPointPaint)
+            polyPointPaint.color = Color.WHITE
             canvas.drawCircle(point.x.toFloat(), point.y.toFloat(), 20f, polyPointPaint)
+
         }
     }
 
