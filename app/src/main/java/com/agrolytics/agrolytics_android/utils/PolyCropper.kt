@@ -11,6 +11,10 @@ import java.io.ByteArrayOutputStream
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import kotlin.math.min
+import android.graphics.BlurMaskFilter
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+
+
 
 
 
@@ -23,7 +27,6 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
     val polyPointPaint = Paint()
     val polyPathPaint = Paint()
     val polyPoints = ArrayList<Point>()
-    val polyPath = Path()
     var selectedPointIdx : Int? = null
     var polyFinished = false
 
@@ -53,6 +56,7 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
         borderPaint.style = Paint.Style.STROKE
         borderPaint.strokeCap = Paint.Cap.ROUND
         borderPaint.strokeJoin = Paint.Join.ROUND
+
     }
 
     fun setImageBitmap(img: Bitmap){
@@ -62,18 +66,21 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        val wRatio = this.width.toFloat() / bitmap!!.width.toFloat()
-        val hRatio = this.height.toFloat() / bitmap!!.height.toFloat()
-        val scalingRatio = min(wRatio, hRatio)
 
-        srcRect = Rect(0, 0, bitmap!!.width, bitmap!!.height)
-        dstRect = Rect(0, 0, (bitmap!!.width * scalingRatio).toInt(), (bitmap!!.height * scalingRatio).toInt())
-        val horizontalOffset = (this.width - dstRect.right) / 2
-        val verticalOffset = (this.height - dstRect.bottom) / 2
-        dstRect.left = dstRect.left + horizontalOffset
-        dstRect.right = dstRect.right + horizontalOffset
-        dstRect.top = dstRect.top + verticalOffset
-        dstRect.bottom = dstRect.bottom + verticalOffset
+        if (srcRect.bottom == 0) //if Rects not initialized
+        {
+            val wRatio = this.width.toFloat() / bitmap!!.width.toFloat()
+            val hRatio = this.height.toFloat() / bitmap!!.height.toFloat()
+            val scalingRatio = min(wRatio, hRatio)
+            srcRect = Rect(0, 0, bitmap!!.width, bitmap!!.height)
+            dstRect = Rect(0, 0, (bitmap!!.width * scalingRatio).toInt(), (bitmap!!.height * scalingRatio).toInt())
+            val horizontalOffset = (this.width - dstRect.right) / 2
+            val verticalOffset = (this.height - dstRect.bottom) / 2
+            dstRect.left = dstRect.left + horizontalOffset
+            dstRect.right = dstRect.right + horizontalOffset
+            dstRect.top = dstRect.top + verticalOffset
+            dstRect.bottom = dstRect.bottom + verticalOffset
+        }
         //Drawing image
         canvas.drawBitmap(bitmap, srcRect, dstRect, borderPaint)
 
@@ -85,20 +92,26 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
             canvas.drawBitmap(bitmap, Rect(0, 0, maskWidth, maskHeight), dstRect, null)
         }
 
-        polyPath.reset()
-        for ((index, point) in polyPoints.withIndex()) {
-            if (index == 0) {
-                polyPath.moveTo(point.x.toFloat(), point.y.toFloat())
-            } else {
-                polyPath.lineTo(point.x.toFloat(), point.y.toFloat())
+        for ((index, _) in polyPoints.withIndex()) {
+            if (index > 0){
+                var x1 = polyPoints[index-1].x.toFloat()
+                var y1 = polyPoints[index-1].y.toFloat()
+
+                var x2 = polyPoints[index].x.toFloat()
+                var y2 = polyPoints[index].y.toFloat()
+
+                canvas.drawLine(x1, y1, x2, y2, polyPathPaint)
             }
         }
 
         if (polyFinished) {
-            polyPath.lineTo(polyPoints[0].x.toFloat(), polyPoints[0].y.toFloat())
-        }
+            var x1 = polyPoints[polyPoints.size-1].x.toFloat()
+            var y1 = polyPoints[polyPoints.size-1].y.toFloat()
 
-        canvas.drawPath(polyPath, polyPathPaint)
+            var x2 = polyPoints[0].x.toFloat()
+            var y2 = polyPoints[0].y.toFloat()
+            canvas.drawLine(x1, y1, x2, y2, polyPathPaint)
+        }
 
         for ((index, point) in polyPoints.withIndex()) {
             polyPointPaint.style = Paint.Style.FILL
@@ -108,7 +121,6 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
                 polyPointPaint.color = Color.WHITE
             }
             polyPointPaint.setShadowLayer(1f, 2f, 2f, Color.BLACK)
-            //polyPointPaint.alpha = 175
             canvas.drawCircle(point.x.toFloat(), point.y.toFloat(), 20f, polyPointPaint)
         }
     }
@@ -134,7 +146,7 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
                 if (selectedPointIdx == 0) {
                     polyFinished = true
                 }
-                if (addNewPoint){
+                if (addNewPoint && !polyFinished){
                     polyPoints.add(Point(touchX!!.toInt(), touchY!!.toInt()))
                     selectedPointIdx = polyPoints.size - 1
                 }
@@ -144,7 +156,7 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
                     polyPoints[selectedPointIdx!!].x = touchX!!.toInt()
                     polyPoints[selectedPointIdx!!].y = touchY!!.toInt()
                 }
-                System.out.println("Moving event : x = " + touchX + " y = " + touchY)
+                //System.out.println("Moving event : x = " + touchX + " y = " + touchY)
             }
             MotionEvent.ACTION_UP -> {
                 System.out.println("Up event : x = " + touchX + " y = " + touchY)
@@ -158,7 +170,6 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
 
     fun reset(){
         polyFinished = false
-        polyPath.reset()
         polyPoints.clear()
         invalidate()
     }
