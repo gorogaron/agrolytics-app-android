@@ -29,8 +29,9 @@ android:background="@android:color/darker_gray">
             <TextView
                 android:id="@+id/btn_next"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="end"
+                android:gravity="center"
                 android:layout_marginEnd="12dp"
                 android:text="@string/done"
                 android:textColor="@android:color/white"

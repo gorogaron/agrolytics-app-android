@@ -149,7 +149,7 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
                         break
                     }
                 }
-                if (selectedPointIdx == 0) {
+                if (selectedPointIdx == 0 && polyPoints.size > 1) {
                     polyFinished = true
                 }
                 if (addNewPoint && !polyFinished){

@@ -27,40 +27,41 @@
                 <ImageButton
                     android:id="@+id/btn_back"
                     android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_height="match_parent"
                     android:background="@android:color/transparent"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_arrow_back"
                     android:tint="@android:color/white" />
-                <TextView
+                <View
+                    android:layout_width="20dp"
+                    android:layout_height="match_parent"/>
+                <ImageButton
                     android:id="@+id/polycropper"
-                    android:paddingLeft="10dp"
-                    android:layout_width="wrap_content"
+                    android:layout_width="50dp"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textColor="#ffffff"
-                    android:text="POLYGON"
-                    android:tint="@android:color/white" />
-                <TextView
+                    android:background="@drawable/poly"/>
+                <View
+                    android:layout_width="20dp"
+                    android:layout_height="match_parent"/>
+                <ImageButton
                     android:id="@+id/rectanglecropper"
-                    android:paddingLeft="10dp"
-                    android:layout_width="wrap_content"
+                    android:layout_width="50dp"
                     android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textColor="#ffffff"
-                    android:text="RECTANGLE"
-                    android:tint="@android:color/white" />
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    android:background="@drawable/rect" />
                 <LinearLayout
                     android:gravity="right"
                     android:paddingRight="25dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent">
                     <TextView
                         android:id="@+id/crop"
                         android:paddingLeft="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:gravity="right"
+                        android:gravity="center"
+                        android:foreground="?android:attr/selectableItemBackgroundBorderless"
                         android:textColor="#ffffff"
                         android:text="CROP"
                         android:tint="@android:color/white" />
