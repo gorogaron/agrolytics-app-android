@@ -14,6 +14,9 @@ import com.agrolytics.agrolytics_android.utils.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import kotlinx.android.synthetic.main.activity_upload_finished.*
 import org.koin.android.ext.android.inject
+import android.content.Intent
+import com.agrolytics.agrolytics_android.ui.main.MainActivity
+
 
 class UploadFinishedActivity : BaseActivity(), UploadFinishedScreen {
 
@@ -127,7 +130,10 @@ class UploadFinishedActivity : BaseActivity(), UploadFinishedScreen {
 
 	override fun onDeclineClicked(fragment: UploadFinishedFragment, id: String?) {
 		if (fragmentList.size == 1) {
-			onBackPressed()
+			//Return to main activity
+			val intent = Intent(this, MainActivity::class.java)
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
 		} else {
 			fragment.updateDeclineView()
 			presenter.deleteImageFromLocalDatabase(id)
