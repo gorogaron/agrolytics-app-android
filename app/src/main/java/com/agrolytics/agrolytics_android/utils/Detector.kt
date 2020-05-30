@@ -4,6 +4,7 @@ import android.content.res.AssetFileDescriptor
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.Matrix
 import org.tensorflow.lite.Interpreter
 import java.io.FileInputStream
 import java.nio.ByteBuffer
@@ -11,14 +12,18 @@ import java.nio.ByteOrder
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import java.util.HashMap
+import android.opengl.ETC1.getHeight
+import android.opengl.ETC1.getWidth
+
+
 
 object Detector {
 
     private var assetManager: AssetManager? = null;
 
     private var model: Interpreter? = null;
-    private var input_width = 512;
-    private var input_height = 512;
+    private var input_width = 640;
+    private var input_height = 480;
 
     private var imgData: ByteBuffer? = null
     private var intValues: IntArray? = null
@@ -42,7 +47,7 @@ object Detector {
 
     fun init(assetManager: AssetManager){
         this.assetManager = assetManager
-        this.model = Interpreter(loadModelFile("deeplabv3_512.tflite"))
+        this.model = Interpreter(loadModelFile("deeplabv3_640_480.tflite"))
 
         this.imgData = ByteBuffer.allocateDirect(1*input_height*input_width*4*3)
         this.imgData?.order(ByteOrder.nativeOrder())
@@ -52,13 +57,15 @@ object Detector {
 
     fun segmentOffline(inputImage: Bitmap): Bitmap{
         val resizedInput = Bitmap.createScaledBitmap(inputImage, input_width, input_height, false)
-        resizedInput.getPixels(this.intValues, 0, resizedInput.width, 0, 0, resizedInput.width, resizedInput.height)
+        val rotatedBitmap = rotateBitmap(resizedInput, 90f)
+
+        rotatedBitmap.getPixels(this.intValues, 0, rotatedBitmap.width, 0, 0, rotatedBitmap.width, rotatedBitmap.height)
         imgData?.rewind()
 
         try {
-            for (i in 0 until input_width){
-                for (j in 0 until input_height){
-                    val pixelValue = intValues!![j * input_width + i]
+            for (i in 0 until rotatedBitmap.width){
+                for (j in 0 until rotatedBitmap.height){
+                    val pixelValue = intValues!![j * rotatedBitmap.width + i]
                     imgData!!.putFloat((pixelValue shr 16 and 0xFF) / 255f)
                     imgData!!.putFloat((pixelValue shr 8 and 0xFF) / 255f)
                     imgData!!.putFloat((pixelValue and 0xFF) / 255f)
@@ -70,7 +77,7 @@ object Detector {
 
 
         var outputSegment =
-            Array(1) { Array(input_width) { Array(input_height) { FloatArray(2) } } }
+            Array(1) { Array(input_height) { Array(input_width) { FloatArray(2) } } }
 
         val inputArray = arrayOf<ByteBuffer?>(imgData)
         val outputMap = HashMap<Int, Any>()
@@ -78,9 +85,9 @@ object Detector {
 
         this.model!!.runForMultipleInputsOutputs(inputArray, outputMap)
 
-        val output: Bitmap = Bitmap.createBitmap(input_width, input_height, Bitmap.Config.ARGB_8888)
-        for (i in 0 until input_width) {
-            for (j in 0 until input_height) {
+        val output: Bitmap = Bitmap.createBitmap(rotatedBitmap.width, rotatedBitmap.height, Bitmap.Config.ARGB_8888)
+        for (i in 0 until rotatedBitmap.width) {
+            for (j in 0 until rotatedBitmap.height) {
                 val WOOD_IDX = 1
                 val BG_IDX = 0
                 if (outputSegment[0][i][j][WOOD_IDX] > outputSegment[0][i][j][BG_IDX]) {
@@ -101,10 +108,10 @@ object Detector {
 
     private fun visualizeMask(): Bitmap{
 
-        var maskedInput = Result.input
-        for (i in 0 until input_width){
-            for (j in 0 until input_height) {
-                val pixelValue = intValues!![j * input_width + i]
+        var maskedInput = rotateBitmap(Result.input!!, 90f)
+        for (i in 0 until maskedInput.width){
+            for (j in 0 until maskedInput.height) {
+                val pixelValue = intValues!![j * maskedInput.width + i]
                 val R = pixelValue and 0xff0000 shr 16
                 val G = pixelValue and 0x00ff00 shr 8
                 val B = pixelValue and 0x0000ff shr 0
@@ -119,6 +126,21 @@ object Detector {
             }
         }
 
-        return maskedInput!!
+        return rotateBitmap(maskedInput!!, -90f)
+    }
+
+    private fun rotateBitmap(img: Bitmap, deg: Float): Bitmap{
+        val matrix = Matrix()
+        matrix.postRotate(deg)
+        val rotatedBitmap = Bitmap.createBitmap(
+            img,
+            0,
+            0,
+            img.getWidth(),
+            img.getHeight(),
+            matrix,
+            true
+        )
+        return rotatedBitmap
     }
 }

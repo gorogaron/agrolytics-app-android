@@ -157,7 +157,6 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
         }
         else{ //Offline processing
             screen?.updateView(fragment)
-            screen?.showToast("Figyelem! A számolt térfogat nem jó a képméret miatt.")
         }
     }
 
