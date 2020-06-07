@@ -1,12 +1,15 @@
 package com.agrolytics.agrolytics_android.ui.images
 
 import android.content.Context
+import android.graphics.BitmapFactory
+import android.icu.util.Measure
 import android.util.Base64
 import android.util.Base64OutputStream
 import com.agrolytics.agrolytics_android.base.BasePresenter
 import com.agrolytics.agrolytics_android.networking.model.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
-import com.agrolytics.agrolytics_android.networking.model.ResponseImageUpload
+import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
+import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.utils.Util
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import io.reactivex.Observable
@@ -265,14 +268,16 @@ class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
                     ?.subscribeOn(Schedulers.io())
                     ?.observeOn(Schedulers.newThread())
                     ?.map { response ->
-                        val responseList = arrayListOf<Pair<ResponseImageUpload, Pair<String, String>>>()
+                        val resultList = arrayListOf<Pair<MeasurementResult, Pair<String, String>>>()
 
                         if (response.firstOrNull { !it.isSuccessful } == null) {
                             for (item in response) {
-                                val responseImageUpload = item.body() as ResponseImageUpload
-                                responseList.add(
+                                val imageUploadResponse = item.body() as ImageUploadResponse
+                                val idx = response.indexOf(item)
+                                var input = BitmapFactory.decodeFile(imageList[idx].localPath)
+                                resultList.add(
                                     Pair(
-                                        responseImageUpload,
+                                        MeasurementResult(imageUploadResponse.mask, input, imageList[idx].rodLength!!, imageList[idx].rodLengthPixel!!),
                                         Pair(
                                             imageList[response.indexOf(item)].localPath ?: "",
                                             imageList[response.indexOf(item)].id!!
@@ -280,14 +285,14 @@ class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
                                     )
                                 )
                             }
-                            responseList
+                            resultList
                         } else {
                             arrayListOf()
                         }
                     }
                     ?.observeOn(AndroidSchedulers.mainThread())
-                    ?.subscribe({ responseList ->
-                        screen?.sendResponseToFragment(responseList)
+                    ?.subscribe({ resultList ->
+                        screen?.sendResultsToFragment(resultList)
                         screen?.hideLoading()
                     }, { error ->
                         screen?.hideLoading()
@@ -307,13 +312,11 @@ class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
         }
     }
 
+
     private fun createImageUploadRequest(item: ImageItem): ImageUploadRequest {
         val file = File(item.localPath)
         val imageUploadRequest = ImageUploadRequest()
         imageUploadRequest.image = convertImageFileToBase64(file)
-        imageUploadRequest.processType = "rod"  //TODO: remove processtype from Json object
-        imageUploadRequest.rodLength = item.rodLength
-        imageUploadRequest.rodLengthPixel = item.rodLengthPixel
         return imageUploadRequest
     }
 

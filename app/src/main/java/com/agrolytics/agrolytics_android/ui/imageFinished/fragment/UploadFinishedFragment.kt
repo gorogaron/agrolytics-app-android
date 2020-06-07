@@ -7,7 +7,8 @@ import android.util.Base64
 import android.view.View
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.base.BaseFragment
-import com.agrolytics.agrolytics_android.networking.model.ResponseImageUpload
+import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
+import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.imageFinished.UploadFinishedScreen
 import com.agrolytics.agrolytics_android.utils.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.SessionManager
@@ -39,26 +40,25 @@ class UploadFinishedFragment: BaseFragment() {
         }
     }
 
-    private fun setUpView(responseImageUpload: ResponseImageUpload?, path: String?, id: String?) {
+    private fun setUpView(measurementResult: MeasurementResult?, path: String?, id: String?) {
         btn_decline?.setOnClickListener { listener?.onDeclineClicked(this, id) }
-        btn_accept?.setOnClickListener { listener?.onAcceptClicked(responseImageUpload, path, this, id) }
+        btn_accept?.setOnClickListener { listener?.onAcceptClicked(measurementResult!!, path, this, id) }
         btn_new?.setOnClickListener { listener?.onDeclineClicked(this, id) }
         btn_next?.setOnClickListener { listener?.onNextPage(this) }
         btn_back?.setOnClickListener { listener?.onPreviousPage(this) }
 
-        responseImageUpload?.image?.let {
-            val decodedBytes = Base64.decode(it, 0)
-            val image = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+        measurementResult?.getMaskedInput().let {
+            val maskedImg = it
 
             activity?.let {
                 Glide.with(it)
-                        .load(image)
+                        .load(maskedImg)
                         .into(iv_response_image)
             }
 
-            responseImageUpload.result?.let { result ->
+            measurementResult?.getVolume().let { result ->
                 tv_result.text =
-                        getString(R.string.wood_volume_value, (result.toFloat() * sessionManager.length))
+                        getString(R.string.wood_volume_value, (result!!.toFloat() * sessionManager.length))
             }
         }
     }
@@ -101,10 +101,10 @@ class UploadFinishedFragment: BaseFragment() {
         private val PATH = ConfigInfo.PATH
         private val ID = ConfigInfo.ID
 
-        fun newInstance(responseImageUpload: ResponseImageUpload, path: String, id: String?): UploadFinishedFragment {
+        fun newInstance(measurementResult: MeasurementResult, path: String, id: String?): UploadFinishedFragment {
             val fragment = UploadFinishedFragment()
             val args = Bundle()
-            args.putParcelable(UPLOAD_RESPONSE, responseImageUpload)
+            args.putParcelable(UPLOAD_RESPONSE, measurementResult)
             args.putString(PATH, path)
             id?.let { args.putString(ID, id) }
             fragment.arguments = args

@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.icu.util.Measure
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,7 +15,8 @@ import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.base.BaseActivity
 import com.agrolytics.agrolytics_android.database.tables.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
-import com.agrolytics.agrolytics_android.networking.model.ResponseImageUpload
+import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
+import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.imageFinished.UploadFinishedActivity
 import com.agrolytics.agrolytics_android.utils.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.SessionManager
@@ -78,25 +80,17 @@ class RodSelectorActivity : BaseActivity(), RodSelectorScreen, BaseActivity.OnDi
 	}
 
 	//Not a good function name...
-	override fun successfulUpload(imageUpload: ResponseImageUpload, path: String?, method: String) {
-		imageUpload.image?.let {
-			if (it.isNotEmpty()) {
-				val intent = Intent(this, UploadFinishedActivity::class.java)
-				val responses = arrayListOf<ResponseImageUpload>()
-				val pathList = arrayListOf<String>()
-				responses.add(imageUpload)
-				path?.let { pathList.add(path) }
-				UploadFinishedActivity.responseList = responses
-				intent.putStringArrayListExtra(ConfigInfo.PATH, pathList)
-				intent.putExtra(ConfigInfo.METHOD, method)
-				startActivity(intent)
-				finish()
-			} else {
-				showToast("A szerver nem tudta feldolgozni a kérést, kérlek készíts másik képek.")
-			}
-		} ?: run {
-			showToast("A szerver nem tudta feldolgozni a kérést, kérlek készíts másik képek.")
-		}
+	override fun successfulUpload(measurementResult: MeasurementResult, path: String?, method: String) {
+			val intent = Intent(this, UploadFinishedActivity::class.java)
+			val results = arrayListOf<MeasurementResult>()
+			val pathList = arrayListOf<String>()
+			results.add(measurementResult)
+			path?.let { pathList.add(path) }
+			UploadFinishedActivity.responseList = results
+			intent.putStringArrayListExtra(ConfigInfo.PATH, pathList)
+			intent.putExtra(ConfigInfo.METHOD, method)
+			startActivity(intent)
+			finish()
 	}
 
 	override fun negativeButtonClicked() { }

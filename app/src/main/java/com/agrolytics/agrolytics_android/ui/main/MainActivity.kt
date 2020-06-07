@@ -16,7 +16,7 @@ import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.base.BaseActivity
 import com.agrolytics.agrolytics_android.database.tables.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
-import com.agrolytics.agrolytics_android.networking.model.ResponseImageUpload
+import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
 import com.agrolytics.agrolytics_android.ui.imageFinished.UploadFinishedActivity
 import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
@@ -200,25 +200,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
             btn_gps.setImageResource(R.drawable.ic_gps_on)
         } else {
             btn_gps.setImageResource(R.drawable.ic_gps_off)
-        }
-    }
-
-    override fun successfulUpload(imageUpload: ResponseImageUpload, path: String?) {
-        imageUpload.image?.let {
-            if (it.isNotEmpty()) {
-                val intent = Intent(this, UploadFinishedActivity::class.java)
-                val responses = arrayListOf<ResponseImageUpload>()
-                val pathList = arrayListOf<String>()
-                responses.add(imageUpload)
-                path?.let { pathList.add(path) }
-                UploadFinishedActivity.responseList = responses
-                intent.putStringArrayListExtra(ConfigInfo.PATH, pathList)
-                startActivity(intent)
-            } else {
-                showToast("A szerver nem tudta feldolgozni a kérést, kérlek készíts másik képek.")
-            }
-        } ?: run {
-            showToast("A szerver nem tudta feldolgozni a kérést, kérlek készíts másik képek.")
         }
     }
 

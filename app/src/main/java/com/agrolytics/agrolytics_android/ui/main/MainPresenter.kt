@@ -11,7 +11,7 @@ import android.util.Log
 import com.agrolytics.agrolytics_android.base.BasePresenter
 import com.agrolytics.agrolytics_android.networking.model.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
-import com.agrolytics.agrolytics_android.networking.model.ResponseImageUpload
+import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
 import com.agrolytics.agrolytics_android.utils.Util
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers

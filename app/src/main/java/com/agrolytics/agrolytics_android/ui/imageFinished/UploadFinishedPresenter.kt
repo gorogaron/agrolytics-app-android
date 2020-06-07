@@ -4,7 +4,8 @@ import android.graphics.Bitmap
 import android.util.Log
 import com.agrolytics.agrolytics_android.base.BasePresenter
 import com.agrolytics.agrolytics_android.networking.model.ImageItem
-import com.agrolytics.agrolytics_android.networking.model.ResponseImageUpload
+import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
+import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.imageFinished.fragment.UploadFinishedFragment
 import com.agrolytics.agrolytics_android.utils.BitmapUtils
 import com.agrolytics.agrolytics_android.utils.Util
@@ -21,7 +22,7 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
     val TAG = "UploadFinishedPresenter"
 
     private fun saveUploadedImageItem(
-        responseImageUpload: ResponseImageUpload?,
+        measurementResult: MeasurementResult?,
         path: String?,
         fragment: UploadFinishedFragment,
         serverImage: String?,
@@ -34,7 +35,7 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
             latitude = Util.lat ?: 0.0,
             longitude = Util.long ?: 0.0,
             length = sessionManager?.length?.toDouble() ?: 0.0,
-            volume = responseImageUpload?.result?.toDouble() ?: 0.0,
+            volume = measurementResult?.getVolume(),
             time = Util.getCurrentDateString(),
             serverImage = serverImage
         )
@@ -44,7 +45,7 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
         }
     }
 
-    fun uploadImageToStorage(responseImageUpload: ResponseImageUpload?, path: String?, fragment: UploadFinishedFragment, processMethod: String) {
+    fun uploadImageToStorage(measurementResult: MeasurementResult, path: String?, fragment: UploadFinishedFragment, processMethod: String) {
         if (processMethod == "online") { //Only uploade image to firebase in case of online processing
             screen?.showLoading()
 
@@ -64,12 +65,10 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
                         val forestryRef = reference?.child("$forestryName/masked/$imageName")
                         val thumbnailForestryRef =
                             reference?.child("$forestryName/thumbnail/$imageName")
-                        responseImageUpload?.image?.let { imageBase64 ->
 
-                            val bitmap = BitmapUtils.getImage(imageBase64)
-                            val bytes = BitmapUtils.getBytes(bitmap)
-
-                            val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 64, 48, true);
+                        measurementResult?.getMaskedInput().let {
+                            val bytes = BitmapUtils.getBytes(it)
+                            val resizedBitmap = Bitmap.createScaledBitmap(it, 64, 48, true);
                             val resizedBytes = BitmapUtils.getBytes(resizedBitmap)
 
                             if (bytes != null && resizedBytes != null) {
@@ -97,7 +96,7 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
                                                                 )
                                                                 uploadImageToFireStore(
                                                                     imageUri.toString(),
-                                                                    responseImageUpload,
+                                                                    measurementResult,
                                                                     path,
                                                                     fragment,
                                                                     "$forestryName/masked/$imageName",
@@ -107,7 +106,7 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
                                                             }.addOnFailureListener { error ->
                                                                 handleAsyncError(
                                                                     error,
-                                                                    responseImageUpload,
+                                                                    measurementResult,
                                                                     path,
                                                                     fragment
                                                                 );
@@ -115,7 +114,7 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
                                                         }.addOnFailureListener { error ->
                                                         handleAsyncError(
                                                             error,
-                                                            responseImageUpload,
+                                                            measurementResult,
                                                             path,
                                                             fragment
                                                         );
@@ -123,7 +122,7 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
                                                 }?.addOnFailureListener { error ->
                                                     handleAsyncError(
                                                         error,
-                                                        responseImageUpload,
+                                                        measurementResult,
                                                         path,
                                                         fragment
                                                     );
@@ -131,7 +130,7 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
                                             }.addOnFailureListener { error ->
                                             handleAsyncError(
                                                 error,
-                                                responseImageUpload,
+                                                measurementResult,
                                                 path,
                                                 fragment
                                             );
@@ -139,13 +138,13 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
                                     }.addOnFailureListener { error ->
                                         handleAsyncError(
                                             error,
-                                            responseImageUpload,
+                                            measurementResult,
                                             path,
                                             fragment
                                         );
                                     }
                                 }?.addOnFailureListener { error ->
-                                    handleAsyncError(error, responseImageUpload, path, fragment);
+                                    handleAsyncError(error, measurementResult, path, fragment);
                                 }
                             }
                         }
@@ -162,11 +161,11 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
 
     private fun handleAsyncError(
         error: Exception,
-        responseImageUpload: ResponseImageUpload?,
+        measurementResult: MeasurementResult?,
         path: String?,
         fragment: UploadFinishedFragment
     ) {
-        saveUploadedImageItem(responseImageUpload, path, fragment, null, null)
+        saveUploadedImageItem(measurementResult, path, fragment, null, null)
         screen?.hideLoading()
         screen?.showToast("Upload failed, we saved it locally. You can try again in Images menu.")
         error.printStackTrace()
@@ -174,7 +173,7 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
 
     private fun uploadImageToFireStore(
         url: String?,
-        responseImageUpload: ResponseImageUpload?,
+        measurementResult: MeasurementResult?,
         path: String?,
         fragment: UploadFinishedFragment,
         imageRef: String?,
@@ -187,8 +186,8 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
             "long" to Util.long,
             "role" to sessionManager?.userRole,
             "url" to url,
-            //"volume" to (responseImageUpload?.result?.toDouble() ?: 1.0) * (sessionManager?.length?.toDouble() ?: 1.0),
-            "volume" to responseImageUpload?.result?.toDouble(),
+            //"volume" to (imageUploadResponse?.result?.toDouble() ?: 1.0) * (sessionManager?.length?.toDouble() ?: 1.0),
+            "volume" to measurementResult?.getVolume(),
             "length" to sessionManager?.length,
             "imageRef" to imageRef,
             "userID" to sessionManager?.userID,
@@ -206,18 +205,18 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
                         screen?.hideLoading()
                         screen?.showToast("Upload finished")
                         screen?.updateView(fragment)
-                        saveUploadedImageItem(responseImageUpload, path, fragment, it["url"] as String, imageStored.id)
+                        saveUploadedImageItem(measurementResult, path, fragment, it["url"] as String, imageStored.id)
                         Log.d(TAG, "DocumentSnapshot successfully written!")
                     }
                     ?.addOnFailureListener { e ->
-                        saveUploadedImageItem(responseImageUpload, path, fragment, null,null)
+                        saveUploadedImageItem(measurementResult, path, fragment, null,null)
                         screen?.hideLoading()
                         screen?.showToast("Upload failed, we saved it locally. You try again in Images menu.")
                         Log.w(TAG, "Error writing document", e)
                     }
             }
             ?.addOnFailureListener { e ->
-                saveUploadedImageItem(responseImageUpload, path, fragment, null, null)
+                saveUploadedImageItem(measurementResult, path, fragment, null, null)
                 screen?.hideLoading()
                 screen?.showToast("Upload failed, we saved it locally. You try again in Images menu.")
                 Log.w(TAG, "Error writing document", e)

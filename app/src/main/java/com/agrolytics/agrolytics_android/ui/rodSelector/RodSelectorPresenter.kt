@@ -8,7 +8,8 @@ import android.util.Base64OutputStream
 import com.agrolytics.agrolytics_android.base.BasePresenter
 import com.agrolytics.agrolytics_android.networking.model.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
-import com.agrolytics.agrolytics_android.networking.model.ResponseImageUpload
+import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
+import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.utils.BitmapUtils
 import com.agrolytics.agrolytics_android.utils.Detector
 import com.agrolytics.agrolytics_android.utils.Util
@@ -45,7 +46,8 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
                 ?.subscribe({ response ->
                     if (response.isSuccessful) {
                         response.body()?.let {
-                            screen?.successfulUpload(it, path, "online")
+                            val measurementResult = MeasurementResult(it.mask!!, bitmap!!, rodLength, rodLengthPixels)
+                            screen?.successfulUpload(measurementResult, path, "online")
                         }
                     } else {
                         screen?.showToast(response.message())
@@ -94,9 +96,6 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
     private fun createImageUploadRequest(bitmap: Bitmap?, rodLength: Double, rodLengthPixels: Int): ImageUploadRequest {
         //val file = File(path)
         val imageUploadRequest = ImageUploadRequest()
-        imageUploadRequest.processType = "rod" //TODO: remove processtype from body
-        imageUploadRequest.rodLength = rodLength
-        imageUploadRequest.rodLengthPixel = rodLengthPixels
         bitmap?.let { imageUploadRequest.image = BitmapUtils.bitmapToBase64(bitmap) }
         return imageUploadRequest
     }
@@ -121,8 +120,10 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
         doAsync {var seg = Detector.segmentOffline(bitmap!!)
             uiThread {
                 val volume = rodLength.pow(2) / rodLengthPixels.toFloat().pow(2) * Detector.Result.numOfWoodPixels
-                var result = ResponseImageUpload(BitmapUtils.bitmapToBase64(seg)!!, volume.toString())
-                screen?.successfulUpload(result!!, path, "offline")
+                var result = ImageUploadResponse(BitmapUtils.bitmapToBase64(seg)!!)
+                //TODO: Remove mask visualization and volume counting from Detector, it's done in MeasurementResult class
+                var measurementResult = MeasurementResult(BitmapUtils.bitmapToBase64(Detector.Result.mask!!)!!,bitmap, rodLength, rodLengthPixels)
+                screen?.successfulUpload(measurementResult, path, "offline")
                 screen?.hideLoading()
             } }
     }

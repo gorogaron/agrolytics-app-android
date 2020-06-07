@@ -7,7 +7,7 @@ import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.base.BaseActivity
 import com.agrolytics.agrolytics_android.database.firebase.FireStoreDB
 import com.agrolytics.agrolytics_android.database.tables.RoomModule
-import com.agrolytics.agrolytics_android.networking.model.ResponseImageUpload
+import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
 import com.agrolytics.agrolytics_android.ui.imageFinished.adapter.ImagePagerAdapter
 import com.agrolytics.agrolytics_android.ui.imageFinished.fragment.UploadFinishedFragment
 import com.agrolytics.agrolytics_android.utils.ConfigInfo
@@ -15,6 +15,7 @@ import com.agrolytics.agrolytics_android.utils.SessionManager
 import kotlinx.android.synthetic.main.activity_upload_finished.*
 import org.koin.android.ext.android.inject
 import android.content.Intent
+import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
 
 
@@ -140,15 +141,15 @@ class UploadFinishedActivity : BaseActivity(), UploadFinishedScreen {
 		}
 	}
 
-	override fun onAcceptClicked(responseImageUpload: ResponseImageUpload?, path: String?,
+	override fun onAcceptClicked(measurementResult: MeasurementResult, path: String?,
 								 fragment: UploadFinishedFragment, id: String?) {
 
 		val processMethod = intent.extras.getString(ConfigInfo.METHOD)
-		presenter.uploadImageToStorage(responseImageUpload, path, fragment, processMethod)
+		presenter.uploadImageToStorage(measurementResult, path, fragment, processMethod)
 		presenter.deleteImageFromLocalDatabase(id)
 	}
 
 	companion object {
-	    var responseList = arrayListOf<ResponseImageUpload>()
+	    var responseList = arrayListOf<MeasurementResult>()
 	}
 }

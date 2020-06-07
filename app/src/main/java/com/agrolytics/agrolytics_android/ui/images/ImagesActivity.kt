@@ -2,6 +2,7 @@ package com.agrolytics.agrolytics_android.ui.images
 
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.icu.util.Measure
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
@@ -13,7 +14,8 @@ import com.agrolytics.agrolytics_android.database.firebase.FireStoreDB
 import com.agrolytics.agrolytics_android.database.tables.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.networking.model.ImageItem
-import com.agrolytics.agrolytics_android.networking.model.ResponseImageUpload
+import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
+import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.imageFinished.UploadFinishedActivity
 import com.agrolytics.agrolytics_android.ui.images.adapter.ImagesAdapter
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
@@ -180,15 +182,15 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 		drawer_layout.closeDrawers()
 	}
 
-	override fun sendResponseToFragment(responseList: ArrayList<Pair<ResponseImageUpload, Pair<String, String>>>?) {
+	override fun sendResultsToFragment(responseList: ArrayList<Pair<MeasurementResult, Pair<String, String>>>?) {
 		val intent = Intent(this, UploadFinishedActivity::class.java)
-		val responses = arrayListOf<ResponseImageUpload>()
+		val responses = arrayListOf<MeasurementResult>()
 		val pathList = arrayListOf<String>()
 		val idList = arrayListOf<String>()
 		responseList?.let {
 			if (it.isNotEmpty()) {
 				for (pair in responseList) {
-					if (pair.first.image != null && pair.first.result != null) {
+					if (pair.first.getMaskedInput() != null && pair.first.getVolume() != null) {
 						responses.add(pair.first)
 						pathList.add(pair.second.first)
 						idList.add(pair.second.second)

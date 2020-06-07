@@ -2,7 +2,7 @@ package com.agrolytics.agrolytics_android.networking
 
 import com.agrolytics.agrolytics_android.BuildConfig
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
-import com.agrolytics.agrolytics_android.networking.model.ResponseImageUpload
+import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
 import io.reactivex.Observable
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -19,7 +19,7 @@ import org.koin.android.ext.android.inject
 
 interface ApiService {
 	@POST("processImage")
-	fun uploadImage(@Body body: ImageUploadRequest): Observable<Response<ResponseImageUpload>>
+	fun uploadImage(@Body body: ImageUploadRequest): Observable<Response<ImageUploadResponse>>
 
 	companion object Factory {
 
