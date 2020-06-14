@@ -14,9 +14,7 @@ import kotlin.math.min
 import android.graphics.BlurMaskFilter
 import android.graphics.Color.parseColor
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-
-
-
+import kotlin.math.abs
 
 
 class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
@@ -221,15 +219,31 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
             if (point.y < minY) minY = point.y
         }
 
+        var paddingDeltaY = 0
+        var paddingDeltaX = 0
+        val aspectRatio = (maxY - minY)/(maxX - minX)
+        if (aspectRatio < 0.75) {
+            //Add padding to top and bottom
+            paddingDeltaY = (0.75*(maxX - minX) - (maxY - minY)).toInt()
+        } else{
+            //Add padding to right and left
+            paddingDeltaX = (1/0.75 * (maxY - minY) - (maxX - minX)).toInt()
+        }
 
-        var croppedImg = Bitmap.createBitmap(maxX - minX, maxY - minY, Bitmap.Config.ARGB_8888) //TODO : REMOVE!!!
+        var croppedImg = Bitmap.createBitmap(maxX - minX + paddingDeltaX, maxY - minY + paddingDeltaY, Bitmap.Config.ARGB_8888) //TODO : REMOVE!!!
         var blackPaint = Paint()
         blackPaint.setColor(Color.BLACK)
         blackPaint.style = Paint.Style.FILL
         val croppedCanvas = Canvas(croppedImg)
         croppedCanvas.drawPaint(blackPaint)
         var boundingRect = Rect(minX, minY, maxX, maxY)
-        croppedCanvas.drawBitmap(finalImg, boundingRect, Rect(0, 0,croppedCanvas.width, croppedCanvas.height), blackPaint)
+        croppedCanvas.drawBitmap(finalImg, boundingRect, Rect(paddingDeltaX/2, paddingDeltaY/2 ,croppedCanvas.width - paddingDeltaX/2, croppedCanvas.height - paddingDeltaY/2), blackPaint)
+
+        val croppedHeight = maxY - minY
+        val croppedWidth = maxX - minX
+        val xScale = 640 / croppedWidth
+        val yScale = 480 / croppedHeight
+
         return croppedImg
     }
 
