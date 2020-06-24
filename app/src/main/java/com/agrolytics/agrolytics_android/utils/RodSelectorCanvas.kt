@@ -204,7 +204,7 @@ class RodSelectorCanvas(context: Context?, attrs: AttributeSet?) : View(context,
         paint.strokeWidth = 1f
 
         canvas.drawBitmap(bmp,Rect(0,0,canvas.width, canvas.height), Rect(0,0,canvas.width, canvas.height), paint)
-        canvas.drawRect(Rect(0, 0, canvas.width, canvas.height), paint)
+        canvas.drawRect(Rect(0, 0, canvas.width-1, canvas.height-1), paint)
         return bmpWithBorder
     }
 
