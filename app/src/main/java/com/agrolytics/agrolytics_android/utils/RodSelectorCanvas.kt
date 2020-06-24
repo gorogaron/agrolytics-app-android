@@ -6,17 +6,11 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.graphics.Bitmap
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
 import kotlin.math.min
-import android.graphics.BlurMaskFilter
 import android.graphics.Color.parseColor
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import kotlin.math.abs
 import kotlin.math.max
-
+import kotlin.math.sqrt
 
 class RodSelectorCanvas(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
@@ -33,6 +27,8 @@ class RodSelectorCanvas(context: Context?, attrs: AttributeSet?) : View(context,
     var linePoints = LinePoints()
     var topSelected = false
     var bottomSelected = false
+    var zooming = false
+
 
     init {
         circlePaint.isAntiAlias = true
@@ -88,6 +84,15 @@ class RodSelectorCanvas(context: Context?, attrs: AttributeSet?) : View(context,
         circlePaint.color = Color.WHITE
         canvas.drawCircle(linePoints.x1, linePoints.y1, circleRadius, circlePaint)
         canvas.drawCircle(linePoints.x2, linePoints.y2, circleRadius, circlePaint)
+
+        if (zooming){
+            if (topSelected){
+                zoom(canvas, linePoints.x1, linePoints.y1)
+            }
+            else if (bottomSelected){
+                zoom(canvas, linePoints.x2, linePoints.y2)
+            }
+        }
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -102,20 +107,25 @@ class RodSelectorCanvas(context: Context?, attrs: AttributeSet?) : View(context,
             MotionEvent.ACTION_DOWN -> {
                 topSelected = getTopTouched(event)
                 bottomSelected = getBottomTouched(event)
+                if (topSelected or bottomSelected) zooming = true
             }
             MotionEvent.ACTION_MOVE -> {
+                zooming = false
                 if (topSelected){
                     linePoints.x1 = min(max(touchX!!, horizontalOffset), this.width - horizontalOffset)
                     linePoints.y1 = min(max(touchY!!, verticalOffset), this.height - verticalOffset)
+                    zooming = true
                 }
                 if (bottomSelected){
                     linePoints.x2 = min(max(touchX!!, horizontalOffset), this.width - horizontalOffset)
                     linePoints.y2 = min(max(touchY!!, verticalOffset), this.height - verticalOffset)
+                    zooming = true
                 }
             }
             MotionEvent.ACTION_UP -> {
                 topSelected = !getTopTouched(event)
                 bottomSelected = !getBottomTouched(event)
+                zooming = false
             }
 
         }
@@ -137,5 +147,84 @@ class RodSelectorCanvas(context: Context?, attrs: AttributeSet?) : View(context,
         val distanceX = event.x - centerX
         val distanceY = event.y - centerY
         return distanceX * distanceX + distanceY * distanceY <= circleRadius * circleRadius
+    }
+
+    private fun zoom(canvas: Canvas, x: Float, y: Float) {
+        val zoomMatrix = Matrix()
+        val zoomPos: PointF? = null
+
+        var fixedXPosition = 225f
+        if (x < canvas.width/2) fixedXPosition = canvas.width - 225f
+
+        val fixedYPosition = 225f
+
+        // Frame of zoom
+        val framePaint = Paint()
+        framePaint.style = Paint.Style.STROKE
+        framePaint.strokeWidth = 7f
+
+        val resized = addBorder(Bitmap.createScaledBitmap(bitmap, dstRect.width(), dstRect.height(), true))
+        val shader = BitmapShader(resized, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
+        var zoomPaint = Paint()
+        zoomPaint.setShader(shader)
+
+        zoomMatrix.reset()
+        zoomMatrix.postScale(2f, 2f, x, y - dstRect.top)
+        zoomMatrix.postTranslate(
+            fixedXPosition-x,
+            fixedYPosition-(y-dstRect.top)
+        )
+        zoomPaint.getShader().setLocalMatrix(zoomMatrix)
+
+        val sizeOfMagnifier = 175
+        // Zoom circle
+        canvas.drawCircle(
+            fixedXPosition,
+            fixedYPosition,
+            sizeOfMagnifier.toFloat(),
+            zoomPaint
+        )
+
+        // Zoom circle frame
+        framePaint.color = Color.GREEN
+        canvas.drawCircle(fixedXPosition, fixedYPosition, 5f, framePaint)
+        framePaint.color = parseColor("#444444")
+        canvas.drawCircle(fixedXPosition+3, fixedYPosition+3, sizeOfMagnifier.toFloat(), framePaint)
+        framePaint.color = Color.WHITE
+        canvas.drawCircle(fixedXPosition, fixedYPosition, sizeOfMagnifier.toFloat(), framePaint)
+    }
+
+    private fun addBorder(bmp: Bitmap): Bitmap {
+        val bmpWithBorder = Bitmap.createBitmap(bmp.width, bmp.height, bmp.config)
+        val canvas = Canvas(bmpWithBorder)
+
+        val paint = Paint()
+        paint.color = parseColor("#444444")
+        paint.style = Paint.Style.STROKE
+        paint.strokeWidth = 1f
+
+        canvas.drawBitmap(bmp,Rect(0,0,canvas.width, canvas.height), Rect(0,0,canvas.width, canvas.height), paint)
+        canvas.drawRect(Rect(0, 0, canvas.width, canvas.height), paint)
+        return bmpWithBorder
+    }
+
+    //Returns the rod length in pixels if the image was resized
+    fun getRodLengthPixels_640_480(): Int{
+        var canvasImgHeight = dstRect.bottom - dstRect.top
+        var canvasImgWidth = dstRect.right - dstRect.left
+        var linePoints_640_480 = LinePoints()
+
+        val wRatio = 640/canvasImgWidth
+        val hRatio = 480/canvasImgHeight
+
+        linePoints_640_480.x1 = linePoints.x1 * wRatio
+        linePoints_640_480.x2 = linePoints.x2 * wRatio
+        linePoints_640_480.y1 = linePoints.y1 * hRatio
+        linePoints_640_480.y2 = linePoints.y2 * hRatio
+
+        val dy = abs(linePoints_640_480.y2 - linePoints_640_480.y1)
+        val dx = abs(linePoints_640_480.x2 - linePoints_640_480.x1)
+
+        return sqrt(dx*dx + dy*dy).toInt()
     }
 }

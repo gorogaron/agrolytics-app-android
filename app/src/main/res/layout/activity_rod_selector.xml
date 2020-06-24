@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-android:background="@android:color/darker_gray">
+android:background="#222222">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"
@@ -42,27 +42,10 @@ android:background="@android:color/darker_gray">
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ImageView
-        android:id="@+id/test_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/app_bar" />
-
-    <LinearLayout
-        android:id="@+id/main"
+    <com.agrolytics.agrolytics_android.utils.RodSelectorCanvas
+        android:id="@+id/rod_selector_canvas"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/app_bar"
-        android:layout_marginTop="12dp"
-        android:gravity="top|start"
-        android:orientation="vertical"
-        android:visibility="visible">
-
-        <!--<com.agrolytics.agrolytics_android.utils.drawView.DrawView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:src="@drawable/dummy"/>-->
-
-    </LinearLayout>
+        android:layout_below="@+id/app_bar"/>
 
 </RelativeLayout>

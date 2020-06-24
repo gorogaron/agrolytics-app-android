@@ -16,7 +16,6 @@ import android.graphics.Color.parseColor
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import kotlin.math.abs
 
-
 class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     var bitmap : Bitmap? = null
@@ -238,11 +237,6 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
         croppedCanvas.drawPaint(blackPaint)
         var boundingRect = Rect(minX, minY, maxX, maxY)
         croppedCanvas.drawBitmap(finalImg, boundingRect, Rect(paddingDeltaX/2, paddingDeltaY/2 ,croppedCanvas.width - paddingDeltaX/2, croppedCanvas.height - paddingDeltaY/2), blackPaint)
-
-        val croppedHeight = maxY - minY
-        val croppedWidth = maxX - minX
-        val xScale = 640 / croppedWidth
-        val yScale = 480 / croppedHeight
 
         return croppedImg
     }
