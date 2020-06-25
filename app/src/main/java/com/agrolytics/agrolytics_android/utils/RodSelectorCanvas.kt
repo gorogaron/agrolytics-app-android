@@ -214,8 +214,8 @@ class RodSelectorCanvas(context: Context?, attrs: AttributeSet?) : View(context,
         var canvasImgWidth = dstRect.right - dstRect.left
         var linePoints_640_480 = LinePoints()
 
-        val wRatio = 640/canvasImgWidth
-        val hRatio = 480/canvasImgHeight
+        val wRatio = 640f/canvasImgWidth
+        val hRatio = 480f/canvasImgHeight
 
         linePoints_640_480.x1 = linePoints.x1 * wRatio
         linePoints_640_480.x2 = linePoints.x2 * wRatio

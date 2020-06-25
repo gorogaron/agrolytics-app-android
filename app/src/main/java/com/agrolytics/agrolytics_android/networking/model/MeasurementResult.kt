@@ -28,7 +28,7 @@ class MeasurementResult(mask_b64 : String?, input_bmp : Bitmap?, rod_length : Do
     }
 
     private fun visualizeMask(input: Bitmap, mask: Bitmap): Bitmap{
-        var visualizedMask = input
+        var visualizedMask = input.copy(Bitmap.Config.ARGB_8888 , true)
         val intValues = IntArray(input.width * input.height)
         input.getPixels(intValues, 0, input.width, 0, 0, input.width, input.height)
         for (i in 0 until input.width){

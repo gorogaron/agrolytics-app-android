@@ -61,7 +61,7 @@ class CropperActivity: BaseActivity(), View.OnClickListener {
         else{
             croppedImg = poly_cropper_view.crop()
         }
-        var cropImgUri = BitmapToTempUri(croppedImg, "cropped_img")
+        var cropImgUri = BitmapToTempUri(Bitmap.createScaledBitmap(croppedImg, 640, 480, true), "cropped_img")
 
         val intent = Intent(this, RodSelectorActivity::class.java)
         intent.putExtra(ConfigInfo.PATH, cropImgUri?.path)
