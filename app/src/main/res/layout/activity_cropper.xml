@@ -21,12 +21,15 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                app:contentInsetLeft="0dp"
+                app:contentInsetStart="0dp"
+                app:contentInsetRight="0dp"
+                app:contentInsetEnd="0dp"
                 android:background="@color/greenDark">
-
 
                 <ImageButton
                     android:id="@+id/btn_back"
-                    android:layout_width="30dp"
+                    android:layout_width="60dp"
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
@@ -39,7 +42,7 @@
                     android:id="@+id/polycropper"
                     android:layout_width="50dp"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:layout_height="match_parent"
+                    android:layout_height="50dp"
                     android:background="@drawable/poly"/>
                 <View
                     android:layout_width="20dp"
@@ -47,23 +50,22 @@
                 <ImageButton
                     android:id="@+id/rectanglecropper"
                     android:layout_width="50dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="50dp"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:background="@drawable/rect" />
                 <LinearLayout
                     android:gravity="right"
-                    android:paddingRight="25dp"
+                    android:paddingRight="0dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
                     <TextView
                         android:id="@+id/crop"
-                        android:paddingLeft="10dp"
-                        android:layout_width="wrap_content"
+                        android:layout_width="100dp"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:foreground="?android:attr/selectableItemBackgroundBorderless"
                         android:textColor="#ffffff"
-                        android:text="CROP"
+                        android:text="Kivágás"
                         android:tint="@android:color/white" />
                 </LinearLayout>
 
