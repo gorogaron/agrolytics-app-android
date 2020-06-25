@@ -193,52 +193,57 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
         return bitmap
     }
 
-    fun crop(): Bitmap{
-        val transformedPolyPoints = transformPointsToOrigImg()
-        var path = getTransformedPathFromPoints(transformedPolyPoints, 0, 0)
-        path.fillType = Path.FillType.EVEN_ODD
-        var paint = Paint()
+    fun crop(): Bitmap?{
+        if (polyFinished)
+        {
+            val transformedPolyPoints = transformPointsToOrigImg()
+            var path = getTransformedPathFromPoints(transformedPolyPoints, 0, 0)
+            path.fillType = Path.FillType.EVEN_ODD
+            var paint = Paint()
 
-        paint.setColor(Color.BLACK)
+            paint.setColor(Color.BLACK)
 
-        val canvas = Canvas(finalImg)
-        canvas.drawPath(path, paint);
-        paint.setXfermode(PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, 0f, 0f, paint);
+            val canvas = Canvas(finalImg)
+            canvas.drawPath(path, paint);
+            paint.setXfermode(PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+            canvas.drawBitmap(bitmap, 0f, 0f, paint);
 
-        var minX = canvas.width
-        var minY = canvas.height
-        var maxX = 0
-        var maxY = 0
-        for (point in transformedPolyPoints){
-            if (point.x > maxX) maxX = point.x
-            if (point.y > maxY) maxY = point.y
+            var minX = canvas.width
+            var minY = canvas.height
+            var maxX = 0
+            var maxY = 0
+            for (point in transformedPolyPoints){
+                if (point.x > maxX) maxX = point.x
+                if (point.y > maxY) maxY = point.y
 
-            if (point.x < minX) minX = point.x
-            if (point.y < minY) minY = point.y
+                if (point.x < minX) minX = point.x
+                if (point.y < minY) minY = point.y
+            }
+
+            var paddingDeltaY = 0
+            var paddingDeltaX = 0
+            val aspectRatio = (maxY - minY)/(maxX - minX)
+            if (aspectRatio < 0.75) {
+                //Add padding to top and bottom
+                paddingDeltaY = (0.75*(maxX - minX) - (maxY - minY)).toInt()
+            } else{
+                //Add padding to right and left
+                paddingDeltaX = (1/0.75 * (maxY - minY) - (maxX - minX)).toInt()
+            }
+
+            var croppedImg = Bitmap.createBitmap(maxX - minX + paddingDeltaX, maxY - minY + paddingDeltaY, Bitmap.Config.ARGB_8888) //TODO : REMOVE!!!
+            var blackPaint = Paint()
+            blackPaint.setColor(Color.BLACK)
+            blackPaint.style = Paint.Style.FILL
+            val croppedCanvas = Canvas(croppedImg)
+            croppedCanvas.drawPaint(blackPaint)
+            var boundingRect = Rect(minX, minY, maxX, maxY)
+            croppedCanvas.drawBitmap(finalImg, boundingRect, Rect(paddingDeltaX/2, paddingDeltaY/2 ,croppedCanvas.width - paddingDeltaX/2, croppedCanvas.height - paddingDeltaY/2), blackPaint)
+            return croppedImg
+        } else {
+            return null
         }
 
-        var paddingDeltaY = 0
-        var paddingDeltaX = 0
-        val aspectRatio = (maxY - minY)/(maxX - minX)
-        if (aspectRatio < 0.75) {
-            //Add padding to top and bottom
-            paddingDeltaY = (0.75*(maxX - minX) - (maxY - minY)).toInt()
-        } else{
-            //Add padding to right and left
-            paddingDeltaX = (1/0.75 * (maxY - minY) - (maxX - minX)).toInt()
-        }
-
-        var croppedImg = Bitmap.createBitmap(maxX - minX + paddingDeltaX, maxY - minY + paddingDeltaY, Bitmap.Config.ARGB_8888) //TODO : REMOVE!!!
-        var blackPaint = Paint()
-        blackPaint.setColor(Color.BLACK)
-        blackPaint.style = Paint.Style.FILL
-        val croppedCanvas = Canvas(croppedImg)
-        croppedCanvas.drawPaint(blackPaint)
-        var boundingRect = Rect(minX, minY, maxX, maxY)
-        croppedCanvas.drawBitmap(finalImg, boundingRect, Rect(paddingDeltaX/2, paddingDeltaY/2 ,croppedCanvas.width - paddingDeltaX/2, croppedCanvas.height - paddingDeltaY/2), blackPaint)
-
-        return croppedImg
     }
 
     fun getTransformedPathFromPoints(polyPoints: ArrayList<Point>, xOffset: Int, yOffset: Int): Path{

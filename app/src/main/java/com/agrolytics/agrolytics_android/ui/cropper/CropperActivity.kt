@@ -18,6 +18,7 @@ import androidx.core.app.ComponentActivity.ExtraData
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.os.Environment
+import org.jetbrains.anko.toast
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -54,19 +55,25 @@ class CropperActivity: BaseActivity(), View.OnClickListener {
     }
 
     fun cropImg(){
-        lateinit var croppedImg : Bitmap
+        var croppedImg : Bitmap?
         if (rectangle_cropper_view.visibility == View.VISIBLE){
             croppedImg = rectangle_cropper_view.getCroppedImage()
         }
         else{
             croppedImg = poly_cropper_view.crop()
         }
-        var cropImgUri = BitmapToTempUri(Bitmap.createScaledBitmap(croppedImg, 640, 480, true), "cropped_img")
+        if (croppedImg != null)
+        {
+            var cropImgUri = BitmapToTempUri(Bitmap.createScaledBitmap(croppedImg, 640, 480, true), "cropped_img")
 
-        val intent = Intent(this, RodSelectorActivity::class.java)
-        intent.putExtra(ConfigInfo.PATH, cropImgUri?.path)
-        RodSelectorActivity.bitmap = croppedImg
-        startActivity(intent)
+            val intent = Intent(this, RodSelectorActivity::class.java)
+            intent.putExtra(ConfigInfo.PATH, cropImgUri?.path)
+            RodSelectorActivity.bitmap = croppedImg
+            startActivity(intent)
+        }
+        else {
+            toast("Jelöljön ki megfelelő területet a képen.")
+        }
     }
 
     fun BitmapToTempUri(inImage: Bitmap, title: String): Uri? {
