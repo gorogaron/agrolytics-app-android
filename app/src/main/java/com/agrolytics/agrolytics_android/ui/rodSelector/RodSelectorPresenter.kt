@@ -50,7 +50,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
                             screen?.successfulUpload(measurementResult, path, "online")
                         }
                     } else {
-                        screen?.showToast(response.message())
+                        screen?.showToast(response.message()) //Internal server error (i.e. HTTP500)
                     }
                     screen?.hideLoading()
                 }, { error ->
@@ -119,13 +119,12 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
         screen?.showLoading()
         doAsync {var seg = Detector.segmentOffline(bitmap!!)
             uiThread {
-                val volume = rodLength.pow(2) / rodLengthPixels.toFloat().pow(2) * Detector.Result.numOfWoodPixels
-                var result = ImageUploadResponse(BitmapUtils.bitmapToBase64(seg)!!)
                 //TODO: Remove mask visualization and volume counting from Detector, it's done in MeasurementResult class
                 var measurementResult = MeasurementResult(BitmapUtils.bitmapToBase64(Detector.Result.mask!!)!!,bitmap, rodLength, rodLengthPixels)
                 screen?.successfulUpload(measurementResult, path, "offline")
                 screen?.hideLoading()
-            } }
+            }
+        }
     }
 
 }
