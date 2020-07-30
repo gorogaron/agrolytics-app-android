@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 class SessionManager(var context: Context) {
 
 	private val KEY_LENGHT = "KeyLenght"
+	private val KEY_WOOD_TYPE = "KeyWoodType"
 	private val KEY_ROLE = "KeyRole"
 	private val KEY_USER_REF = "KeyUserRef"
 	private val KEY_USER_ID = "KeyUserId"
@@ -21,6 +22,10 @@ class SessionManager(var context: Context) {
 	var length: Float
 		get() = sharedPreferences.getFloat(KEY_LENGHT, 1.0f)
 		set(length) = sharedPreferences.edit().putFloat(KEY_LENGHT, length).apply()
+
+	var woodType: String
+		get() = sharedPreferences.getString(KEY_WOOD_TYPE, "")
+		set(type) = sharedPreferences.edit().putString(KEY_WOOD_TYPE, type).apply()
 
 	var userRole: String
 		get() = sharedPreferences.getString(KEY_ROLE, "")

@@ -194,7 +194,8 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
             "leaderID" to sessionManager?.leaderID,
             "forestryID" to sessionManager?.forestryID,
             "thumbnailRef" to thumbnailRef,
-            "thumbnailUrl" to thumbnailUrl
+            "thumbnailUrl" to thumbnailUrl,
+            "wood_type" to sessionManager?.woodType
         )
 
         fireStoreDB?.db?.collection("images")

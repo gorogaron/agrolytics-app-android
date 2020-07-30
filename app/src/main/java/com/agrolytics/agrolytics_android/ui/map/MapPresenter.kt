@@ -130,6 +130,9 @@ class MapPresenter: BasePresenter<MapScreen>() {
 		if (length is Long || length is Int) {
 			length = length.toString().toDouble()
 		}
+
+		var woodType = if (document["wood_type"] == null) "" else document["wood_type"] as String?
+
 		return ImageItem(
 			id = document.id,
 			isPushedToServer = true,
@@ -144,7 +147,8 @@ class MapPresenter: BasePresenter<MapScreen>() {
 			leaderID = document["leaderID"] as String?,
 			forestryID = document["forestryID"] as String?,
 			thumbnailPath = document["thumbnailRef"] as String?,
-			thumbnailUrl = document["thumbnailUrl"] as String?)
+			thumbnailUrl = document["thumbnailUrl"] as String?,
+			woodType = woodType)
 	}
 
 	fun getAllLocalImage() {

@@ -85,7 +85,8 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
             time = Util.getCurrentDateString(),
             selectionMode = "rod",
             rodLength = rodLength,
-            rodLengthPixel = rodLengthPixels
+            rodLengthPixel = rodLengthPixels,
+            woodType = sessionManager?.woodType
         )
         doAsync {
             roomModule?.database?.imageItemDao()?.addImage(imageItem)

@@ -75,6 +75,7 @@
     <string name="btn_done">Kész</string>
     <string name="toolbar_rod_selector">Rúd kijelölés</string>
     <string name="length_of_rod">Írd be a rúd méretét. (m)</string>
+    <string name="length_of_wood">Írd be a farakás hosszát. (m)</string>
     <string name="select_item">Először válassz ki elemeket</string>
     <string name="delete_image_title">Kép törlése</string>
     <string name="delete_image_desc">Biztos, hogy törölni akarod az összes kijelölt elemet?</string>

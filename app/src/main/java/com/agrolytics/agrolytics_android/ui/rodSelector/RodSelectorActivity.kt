@@ -5,9 +5,12 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.se.omapi.Session
 import android.view.LayoutInflater
 import android.view.inputmethod.EditorInfo
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.Spinner
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.base.BaseActivity
 import com.agrolytics.agrolytics_android.database.tables.RoomModule
@@ -119,24 +122,28 @@ class RodSelectorActivity : BaseActivity(), RodSelectorScreen, BaseActivity.OnDi
 
 	private fun createRodDialog() {
 		val builder = AlertDialog.Builder(this)
-		builder.setTitle("Hossz")
+		builder.setTitle("Adatok")
 		val view = LayoutInflater.from(this).inflate(R.layout.rod_dialog, null)
-		val editText = view.findViewById<EditText>(R.id.et_length_rod)
-		editText.setOnEditorActionListener { textView, i, keyEvent ->
-			if (i == EditorInfo.IME_ACTION_DONE) {
-				rodLength = editText.text.toString().toDouble()
-				Util.hideKeyboard(this, editText)
-				true
-			} else {
-				false
-			}
-		}
+
+		val et_length_rod = view.findViewById<EditText>(R.id.et_length_rod)
+		val et_length_wood = view.findViewById<EditText>(R.id.et_wood_length)
+
+		et_length_rod.setText(sessionManager.length.toString())
+		et_length_wood.setText(rodLength.toString())
+
+		val spinner = view.findViewById<Spinner>(R.id.wood_type_spinner)
+		val spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.wood_types, android.R.layout.simple_spinner_item)
+		spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+		spinner.adapter = spinnerAdapter
+
 		builder.setView(view)
 		builder.setPositiveButton("Ok") { dialog, which ->
-			if (editText.text.isNotEmpty()) {
-				rodLength = editText.text.toString().toDouble()
+			if (et_length_rod.text.isNotEmpty()) {
+				rodLength = et_length_rod.text.toString().toDouble()
+				sessionManager.woodType = spinner.selectedItem.toString()
+				sessionManager.length = et_length_wood.text.toString().toFloat()
 			}
-			Util.hideKeyboard(this, editText)
+			Util.hideKeyboard(this, et_length_rod)
 		}
 				.setCancelable(false)
 				.show()

@@ -200,6 +200,7 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 					UploadFinishedActivity.responseList = responses
 					intent.putStringArrayListExtra(ConfigInfo.PATH, pathList)
 					intent.putStringArrayListExtra(ConfigInfo.ID, idList)
+					intent.putExtra(ConfigInfo.METHOD, "online")
 					startActivity(intent)
 					finish()
 				} else {

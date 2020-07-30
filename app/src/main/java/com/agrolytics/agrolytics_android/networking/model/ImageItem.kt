@@ -64,7 +64,10 @@ data class ImageItem(
     var thumbnailPath: String? = null,
 
     @ColumnInfo(name = "thumbnail_url")
-    var thumbnailUrl: String? = null
+    var thumbnailUrl: String? = null,
+
+    @ColumnInfo(name = "wood_type")
+    var woodType: String? = null
 
 ) : Parcelable {
 
@@ -92,6 +95,7 @@ data class ImageItem(
         parcel.readValue(Double::class.java.classLoader) as? Double,
         parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readString(),
+        parcel.readString(),
         parcel.readString()
     ) {
         isChecked = parcel.readByte() != 0.toByte()
@@ -118,6 +122,7 @@ data class ImageItem(
         parcel.writeByte(if (isChecked) 1 else 0)
         parcel.writeString(thumbnailPath)
         parcel.writeString(thumbnailUrl)
+        parcel.writeString(woodType)
     }
 
     override fun describeContents(): Int {
