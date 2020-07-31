@@ -62,6 +62,7 @@
     <string name="logs_volume">a farakás térfogata</string>
     <string name="item_id">ID</string>
     <string name="item_volume">Térfogat:</string>
+    <string name="item_wood_type">Faj:</string>
     <string name="item_length">Hossz:</string>
     <string name="item_date">Dátum:</string>
     <string name="hint_email">Email</string>

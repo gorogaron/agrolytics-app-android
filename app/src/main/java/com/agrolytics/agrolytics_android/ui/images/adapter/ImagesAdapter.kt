@@ -80,6 +80,7 @@ class ImagesAdapter(private val listener: OnImageListener,
 			itemView.tv_time_image_created_on.text = item.time
 //			itemView.tv_length_new.text = item.length.toString()
 			itemView.tv_length_new.text = String.format("%.2f", item.length)
+			itemView.tv_woodtype_adapter.text = item.woodType
 			//itemView.tv_adapter_id.text = item.id
 			itemView.tv_adapter_id.visibility = View.GONE
 			item.serverImage?.let {
