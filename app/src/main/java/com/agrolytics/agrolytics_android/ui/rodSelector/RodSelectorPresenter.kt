@@ -46,7 +46,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
                 ?.subscribe({ response ->
                     if (response.isSuccessful) {
                         response.body()?.let {
-                            val measurementResult = MeasurementResult(it.mask!!, bitmap!!, rodLength, rodLengthPixels)
+                            val measurementResult = MeasurementResult(it.mask!!, bitmap!!, rodLength, rodLengthPixels, sessionManager!!.length, Util.getCurrentDateString(), sessionManager!!.woodType, Util.lat!!, Util.long!!)
                             screen?.successfulUpload(measurementResult, path, "online")
                         }
                     } else {
@@ -75,6 +75,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
 
     fun saveLocalImageItem(rodLength: Double, rodLengthPixels: Int) {
         val imageItem = ImageItem(
+            //TODO: create unique ID generation
             id = (0..10000).random().toString(),
             localPath = path ?: "",
             isPushedToServer = false,
@@ -121,7 +122,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
         doAsync {var seg = Detector.segmentOffline(bitmap!!)
             uiThread {
                 //TODO: Remove mask visualization and volume counting from Detector, it's done in MeasurementResult class
-                var measurementResult = MeasurementResult(BitmapUtils.bitmapToBase64(Detector.Result.mask!!)!!,bitmap, rodLength, rodLengthPixels)
+                var measurementResult = MeasurementResult(BitmapUtils.bitmapToBase64(Detector.Result.mask!!)!!,bitmap, rodLength, rodLengthPixels, sessionManager!!.length, Util.getCurrentDateString(), sessionManager!!.woodType, Util.lat!!, Util.long!!)
                 screen?.successfulUpload(measurementResult, path, "offline")
                 screen?.hideLoading()
             }

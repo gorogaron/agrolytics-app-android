@@ -70,6 +70,7 @@ class CropperActivity: BaseActivity(), View.OnClickListener {
             intent.putExtra(ConfigInfo.PATH, cropImgUri?.path)
             RodSelectorActivity.bitmap = croppedImg
             startActivity(intent)
+            finish()
         }
         else {
             toast("Jelöljön ki megfelelő területet a képen.")

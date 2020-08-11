@@ -280,7 +280,7 @@ class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
                                 var input = BitmapFactory.decodeFile(imageList[idx].localPath)
                                 resultList.add(
                                     Pair(
-                                        MeasurementResult(imageUploadResponse.mask, input, imageList[idx].rodLength!!, imageList[idx].rodLengthPixel!!),
+                                        MeasurementResult(imageUploadResponse.mask, input, imageList[idx].rodLength!!, imageList[idx].rodLengthPixel!!, imageList[idx].length!!.toFloat(), imageList[idx].time!!, imageList[idx].woodType!!, imageList[idx].latitude!!, imageList[idx].longitude!!),
                                         Pair(
                                             imageList[response.indexOf(item)].localPath ?: "",
                                             imageList[response.indexOf(item)].id!!

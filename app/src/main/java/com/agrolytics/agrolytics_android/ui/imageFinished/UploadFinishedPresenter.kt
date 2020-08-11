@@ -181,21 +181,21 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
         thumbnailUrl: String?
     ) {
         val imageDocument = hashMapOf(
-            "time" to Util.getCurrentDateString(),
-            "lat" to Util.lat,
-            "long" to Util.long,
+            "time" to measurementResult?.date,
+            "lat" to measurementResult?.lat,
+            "long" to measurementResult?.lon,
             "role" to sessionManager?.userRole,
             "url" to url,
             //"volume" to (imageUploadResponse?.result?.toDouble() ?: 1.0) * (sessionManager?.length?.toDouble() ?: 1.0),
             "volume" to measurementResult?.getVolume(),
-            "length" to sessionManager?.length,
+            "length" to measurementResult?.getWoodLength(),
             "imageRef" to imageRef,
             "userID" to sessionManager?.userID,
             "leaderID" to sessionManager?.leaderID,
             "forestryID" to sessionManager?.forestryID,
             "thumbnailRef" to thumbnailRef,
             "thumbnailUrl" to thumbnailUrl,
-            "wood_type" to sessionManager?.woodType
+            "wood_type" to measurementResult?.woodType
         )
 
         fireStoreDB?.db?.collection("images")

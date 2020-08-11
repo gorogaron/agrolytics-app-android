@@ -384,11 +384,11 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
             }
             PICK_IMAGE -> {
                 try {
-                    var imageUri = data!!.getData();
+                    var imageUri = data!!.getData()
                     startCropper(imageUri)
                 }
                 catch (e: Exception){
-                    showToast("Hiba a kép megnyitása közben.")
+                    //showToast("Hiba a kép megnyitása közben.")
                 }
             }
         }

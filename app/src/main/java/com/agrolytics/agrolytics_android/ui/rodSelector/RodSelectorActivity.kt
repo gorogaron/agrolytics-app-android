@@ -128,8 +128,8 @@ class RodSelectorActivity : BaseActivity(), RodSelectorScreen, BaseActivity.OnDi
 		val et_length_rod = view.findViewById<EditText>(R.id.et_length_rod)
 		val et_length_wood = view.findViewById<EditText>(R.id.et_wood_length)
 
-		et_length_rod.setText(sessionManager.length.toString())
-		et_length_wood.setText(rodLength.toString())
+		et_length_rod.setText(rodLength.toString())
+		et_length_wood.setText(sessionManager.length.toString())
 
 		val spinner = view.findViewById<Spinner>(R.id.wood_type_spinner)
 		val spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.wood_types, android.R.layout.simple_spinner_item)

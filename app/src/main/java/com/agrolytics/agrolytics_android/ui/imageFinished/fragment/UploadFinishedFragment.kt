@@ -58,7 +58,7 @@ class UploadFinishedFragment: BaseFragment() {
 
             measurementResult?.getVolume().let { result ->
                 tv_result.text =
-                        getString(R.string.wood_volume_value, (result!!.toFloat() * sessionManager.length))
+                        getString(R.string.wood_volume_value, result)
             }
         }
     }

@@ -8,23 +8,42 @@ import com.agrolytics.agrolytics_android.utils.BitmapUtils
 import com.agrolytics.agrolytics_android.utils.Detector
 import kotlin.math.pow
 
-class MeasurementResult(mask_b64 : String?, input_bmp : Bitmap?, rod_length : Double, rod_length_pixel : Int): Parcelable {
+class MeasurementResult(mask_b64 : String?,
+                        input_bmp : Bitmap?,
+                        rod_length : Double,
+                        rod_length_pixel : Int,
+                        wood_length : Float,
+                        date : String,
+                        type : String,
+                        lat : Double,
+                        lon : Double): Parcelable {
+
     private var mask = BitmapUtils.getImage(mask_b64)
     private var input =  input_bmp
     private var maskedInput = visualizeMask(input!!, mask)
     private var volume = 0.toDouble()
     private var numOfWoodPixels = 0
+    private var wood_length = wood_length
+    var date : String = date
+    var woodType : String = type
+    var lat : Double = lat
+    var lon : Double = lon
 
     init {
-        volume = rod_length.pow(2) / rod_length_pixel.toFloat().pow(2) * numOfWoodPixels
+        volume = rod_length.pow(2) / rod_length_pixel.toFloat().pow(2) * numOfWoodPixels * wood_length
     }
 
-    constructor(parcel: Parcel) : this(null, null, 0.toDouble(), 0) {
+    constructor(parcel: Parcel) : this(null, null, 0.toDouble(), 0, 0f, "", "", 0.0, 0.0) {
         mask = parcel.readParcelable(Bitmap::class.java.classLoader)!!
         input = parcel.readParcelable(Bitmap::class.java.classLoader)
         maskedInput = parcel.readParcelable(Bitmap::class.java.classLoader)!!
         volume = parcel.readDouble()
         numOfWoodPixels = parcel.readInt()
+        wood_length = parcel.readFloat()
+        date = parcel.readString()!!
+        woodType = parcel.readString()!!
+        lat = parcel.readDouble()
+        lon = parcel.readDouble()
     }
 
     private fun visualizeMask(input: Bitmap, mask: Bitmap): Bitmap{
@@ -58,6 +77,10 @@ class MeasurementResult(mask_b64 : String?, input_bmp : Bitmap?, rod_length : Do
         return input!!
     }
 
+    fun getWoodLength(): Float{
+        return wood_length
+    }
+
     fun getVolume(): Double{
         return volume
     }
@@ -73,6 +96,11 @@ class MeasurementResult(mask_b64 : String?, input_bmp : Bitmap?, rod_length : Do
         parcel.writeValue(maskedInput)
         parcel.writeValue(volume)
         parcel.writeValue(numOfWoodPixels)
+        parcel.writeValue(wood_length)
+        parcel.writeValue(date)
+        parcel.writeValue(woodType)
+        parcel.writeValue(lat)
+        parcel.writeValue(lon)
     }
 
     override fun describeContents(): Int {
