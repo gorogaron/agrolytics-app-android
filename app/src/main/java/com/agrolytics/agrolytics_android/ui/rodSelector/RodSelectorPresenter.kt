@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.Base64
 import android.util.Base64OutputStream
+import android.util.Log
 import com.agrolytics.agrolytics_android.base.BasePresenter
 import com.agrolytics.agrolytics_android.networking.model.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
@@ -54,6 +55,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
                     }
                     screen?.hideLoading()
                 }, { error ->
+                    Log.d("Sending", "Could not send image: ${error}")
                     screen?.showToast("Hiba történt. Kérlek próbáld meg mégegyszer és ellenőrizd az internet kapcsolatot.")
                     screen?.hideLoading()
                     error.printStackTrace()

@@ -2,29 +2,13 @@ package com.agrolytics.agrolytics_android.utils
 
 import android.app.Activity
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.graphics.drawable.GradientDrawable
+import android.net.ConnectivityManager
 import android.os.Build
-import android.util.DisplayMetrics
-import android.util.TypedValue
 import android.view.View
-import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
-import java.util.regex.Pattern
-import android.net.NetworkInfo
-import android.net.ConnectivityManager
-import org.joda.time.format.DateTimeFormat
-import android.net.NetworkCapabilities
-import androidx.core.content.ContextCompat.getSystemService
-
-
 
 
 class Util {
@@ -49,19 +33,21 @@ class Util {
         fun isNetworkAvailable(context: Context): Boolean {
             val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             val activeNetworkInfo = connectivityManager.activeNetworkInfo
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected
+        }
 
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                val nc = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-                if (nc != null) {
-                    val downSpeed = nc.linkDownstreamBandwidthKbps
-                    val upSpeed = nc.linkUpstreamBandwidthKbps
-                    activeNetworkInfo != null && activeNetworkInfo.isConnected && downSpeed > 100000
-                } else {
-                    activeNetworkInfo != null && activeNetworkInfo.isConnected
-                }
-            } else {
-                activeNetworkInfo != null && activeNetworkInfo.isConnected
+        fun isOnline(): Boolean {
+            val runtime = Runtime.getRuntime()
+            try {
+                val ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8")
+                val exitValue = ipProcess.waitFor()
+                return exitValue == 0
+            } catch (e: IOException) {
+                e.printStackTrace()
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
             }
+            return false
         }
 
     }

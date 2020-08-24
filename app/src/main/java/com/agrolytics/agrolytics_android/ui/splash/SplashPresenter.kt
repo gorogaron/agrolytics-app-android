@@ -73,6 +73,7 @@ class SplashPresenter(val context: Context): BasePresenter<SplashScreen>() {
     }
 
     private fun getUser(user: FirebaseUser?) {
+        Log.d("Firebase", "Getting user from firebase...")
         user?.let { fbUser ->
             val userId = fbUser.uid
             val userColRef = fireStoreDB?.db?.collection("user")?.document(userId)
@@ -95,10 +96,12 @@ class SplashPresenter(val context: Context): BasePresenter<SplashScreen>() {
                         }
                     } else {
                         screen?.showToast("Something went wrong.")
+                        Log.d("Firebase", "Could not get user from firebase: document is null")
                     }
                 }
                 ?.addOnFailureListener { exception ->
                     screen?.showToast("Something went wrong.")
+                    Log.d("Firebase", "Could not get user from firebase: ${exception}")
                 }
         }
     }

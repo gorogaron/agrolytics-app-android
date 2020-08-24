@@ -379,6 +379,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
                     Log.d("HGXQR", "MAIN ACTIVITY UNCROPPED bitmap height" + thumbnail.height)
                     startCropper(uri)
                 } catch (e: Exception) {
+                    Log.d("Camera", "Failed to get camera image Uri: ${e}")
                     e.printStackTrace()
                 }
             }
