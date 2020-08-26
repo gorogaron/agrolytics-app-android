@@ -18,7 +18,8 @@ import com.agrolytics.agrolytics_android.utils.SessionManager
 import org.koin.android.ext.android.inject
 
 interface ApiService {
-	@POST("processImage")
+	//@POST("processImage")
+	@POST("process")
 	fun uploadImage(@Body body: ImageUploadRequest): Observable<Response<ImageUploadResponse>>
 
 	companion object Factory {
@@ -52,8 +53,9 @@ interface ApiService {
 				chain.proceed(request)
 			}
 			val client = OkHttpClient.Builder()
-					.readTimeout(30, TimeUnit.SECONDS)
-					.connectTimeout(30, TimeUnit.SECONDS)
+					.readTimeout(15, TimeUnit.SECONDS)
+					.connectTimeout(15, TimeUnit.SECONDS)
+					.writeTimeout(15, TimeUnit.SECONDS)
 					.addInterceptor(header)
 					.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
 					.build()

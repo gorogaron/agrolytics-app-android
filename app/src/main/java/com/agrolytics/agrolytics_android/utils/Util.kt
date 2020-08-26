@@ -14,8 +14,8 @@ import java.util.*
 class Util {
     companion object {
 
-        var lat: Double? = null
-        var long: Double? = null
+        var lat: Double? = 1.0
+        var long: Double? = 1.0
 
         fun hideKeyboard(activity: Activity, view: View) {
             val inputMethodManager = activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager

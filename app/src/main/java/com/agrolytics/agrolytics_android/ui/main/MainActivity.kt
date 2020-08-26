@@ -75,7 +75,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
     private var locationManager: LocationManager? = null
     private var locationListener: AgroLocationListener? = null
     private var eventBusDisposable: Disposable? = null
-    private val networkChangeReceiver: NetworkChangeReceiver = NetworkChangeReceiver()
+    //private val networkChangeReceiver: NetworkChangeReceiver = NetworkChangeReceiver()
 
     private var imageUri: Uri? = null
 
@@ -87,7 +87,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         presenter.addInjections(arrayListOf(appServer, roomModule, sessionManager))
         presenter.setActivity(this)
 
-        Detector.init(assets)
+        doAsync { Detector.init(assets) }
 
         btn_open_camera.setOnClickListener(this)
         btn_open_gallery.setOnClickListener(this)
@@ -101,10 +101,10 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         container_set_length.setOnClickListener(this)
         container_sign_out.setOnClickListener(this)
 
-        checkInternetAndGpsConnection()
+        //checkInternetAndGpsConnection()
 
-        registerNetworkStateReceiver()
-        listenNetworkStatus()
+        //registerNetworkStateReceiver()
+        //listenNetworkStatus()
 
         container_main_menu.setBackgroundColor(ContextCompat.getColor(this, R.color.lightGreen))
         tv_email.text = sessionManager.userEmail
@@ -121,7 +121,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         } else {
             tv_show_old_length.text = getString(R.string.length) + " m"
         }
-        updateLocation()
+        //updateLocation()
     }
 
     override fun onClick(v: View?) {
@@ -143,7 +143,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
     private fun registerNetworkStateReceiver() {
         val intentFiler = IntentFilter()
         intentFiler.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
-        registerReceiver(networkChangeReceiver, intentFiler)
+       // registerReceiver(networkChangeReceiver, intentFiler)
     }
 
     private fun listenNetworkStatus() {
@@ -336,7 +336,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
                             pickImage()
                         }
                     }
-                    updateLocation()
+                    //updateLocation()
                 }
 
                 override fun onPermissionRationaleShouldBeShown(
@@ -357,7 +357,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
     override fun onStop() {
         super.onStop()
         try {
-            unregisterReceiver(networkChangeReceiver)
+            //unregisterReceiver(networkChangeReceiver)
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         }
