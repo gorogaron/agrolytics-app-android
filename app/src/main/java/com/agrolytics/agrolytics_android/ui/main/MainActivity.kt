@@ -72,11 +72,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
     private val sessionManager: SessionManager by inject()
     private val roomModule: RoomModule by inject()
 
-    private var locationManager: LocationManager? = null
-    private var locationListener: AgroLocationListener? = null
-    private var eventBusDisposable: Disposable? = null
-    //private val networkChangeReceiver: NetworkChangeReceiver = NetworkChangeReceiver()
-
     private var imageUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,16 +96,10 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         container_set_length.setOnClickListener(this)
         container_sign_out.setOnClickListener(this)
 
-        //checkInternetAndGpsConnection()
-
-        //registerNetworkStateReceiver()
-        //listenNetworkStatus()
-
         container_main_menu.setBackgroundColor(ContextCompat.getColor(this, R.color.lightGreen))
         tv_email.text = sessionManager.userEmail
 
         checkPermissions(false, true)
-
     }
 
     override fun onResume() {
@@ -121,7 +110,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         } else {
             tv_show_old_length.text = getString(R.string.length) + " m"
         }
-        //updateLocation()
     }
 
     override fun onClick(v: View?) {
@@ -140,30 +128,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         }
     }
 
-    private fun registerNetworkStateReceiver() {
-        val intentFiler = IntentFilter()
-        intentFiler.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
-       // registerReceiver(networkChangeReceiver, intentFiler)
-    }
-
-    private fun listenNetworkStatus() {
-        eventBusDisposable = EventBus.instance.networkStatus
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ networkStatus ->
-                when (networkStatus.state) {
-                    NetworkStatus.State.ONLINE -> {
-                        btn_internet.setImageResource(R.drawable.ic_wifi_on)
-                    }
-                    NetworkStatus.State.OFFLINE -> {
-                        btn_internet.setImageResource(R.drawable.ic_wifi_off)
-                    }
-                }
-            }, {
-                it.printStackTrace()
-            })
-    }
-
     private fun signOut() {
         FirebaseAuth.getInstance().signOut()
         sessionManager.clearSession()
@@ -176,67 +140,10 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         }
     }
 
-    private fun checkInternetAndGpsConnection() {
-        if (Util.isNetworkAvailable(this)) {
-            btn_internet.setImageResource(R.drawable.ic_wifi_on)
-
-            //This is needed to retreive user token when during app startup
-            //auto-login was successful, but there was not internet connection.
-            if (appServer.getUserToken() == null){
-                var auth = FirebaseAuth.getInstance()
-                var currentUser = auth.currentUser
-                currentUser?.getIdToken(false)?.addOnSuccessListener { userToken ->
-                    appServer.updateApiService(userToken.token)
-                }?.addOnFailureListener { e ->
-                    //TODO
-                }
-            }
-
-        } else {
-            btn_internet.setImageResource(R.drawable.ic_wifi_off)
-        }
-
-        if (locationPermGiven() && Util.lat != null && Util.long != null) {
-            btn_gps.setImageResource(R.drawable.ic_gps_on)
-        } else {
-            btn_gps.setImageResource(R.drawable.ic_gps_off)
-        }
-    }
-
     override fun negativeButtonClicked() {}
 
     override fun positiveButtonClicked() {
         presenter.saveLocalImageItem()
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun updateLocation() {
-        if (locationPermGiven()) {
-            locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            locationListener = AgroLocationListener(applicationContext, this)
-            val providers = locationManager?.getProviders(true)
-            var bestLocation: Location? = null
-            if (providers != null) {
-                for (provider in providers) {
-                    val loc: Location? = locationManager?.getLastKnownLocation(provider) ?: continue
-                    if (bestLocation == null || loc!!.accuracy < bestLocation.accuracy) {
-                        bestLocation = loc
-                    }
-                }
-            }
-            val lastKnown = locationManager?.getLastKnownLocation((LocationManager.GPS_PROVIDER))
-            if (lastKnown != null) {
-                Util.lat = lastKnown.latitude
-                Util.long = lastKnown.longitude
-            } else {
-                if (bestLocation != null) {
-                    Util.lat = bestLocation.latitude
-                    Util.long = bestLocation.longitude
-                }
-            }
-            locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0f, locationListener)
-            checkInternetAndGpsConnection()
-        }
     }
 
     private fun openActivity(menuItem: MenuItem) {
@@ -309,11 +216,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         startActivityForResult(intent, CAMERA_CAPTURE)
     }
 
-    override fun locationUpdated() {
-        checkInternetAndGpsConnection()
-        locationManager?.removeUpdates(locationListener)
-    }
-
     override fun onBackPressed() {
         finish()
         System.exit(0)
@@ -361,11 +263,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        eventBusDisposable?.dispose()
     }
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
