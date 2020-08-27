@@ -12,7 +12,7 @@ import android.widget.Spinner
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.base.BaseActivity
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
-import com.agrolytics.agrolytics_android.ui.imageFinished.UploadFinishedActivity
+import com.agrolytics.agrolytics_android.ui.main.MainActivity
 import com.agrolytics.agrolytics_android.utils.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.agrolytics.agrolytics_android.utils.Util
@@ -62,14 +62,7 @@ class RodSelectorActivity : BaseActivity(), RodSelectorScreen, BaseActivity.OnDi
 
 	//Not a good function name...
 	override fun successfulUpload(measurementResult: MeasurementResult, path: String?, method: String) {
-			val intent = Intent(this, UploadFinishedActivity::class.java)
-			val results = arrayListOf<MeasurementResult>()
-			val pathList = arrayListOf<String>()
-			results.add(measurementResult)
-			path?.let { pathList.add(path) }
-			UploadFinishedActivity.responseList = results
-			intent.putStringArrayListExtra(ConfigInfo.PATH, pathList)
-			intent.putExtra(ConfigInfo.METHOD, method)
+			val intent = Intent(this, MainActivity::class.java)
 			startActivity(intent)
 			finish()
 	}

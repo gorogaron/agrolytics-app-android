@@ -11,14 +11,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.utils.fragments.CustomFragmentManager
 
 abstract class BaseActivity : AppCompatActivity(), BaseScreen {
 
     var toolbarText: TextView? = null
     private var dialog: AlertDialog? = null
-    protected val fragmentManager =
-        CustomFragmentManager(supportFragmentManager)
 
     override fun showLoading() {
         dialog = AlertDialog.Builder(this).create()
@@ -82,15 +79,12 @@ abstract class BaseActivity : AppCompatActivity(), BaseScreen {
     }
 
     override fun showFragmentBack(fragment: BaseFragment, tag: String) {
-        fragmentManager.showFragmentBack(fragment, tag)
     }
 
     override fun showFragmentForward(fragment: BaseFragment, tag: String) {
-        fragmentManager.showFragmentForward(fragment, tag)
     }
 
     override fun showFragment(fragment: BaseFragment, tag: String) {
-        fragmentManager.showFragment(fragment, tag)
     }
 
     override fun clearFragments() {

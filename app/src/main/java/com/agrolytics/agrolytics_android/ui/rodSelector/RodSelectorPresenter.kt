@@ -68,9 +68,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
                 val a = 2
             }
             uiThread {
-                //TODO: Remove mask visualization and volume counting from Detector, it's done in MeasurementResult class
-                var measurementResult = MeasurementResult(BitmapUtils.bitmapToBase64(Detector.Result.mask!!)!!,bitmap, rodLength, rodLengthPixels, sessionManager!!.length, Util.getCurrentDateString(), "NoType", Util.lat!!, Util.long!!)
-                screen?.successfulUpload(measurementResult, path, "offline")
+                Toast.makeText(context, "Processing finished, but won't show image.", Toast.LENGTH_SHORT)
                 screen?.hideLoading()
             }
         }
