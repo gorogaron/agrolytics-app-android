@@ -1,27 +1,13 @@
 package com.agrolytics.agrolytics_android.ui.main
 
-import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Environment
-import android.util.Base64
-import android.util.Base64OutputStream
-import android.util.Log
 import com.agrolytics.agrolytics_android.base.BasePresenter
 import com.agrolytics.agrolytics_android.networking.model.ImageItem
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
 import com.agrolytics.agrolytics_android.utils.Util
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import org.jetbrains.anko.doAsync
 import java.io.*
-import java.text.SimpleDateFormat
-import java.util.*
 import android.provider.MediaStore
-import java.net.SocketTimeoutException
-import java.util.concurrent.TimeoutException
 
 
 class MainPresenter(private val context: Context): BasePresenter<MainScreen>() {

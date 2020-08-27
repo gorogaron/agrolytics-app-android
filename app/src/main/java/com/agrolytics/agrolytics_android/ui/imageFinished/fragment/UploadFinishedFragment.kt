@@ -1,13 +1,10 @@
 package com.agrolytics.agrolytics_android.ui.imageFinished.fragment
 
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Base64
 import android.view.View
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.base.BaseFragment
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.imageFinished.UploadFinishedScreen
 import com.agrolytics.agrolytics_android.utils.ConfigInfo

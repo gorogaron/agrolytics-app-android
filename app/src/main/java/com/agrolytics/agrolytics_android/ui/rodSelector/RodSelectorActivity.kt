@@ -5,15 +5,12 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.se.omapi.Session
 import android.view.LayoutInflater
-import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.base.BaseActivity
-import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.imageFinished.UploadFinishedActivity
 import com.agrolytics.agrolytics_android.utils.ConfigInfo
@@ -26,7 +23,6 @@ import org.koin.android.ext.android.inject
 class RodSelectorActivity : BaseActivity(), RodSelectorScreen, BaseActivity.OnDialogActions {
 
 	private val presenter: RodSelectorPresenter by inject()
-	private val appServer: AppServer by inject()
 	private val sessionManager: SessionManager by inject()
 
 	var path: String? = null
@@ -37,7 +33,6 @@ class RodSelectorActivity : BaseActivity(), RodSelectorScreen, BaseActivity.OnDi
 		setContentView(R.layout.activity_rod_selector)
 
 		presenter.addView(this)
-		presenter.addInjections(arrayListOf(appServer, sessionManager))
 		presenter.setActivity(this)
 
 		intent.getStringExtra(ConfigInfo.PATH)?.let {

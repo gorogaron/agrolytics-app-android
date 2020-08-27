@@ -1,22 +1,12 @@
 package com.agrolytics.agrolytics_android.ui.imageFinished
 
-import android.graphics.Bitmap
-import android.util.Log
-import android.widget.Toast
 import com.agrolytics.agrolytics_android.base.BasePresenter
 import com.agrolytics.agrolytics_android.networking.model.ImageItem
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.imageFinished.fragment.UploadFinishedFragment
-import com.agrolytics.agrolytics_android.utils.BitmapUtils
 import com.agrolytics.agrolytics_android.utils.Util
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.doAsyncResult
 import org.jetbrains.anko.uiThread
-import org.koin.dsl.module.applicationContext
-import java.io.File
-import java.io.FileInputStream
-import java.util.*
 
 class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
 

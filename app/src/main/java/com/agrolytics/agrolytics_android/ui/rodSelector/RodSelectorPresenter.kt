@@ -3,13 +3,10 @@ package com.agrolytics.agrolytics_android.ui.rodSelector
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Base64
-import android.util.Base64OutputStream
 import android.util.Log
+import android.widget.Toast
 import com.agrolytics.agrolytics_android.base.BasePresenter
 import com.agrolytics.agrolytics_android.networking.model.ImageItem
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.utils.BitmapUtils
 import com.agrolytics.agrolytics_android.utils.Detector
@@ -18,8 +15,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.FileInputStream
 import java.net.SocketTimeoutException
 import java.util.concurrent.TimeoutException
@@ -35,44 +30,8 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
     }
 
     fun uploadImage(path: String?, bitmap: Bitmap?, rodLength: Double, rodLengthPixels: Int) {
-        this.path = path
-        if (!Util.isNetworkAvailable(context)) {
-            handleNoInternet(bitmap!!, rodLength, rodLengthPixels)
-        } else {
-            screen?.showLoading()
-            val imageUploadRequest = createImageUploadRequest(bitmap, rodLength, rodLengthPixels)
-            val upload = appServer?.uploadImage(imageUploadRequest)
-                ?.subscribeOn(Schedulers.io())
-                ?.observeOn(AndroidSchedulers.mainThread())
-                ?.subscribe({ response ->
-                    if (response.isSuccessful) {
-                        response.body()?.let {
-                            val measurementResult = MeasurementResult(it.mask!!, bitmap!!, rodLength, rodLengthPixels, sessionManager!!.length, Util.getCurrentDateString(), sessionManager!!.woodType, Util.lat!!, Util.long!!)
-                            screen?.successfulUpload(measurementResult, path, "online")
-                        }
-                    } else {
-                        screen?.showToast(response.message()) //Internal server error (i.e. HTTP500)
-                    }
-                    screen?.hideLoading()
-                }, { error ->
-                    Log.d("Sending", "Could not send image: ${error}")
-                    screen?.showToast("Hiba történt. Kérlek próbáld meg mégegyszer és ellenőrizd az internet kapcsolatot.")
-                    screen?.hideLoading()
-                    error.printStackTrace()
-                    if (error is SocketTimeoutException) {
-                        activity?.let {
-                            screen?.showAlertDialog(
-                                "Nincs internet kapcsolat",
-                                "Jelenleg nincs internetkapcsolat. Szeretnéd elmenteni a képet?",
-                                it, true, "Mentés"
-                            )
-                        }
-                    } else {
-                        screen?.showToast("Hiba történt. Kérlek próbáld meg mégegyszer és ellenőrizd az internet kapcsolatot.")
-                    }
-                })
-            upload?.let { subscriptions?.add(it) }
-        }
+        Toast.makeText(context, "Offline detection has started.", Toast.LENGTH_SHORT).show()
+        handleNoInternet(bitmap!!, rodLength, rodLengthPixels)
     }
 
     fun saveLocalImageItem(rodLength: Double, rodLengthPixels: Int) {
@@ -94,34 +53,23 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
         screen?.back()
     }
 
-    private fun createImageUploadRequest(bitmap: Bitmap?, rodLength: Double, rodLengthPixels: Int): ImageUploadRequest {
-        //val file = File(path)
-        val imageUploadRequest = ImageUploadRequest()
-        bitmap?.let { imageUploadRequest.image = BitmapUtils.bitmapToBase64(bitmap) }
-        return imageUploadRequest
-    }
 
     private fun handleNoInternet(bitmap: Bitmap, rodLength: Double, rodLengthPixels: Int){
-        activity?.let{
-            val builder = AlertDialog.Builder(it)
-            builder.setTitle("Nincs internetkapcsolat")
-            builder.setMessage("Nem megfelelő az internetkapcsolat. A képet lementheti későbbi feldolgozásra, vagy használhatja az offline " +
-                    "mérést. Ekkor a kép nem kerül mentésre, és az eredmény pontatlanabb.")
-            builder.setNeutralButton("Kilépés"){_,_ -> }
-            builder.setPositiveButton("Mentés"){_,_ ->  it.positiveButtonClicked()}
-            builder.setNegativeButton("Offline mérés"){_,_ -> startOfflineDetection(bitmap, rodLength, rodLengthPixels)}
-            builder.setCancelable(true)
-            val dialog: AlertDialog = builder.create()
-            dialog.show()
-        }
+        startOfflineDetection(bitmap, rodLength, rodLengthPixels)
     }
 
     private fun startOfflineDetection(bitmap: Bitmap, rodLength: Double, rodLengthPixels: Int){
         screen?.showLoading()
-        doAsync {var seg = Detector.segmentOffline(bitmap!!)
+        doAsync {
+            try {
+                var seg = Detector.segmentOffline(bitmap!!)
+            } catch (e: Exception)
+            {
+                val a = 2
+            }
             uiThread {
                 //TODO: Remove mask visualization and volume counting from Detector, it's done in MeasurementResult class
-                var measurementResult = MeasurementResult(BitmapUtils.bitmapToBase64(Detector.Result.mask!!)!!,bitmap, rodLength, rodLengthPixels, sessionManager!!.length, Util.getCurrentDateString(), sessionManager!!.woodType, Util.lat!!, Util.long!!)
+                var measurementResult = MeasurementResult(BitmapUtils.bitmapToBase64(Detector.Result.mask!!)!!,bitmap, rodLength, rodLengthPixels, sessionManager!!.length, Util.getCurrentDateString(), "NoType", Util.lat!!, Util.long!!)
                 screen?.successfulUpload(measurementResult, path, "offline")
                 screen?.hideLoading()
             }

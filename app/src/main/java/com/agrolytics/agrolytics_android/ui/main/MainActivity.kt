@@ -1,11 +1,8 @@
 package com.agrolytics.agrolytics_android.ui.main
 
 import android.Manifest
-import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -14,9 +11,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.base.BaseActivity
-import com.agrolytics.agrolytics_android.networking.AppServer
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
-import com.agrolytics.agrolytics_android.ui.imageFinished.UploadFinishedActivity
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.setLength.LengthActivity
 import com.agrolytics.agrolytics_android.utils.ConfigInfo.CAMERA_CAPTURE
@@ -26,35 +20,16 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.theartofdev.edmodo.cropper.CropImage
-import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_bar.*
 import org.koin.android.ext.android.inject
-import android.location.LocationManager
-import android.content.Context
-import android.content.IntentFilter
-import android.graphics.BitmapFactory
-import android.location.Location
-import android.net.ConnectivityManager
 import android.util.Log
 import android.widget.Toast
 import com.agrolytics.agrolytics_android.ui.cropper.CropperActivity
 import com.agrolytics.agrolytics_android.ui.guide.GuideActivity
 import com.agrolytics.agrolytics_android.utils.*
-import com.agrolytics.agrolytics_android.ui.rodSelector.RodSelectorActivity
-import com.agrolytics.agrolytics_android.utils.ConfigInfo.CROPPER
 import com.agrolytics.agrolytics_android.utils.ConfigInfo.PICK_IMAGE
-import com.agrolytics.agrolytics_android.utils.networkListener.EventBus
-import com.agrolytics.agrolytics_android.utils.networkListener.NetworkChangeReceiver
-import com.agrolytics.agrolytics_android.utils.networkListener.NetworkStatus
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.startActivityForResult
-import org.jetbrains.anko.uiThread
-import java.io.InputStream
 import java.lang.Exception
 import java.lang.IllegalArgumentException
 
@@ -64,7 +39,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
     private val TAG = "MainActivity"
 
     private val presenter: MainPresenter by inject()
-    private val appServer: AppServer by inject()
     private val sessionManager: SessionManager by inject()
 
     private var imageUri: Uri? = null
@@ -74,7 +48,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         setContentView(R.layout.activity_main)
 
         presenter.addView(this)
-        presenter.addInjections(arrayListOf(appServer, sessionManager))
         presenter.setActivity(this)
 
         doAsync { Detector.init(assets) }
