@@ -11,7 +11,6 @@ import kotlinx.android.synthetic.main.activity_info.btn_back
 import android.provider.MediaStore
 import com.agrolytics.agrolytics_android.ui.rodSelector.RodSelectorActivity
 import com.agrolytics.agrolytics_android.utils.ConfigInfo
-import com.google.common.io.Flushables.flush
 import android.system.Os.mkdir
 import android.os.Environment.getExternalStorageDirectory
 import androidx.core.app.ComponentActivity.ExtraData
