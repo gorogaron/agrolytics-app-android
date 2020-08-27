@@ -41,7 +41,6 @@ import android.util.Log
 import android.widget.Toast
 import com.agrolytics.agrolytics_android.ui.cropper.CropperActivity
 import com.agrolytics.agrolytics_android.ui.guide.GuideActivity
-import com.agrolytics.agrolytics_android.ui.login.LoginActivity
 import com.agrolytics.agrolytics_android.utils.*
 import com.agrolytics.agrolytics_android.ui.rodSelector.RodSelectorActivity
 import com.agrolytics.agrolytics_android.utils.ConfigInfo.CROPPER
@@ -49,7 +48,6 @@ import com.agrolytics.agrolytics_android.utils.ConfigInfo.PICK_IMAGE
 import com.agrolytics.agrolytics_android.utils.networkListener.EventBus
 import com.agrolytics.agrolytics_android.utils.networkListener.NetworkChangeReceiver
 import com.agrolytics.agrolytics_android.utils.networkListener.NetworkStatus
-import com.google.firebase.auth.FirebaseAuth
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -126,14 +124,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
     }
 
     private fun signOut() {
-        FirebaseAuth.getInstance().signOut()
-        sessionManager.clearSession()
-        doAsync {
-            uiThread {
-                startActivity(LoginActivity::class.java, Bundle(), false)
-                //finish()
-            }
-        }
+        Toast.makeText(this,"Login window has been removed.", Toast.LENGTH_SHORT).show()
     }
 
     override fun negativeButtonClicked() {}

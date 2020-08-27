@@ -3,7 +3,6 @@ package com.agrolytics.agrolytics_android.base
 import com.agrolytics.agrolytics_android.database.firebase.FireStoreDB
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.utils.SessionManager
-import com.google.firebase.auth.FirebaseAuth
 import io.reactivex.disposables.CompositeDisposable
 
 abstract class BasePresenter<T> {
@@ -13,7 +12,6 @@ abstract class BasePresenter<T> {
     var appServer: AppServer? = null
     var sessionManager: SessionManager? = null
     var fireStoreDB: FireStoreDB? = null
-    var auth: FirebaseAuth? = null
 
     init { subscriptions = CompositeDisposable() }
 
@@ -23,7 +21,6 @@ abstract class BasePresenter<T> {
                is AppServer -> appServer = item
                is SessionManager -> sessionManager = item
                is FireStoreDB -> fireStoreDB = item
-               is FirebaseAuth -> auth = item
            }
         }
     }

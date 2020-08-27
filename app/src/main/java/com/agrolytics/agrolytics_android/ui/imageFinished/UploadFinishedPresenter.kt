@@ -2,6 +2,7 @@ package com.agrolytics.agrolytics_android.ui.imageFinished
 
 import android.graphics.Bitmap
 import android.util.Log
+import android.widget.Toast
 import com.agrolytics.agrolytics_android.base.BasePresenter
 import com.agrolytics.agrolytics_android.networking.model.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
@@ -13,6 +14,7 @@ import com.google.firebase.storage.StorageMetadata
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.doAsyncResult
 import org.jetbrains.anko.uiThread
+import org.koin.dsl.module.applicationContext
 import java.io.File
 import java.io.FileInputStream
 import java.util.*
@@ -42,120 +44,6 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
         doAsync {
             //roomModule?.database?.imageItemDao()?.addImage(imageItem)
             uiThread { screen?.updateView(fragment) }
-        }
-    }
-
-    fun uploadImageToStorage(measurementResult: MeasurementResult, path: String?, fragment: UploadFinishedFragment, processMethod: String) {
-        if (processMethod == "online") { //Only uploade image to firebase in case of online processing
-            screen?.showLoading()
-
-            val reference = fireStoreDB?.storage?.reference
-            val file = File(path)
-            val imageName = file.name
-            val imageRef = reference?.child(imageName)
-            sessionManager?.forestryID?.let { forestryID ->
-
-                var forestryName = ""
-
-                fireStoreDB?.db?.collection("forestry")?.document(forestryID)
-                    ?.get()
-                    ?.addOnSuccessListener {
-                        forestryName = it["name"] as String
-
-                        val forestryRef = reference?.child("$forestryName/masked/$imageName")
-                        val thumbnailForestryRef =
-                            reference?.child("$forestryName/thumbnail/$imageName")
-
-                        measurementResult?.getMaskedInput().let {
-                            val bytes = BitmapUtils.getBytes(it)
-                            val resizedBitmap = Bitmap.createScaledBitmap(it, 64, 48, true);
-                            val resizedBytes = BitmapUtils.getBytes(resizedBitmap)
-
-                            if (bytes != null && resizedBytes != null) {
-                                val thumbnailUploadTask =
-                                    thumbnailForestryRef?.putBytes(resizedBytes)
-                                thumbnailUploadTask?.addOnSuccessListener { uploadThumbnailImageTaskSnapshot ->
-                                    uploadThumbnailImageTaskSnapshot.storage.downloadUrl.addOnSuccessListener { thumbnailUrl ->
-                                        val metadata = StorageMetadata.Builder()
-                                            .setCacheControl("max-age=604800")
-                                            .build()
-                                        thumbnailForestryRef!!.updateMetadata(metadata)
-                                            .addOnSuccessListener {
-                                                val uploadTask = forestryRef?.putBytes(bytes)
-                                                uploadTask?.addOnSuccessListener { uploadImageTaskSnapshot ->
-                                                    val metadata = StorageMetadata.Builder()
-                                                        .setCacheControl("max-age=604800")
-                                                        .build()
-                                                    forestryRef!!.updateMetadata(metadata)
-                                                        .addOnSuccessListener { metadata ->
-                                                            // metadata.contentType should be null
-                                                            uploadImageTaskSnapshot.storage.downloadUrl.addOnSuccessListener { imageUri ->
-                                                                Log.d(
-                                                                    TAG,
-                                                                    " downloadURL: $imageUri"
-                                                                )
-                                                                uploadImageToFireStore(
-                                                                    imageUri.toString(),
-                                                                    measurementResult,
-                                                                    path,
-                                                                    fragment,
-                                                                    "$forestryName/masked/$imageName",
-                                                                    "$forestryName/thumbnail/$imageName",
-                                                                    thumbnailUrl.toString()
-                                                                )
-                                                            }.addOnFailureListener { error ->
-                                                                handleAsyncError(
-                                                                    error,
-                                                                    measurementResult,
-                                                                    path,
-                                                                    fragment
-                                                                );
-                                                            }
-                                                        }.addOnFailureListener { error ->
-                                                        handleAsyncError(
-                                                            error,
-                                                            measurementResult,
-                                                            path,
-                                                            fragment
-                                                        );
-                                                    }
-                                                }?.addOnFailureListener { error ->
-                                                    handleAsyncError(
-                                                        error,
-                                                        measurementResult,
-                                                        path,
-                                                        fragment
-                                                    );
-                                                }
-                                            }.addOnFailureListener { error ->
-                                            handleAsyncError(
-                                                error,
-                                                measurementResult,
-                                                path,
-                                                fragment
-                                            );
-                                        }
-                                    }.addOnFailureListener { error ->
-                                        handleAsyncError(
-                                            error,
-                                            measurementResult,
-                                            path,
-                                            fragment
-                                        );
-                                    }
-                                }?.addOnFailureListener { error ->
-                                    handleAsyncError(error, measurementResult, path, fragment);
-                                }
-                            }
-                        }
-                    }
-                    ?.addOnFailureListener { it.printStackTrace() }
-            } ?: run {
-                screen?.showToast("Hiányzó erdész azonosító. Kérlek próbáld meg később.")
-            }
-        }
-        else{ //Offline processing
-            screen?.updateView(fragment)
         }
     }
 
@@ -223,15 +111,6 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
                 Log.w(TAG, "Error writing document", e)
             }
 
-    }
-
-    fun deleteImageFromLocalDatabase(id: String?) {
-        id?.let {
-            doAsync {
-                //val imageItem = roomModule?.database?.imageItemDao()?.getImageById(id)
-                //imageItem?.let { roomModule?.database?.imageItemDao()?.deleteImage(imageItem) }
-            }
-        }
     }
 
 }

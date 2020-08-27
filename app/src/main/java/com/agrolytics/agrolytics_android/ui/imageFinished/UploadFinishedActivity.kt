@@ -14,6 +14,7 @@ import com.agrolytics.agrolytics_android.utils.SessionManager
 import kotlinx.android.synthetic.main.activity_upload_finished.*
 import org.koin.android.ext.android.inject
 import android.content.Intent
+import android.widget.Toast
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
 
@@ -135,16 +136,12 @@ class UploadFinishedActivity : BaseActivity(), UploadFinishedScreen {
 			startActivity(intent);
 		} else {
 			fragment.updateDeclineView()
-			presenter.deleteImageFromLocalDatabase(id)
 		}
 	}
 
 	override fun onAcceptClicked(measurementResult: MeasurementResult, path: String?,
 								 fragment: UploadFinishedFragment, id: String?) {
-
-		val processMethod = intent.extras.getString(ConfigInfo.METHOD)
-		presenter.uploadImageToStorage(measurementResult, path, fragment, processMethod)
-		presenter.deleteImageFromLocalDatabase(id)
+		Toast.makeText(this, "Nothing has happened in the background.", Toast.LENGTH_SHORT).show()
 	}
 
 	companion object {
