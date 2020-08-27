@@ -6,6 +6,7 @@ import android.icu.util.Measure
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.agrolytics.agrolytics_android.R
@@ -20,7 +21,6 @@ import com.agrolytics.agrolytics_android.ui.imageFinished.UploadFinishedActivity
 import com.agrolytics.agrolytics_android.ui.images.adapter.ImagesAdapter
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
-import com.agrolytics.agrolytics_android.ui.map.MapActivity
 import com.agrolytics.agrolytics_android.ui.setLength.LengthActivity
 import com.agrolytics.agrolytics_android.utils.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.MenuItem
@@ -170,7 +170,7 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 			}
 			MenuItem.MAP -> {
 				if (MenuItem.MAP.tag != TAG) {
-					startActivity(MapActivity::class.java, Bundle(), false)
+					Toast.makeText(this,"Map deleted", Toast.LENGTH_SHORT).show()
 				}
 			}
 			MenuItem.INFO -> {

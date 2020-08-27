@@ -2,13 +2,13 @@ package com.agrolytics.agrolytics_android.ui.guide
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.base.BaseActivity
 import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
-import com.agrolytics.agrolytics_android.ui.map.MapActivity
 import com.agrolytics.agrolytics_android.ui.setLength.LengthActivity
 import com.agrolytics.agrolytics_android.utils.MenuItem
 import com.agrolytics.agrolytics_android.utils.SessionManager
@@ -66,7 +66,7 @@ class GuideActivity: BaseActivity(), View.OnClickListener  {
             }
             MenuItem.MAP -> {
                 if (MenuItem.MAP.tag != TAG) {
-                    startActivity(MapActivity::class.java, Bundle(), false)
+                    Toast.makeText(this,"Map deleted", Toast.LENGTH_SHORT).show()
                 }
             }
             MenuItem.INFO -> {

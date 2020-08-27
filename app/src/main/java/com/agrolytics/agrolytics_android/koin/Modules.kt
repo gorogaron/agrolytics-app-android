@@ -8,7 +8,6 @@ import com.agrolytics.agrolytics_android.ui.imageFinished.UploadFinishedPresente
 import com.agrolytics.agrolytics_android.ui.images.ImagesPresenter
 import com.agrolytics.agrolytics_android.ui.login.LoginPresenter
 import com.agrolytics.agrolytics_android.ui.main.MainPresenter
-import com.agrolytics.agrolytics_android.ui.map.MapPresenter
 import com.agrolytics.agrolytics_android.ui.rodSelector.RodSelectorPresenter
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import org.koin.android.ext.koin.androidContext
@@ -29,7 +28,6 @@ val appModule = module {
     factory { MainPresenter(androidContext()) }
     factory { ImagesPresenter(androidContext()) }
     factory { UploadFinishedPresenter() }
-    factory { MapPresenter() }
     factory { LoginPresenter(androidContext()) }
     factory { RodSelectorPresenter(androidContext()) }
 

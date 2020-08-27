@@ -20,7 +20,6 @@ import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
 import com.agrolytics.agrolytics_android.ui.imageFinished.UploadFinishedActivity
 import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
-import com.agrolytics.agrolytics_android.ui.map.MapActivity
 import com.agrolytics.agrolytics_android.ui.setLength.LengthActivity
 import com.agrolytics.agrolytics_android.utils.ConfigInfo.CAMERA_CAPTURE
 import com.agrolytics.agrolytics_android.utils.extensions.*
@@ -41,6 +40,7 @@ import android.graphics.BitmapFactory
 import android.location.Location
 import android.net.ConnectivityManager
 import android.util.Log
+import android.widget.Toast
 import com.agrolytics.agrolytics_android.ui.cropper.CropperActivity
 import com.agrolytics.agrolytics_android.ui.guide.GuideActivity
 import com.agrolytics.agrolytics_android.ui.login.LoginActivity
@@ -165,7 +165,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
             }
             MenuItem.MAP -> {
                 if (MenuItem.MAP.tag != TAG) {
-                    startActivity(MapActivity::class.java, Bundle(), true)
+                    Toast.makeText(this,"Map deleted", Toast.LENGTH_SHORT).show()
                 }
             }
             MenuItem.INFO -> {
