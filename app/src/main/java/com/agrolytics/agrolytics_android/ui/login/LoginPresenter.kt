@@ -101,7 +101,6 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
                                     } else {
                                         FirebaseAuth.getInstance().signOut()
                                         doAsync {
-                                            roomModule?.database?.clearAllTables()
                                             sessionManager?.clearSession()
                                             uiThread {
                                                 screen?.showToast("Your free trial has expired.")
@@ -141,7 +140,6 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
 
     private fun logout() {
         doAsync {
-            roomModule?.database?.clearAllTables()
             uiThread {
                 screen?.hideLoading()
                 screen?.showAlertDialog()

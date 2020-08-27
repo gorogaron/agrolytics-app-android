@@ -13,7 +13,6 @@ import android.widget.EditText
 import android.widget.Spinner
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.base.BaseActivity
-import com.agrolytics.agrolytics_android.database.tables.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.imageFinished.UploadFinishedActivity
@@ -28,7 +27,6 @@ class RodSelectorActivity : BaseActivity(), RodSelectorScreen, BaseActivity.OnDi
 
 	private val presenter: RodSelectorPresenter by inject()
 	private val appServer: AppServer by inject()
-	private val roomModule: RoomModule by inject()
 	private val sessionManager: SessionManager by inject()
 
 	var path: String? = null
@@ -39,7 +37,7 @@ class RodSelectorActivity : BaseActivity(), RodSelectorScreen, BaseActivity.OnDi
 		setContentView(R.layout.activity_rod_selector)
 
 		presenter.addView(this)
-		presenter.addInjections(arrayListOf(appServer, roomModule, sessionManager))
+		presenter.addInjections(arrayListOf(appServer, sessionManager))
 		presenter.setActivity(this)
 
 		intent.getStringExtra(ConfigInfo.PATH)?.let {

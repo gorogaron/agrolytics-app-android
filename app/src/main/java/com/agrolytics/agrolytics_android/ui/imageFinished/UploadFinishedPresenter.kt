@@ -40,7 +40,7 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
             serverImage = serverImage
         )
         doAsync {
-            roomModule?.database?.imageItemDao()?.addImage(imageItem)
+            //roomModule?.database?.imageItemDao()?.addImage(imageItem)
             uiThread { screen?.updateView(fragment) }
         }
     }
@@ -228,8 +228,8 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
     fun deleteImageFromLocalDatabase(id: String?) {
         id?.let {
             doAsync {
-                val imageItem = roomModule?.database?.imageItemDao()?.getImageById(id)
-                imageItem?.let { roomModule?.database?.imageItemDao()?.deleteImage(imageItem) }
+                //val imageItem = roomModule?.database?.imageItemDao()?.getImageById(id)
+                //imageItem?.let { roomModule?.database?.imageItemDao()?.deleteImage(imageItem) }
             }
         }
     }

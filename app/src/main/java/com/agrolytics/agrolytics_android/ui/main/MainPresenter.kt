@@ -50,8 +50,5 @@ class MainPresenter(private val context: Context): BasePresenter<MainScreen>() {
 			length = sessionManager?.length?.toDouble() ?: 0.0,
 			volume = 0.0,
 			time = Util.getCurrentDateString())
-		doAsync {
-			roomModule?.database?.imageItemDao()?.addImage(imageItem)
-		}
 	}
 }

@@ -6,7 +6,6 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.base.BaseActivity
-import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
 import com.agrolytics.agrolytics_android.utils.MenuItem
@@ -77,8 +76,7 @@ class LengthActivity: BaseActivity(), View.OnClickListener {
 			}
 			MenuItem.IMAGES -> {
 				if (MenuItem.IMAGES.tag != TAG) {
-					startActivity(ImagesActivity::class.java, Bundle(), false)
-				}
+					Toast.makeText(this,"Images menu deleted", Toast.LENGTH_SHORT).show()				}
 			}
 			MenuItem.MAP -> {
 				if (MenuItem.MAP.tag != TAG) {

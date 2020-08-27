@@ -91,10 +91,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
             rodLengthPixel = rodLengthPixels,
             woodType = sessionManager?.woodType
         )
-        doAsync {
-            roomModule?.database?.imageItemDao()?.addImage(imageItem)
-            screen?.back()
-        }
+        screen?.back()
     }
 
     private fun createImageUploadRequest(bitmap: Bitmap?, rodLength: Double, rodLengthPixels: Int): ImageUploadRequest {

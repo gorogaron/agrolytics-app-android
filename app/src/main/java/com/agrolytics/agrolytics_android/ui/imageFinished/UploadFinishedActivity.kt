@@ -6,7 +6,6 @@ import androidx.viewpager.widget.ViewPager
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.base.BaseActivity
 import com.agrolytics.agrolytics_android.database.firebase.FireStoreDB
-import com.agrolytics.agrolytics_android.database.tables.RoomModule
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
 import com.agrolytics.agrolytics_android.ui.imageFinished.adapter.ImagePagerAdapter
 import com.agrolytics.agrolytics_android.ui.imageFinished.fragment.UploadFinishedFragment
@@ -22,7 +21,6 @@ import com.agrolytics.agrolytics_android.ui.main.MainActivity
 class UploadFinishedActivity : BaseActivity(), UploadFinishedScreen {
 
 	private val sessionManager: SessionManager by inject()
-	private val roomModule: RoomModule by inject()
 	private val presenter: UploadFinishedPresenter by inject()
 	private val fireStoreDB: FireStoreDB by inject()
 
@@ -102,7 +100,7 @@ class UploadFinishedActivity : BaseActivity(), UploadFinishedScreen {
 		tv_done.setOnClickListener { onBackPressed() }
 
 		presenter.addView(this)
-		presenter.addInjections(arrayListOf(sessionManager, roomModule, fireStoreDB))
+		presenter.addInjections(arrayListOf(sessionManager, fireStoreDB))
 	}
 
 	override fun onResume() {

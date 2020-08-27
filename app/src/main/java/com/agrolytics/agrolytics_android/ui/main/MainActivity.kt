@@ -14,11 +14,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.base.BaseActivity
-import com.agrolytics.agrolytics_android.database.tables.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
 import com.agrolytics.agrolytics_android.ui.imageFinished.UploadFinishedActivity
-import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.setLength.LengthActivity
 import com.agrolytics.agrolytics_android.utils.ConfigInfo.CAMERA_CAPTURE
@@ -70,7 +68,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
     private val presenter: MainPresenter by inject()
     private val appServer: AppServer by inject()
     private val sessionManager: SessionManager by inject()
-    private val roomModule: RoomModule by inject()
 
     private var imageUri: Uri? = null
 
@@ -79,7 +76,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         setContentView(R.layout.activity_main)
 
         presenter.addView(this)
-        presenter.addInjections(arrayListOf(appServer, roomModule, sessionManager))
+        presenter.addInjections(arrayListOf(appServer, sessionManager))
         presenter.setActivity(this)
 
         doAsync { Detector.init(assets) }
@@ -132,7 +129,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         FirebaseAuth.getInstance().signOut()
         sessionManager.clearSession()
         doAsync {
-            roomModule.database?.clearAllTables()
             uiThread {
                 startActivity(LoginActivity::class.java, Bundle(), false)
                 //finish()
@@ -160,8 +156,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
             }
             MenuItem.IMAGES -> {
                 if (MenuItem.IMAGES.tag != TAG) {
-                    startActivity(ImagesActivity::class.java, Bundle(), true)
-                }
+                    Toast.makeText(this,"Images menu deleted", Toast.LENGTH_SHORT).show()                }
             }
             MenuItem.MAP -> {
                 if (MenuItem.MAP.tag != TAG) {

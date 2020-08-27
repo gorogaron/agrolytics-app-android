@@ -90,11 +90,6 @@ dependencies {
     // joda time
     implementation 'net.danlew:android.joda:2.9.9.3'
 
-    //room
-    implementation "android.arch.persistence.room:runtime:$room_version"
-    kapt "android.arch.persistence.room:compiler:$room_version"
-    implementation "android.arch.persistence.room:rxjava2:$room_version"
-
     // cropper
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
 
