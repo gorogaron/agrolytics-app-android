@@ -124,7 +124,9 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
         doAsync {var seg = Detector.segmentOffline(bitmap!!)
             uiThread {
                 //TODO: Remove mask visualization and volume counting from Detector, it's done in MeasurementResult class
-                var measurementResult = MeasurementResult(BitmapUtils.bitmapToBase64(Detector.Result.mask!!)!!,bitmap, rodLength, rodLengthPixels, sessionManager!!.length, Util.getCurrentDateString(), sessionManager!!.woodType, Util.lat!!, Util.long!!)
+                //TODO: Add proper wood type
+                //TODO: When GPS and innternet is turned off, Util.lat and Util.lon are null
+                var measurementResult = MeasurementResult(BitmapUtils.bitmapToBase64(Detector.Result.mask!!)!!,bitmap, rodLength, rodLengthPixels, sessionManager!!.length, Util.getCurrentDateString(), "NoType", Util.lat!!, Util.long!!)
                 screen?.successfulUpload(measurementResult, path, "offline")
                 screen?.hideLoading()
             }
