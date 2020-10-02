@@ -53,8 +53,7 @@ interface ApiService {
 				chain.proceed(request)
 			}
 			val client = OkHttpClient.Builder()
-					.readTimeout(60, TimeUnit.SECONDS)
-					.connectTimeout(60, TimeUnit.SECONDS)
+					.callTimeout(10, TimeUnit.SECONDS)
 					.addInterceptor(header)
 					.addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
 					.build()
