@@ -6,7 +6,10 @@ import android.net.ConnectivityManager
 import android.os.Build
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import kotlinx.coroutines.*
 import java.io.IOException
+import java.net.InetAddress
+import java.net.UnknownHostException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -31,21 +34,25 @@ class Util {
         }
 
         fun isNetworkAvailable(context: Context): Boolean {
+            /* Old method:
             val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             val activeNetworkInfo = connectivityManager.activeNetworkInfo
             return activeNetworkInfo != null && activeNetworkInfo.isConnected
+             */
+
+            /*New Method:*/
+            return runBlocking { isOnline() }
         }
 
-        fun isOnline(): Boolean {
-            val runtime = Runtime.getRuntime()
+        suspend fun isOnline(): Boolean {
             try {
-                val ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8")
-                val exitValue = ipProcess.waitFor()
-                return exitValue == 0
-            } catch (e: IOException) {
-                e.printStackTrace()
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
+                lateinit var addresses: Array<out InetAddress>
+                GlobalScope.async{
+                    addresses = InetAddress.getAllByName("www.google.com")
+                }.await()
+                return addresses[0].hostAddress != ""
+            } catch (e: UnknownHostException) {
+                // TODO: handle error
             }
             return false
         }

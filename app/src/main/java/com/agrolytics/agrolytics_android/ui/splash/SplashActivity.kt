@@ -56,19 +56,11 @@ class SplashActivity: BaseActivity(), SplashScreen {
     }
 
     override fun successfulAutoLogin() {
-        //val activityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(this, iv_logo, "logoImage")
-        val intent = Intent(this, MainActivity::class.java)
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-//        startActivity(intent, activityOptionsCompat.toBundle())
         startActivity(MainActivity::class.java, Bundle(), false)
         finish()
     }
 
     override fun failedLogin() {
-        //val activityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(this, iv_logo, "logoImage")
-        val intent = Intent(this, LoginActivity::class.java)
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-//        startActivity(intent, activityOptionsCompat.toBundle())
         startActivity(LoginActivity::class.java, Bundle(), false)
         finish()
     }

@@ -47,6 +47,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
                 ?.subscribe({ response ->
                     if (response.isSuccessful) {
                         response.body()?.let {
+                            //TODO: Handle if GPS in not available
                             val measurementResult = MeasurementResult(it.mask!!, bitmap!!, rodLength, rodLengthPixels, sessionManager!!.length, Util.getCurrentDateString(), sessionManager!!.woodType, Util.lat!!, Util.long!!)
                             screen?.successfulUpload(measurementResult, path, "online")
                         }
@@ -63,7 +64,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
                         activity?.let {
                             screen?.showAlertDialog(
                                 "Nincs internet kapcsolat",
-                                "Jelenleg nincs internetkapcsolat. Szeretnéd elmenteni a képet?",
+                                "A kapcsolat időtúllépés miatt megszakadt. Szeretnéd elmenteni a képet?",
                                 it, true, "Mentés"
                             )
                         }

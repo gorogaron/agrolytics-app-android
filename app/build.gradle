@@ -1,8 +1,9 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'io.fabric'
+apply plugin: 'com.google.firebase.crashlytics'
+
 
 android {
     compileSdkVersion 28
@@ -26,11 +27,13 @@ android {
     }
     buildTypes {
         debug {
-            buildConfigField 'String', 'BASE_URL', '"https://us-central1-webhost-7bf8f.cloudfunctions.net/"'
+            buildConfigField 'String', 'BASE_URL', '"http://noether.ddns.net/"'
+            //buildConfigField 'String', 'BASE_URL', '"https://us-central1-webhost-7bf8f.cloudfunctions.net/"'
         }
         release {
             minifyEnabled true
-            buildConfigField 'String', 'BASE_URL', '"https://us-central1-webhost-7bf8f.cloudfunctions.net/"'
+            buildConfigField 'String', 'BASE_URL', '"http://noether.ddns.net/"'
+            //buildConfigField 'String', 'BASE_URL', '"https://us-central1-webhost-7bf8f.cloudfunctions.net/"'
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.agrolytics
         }
@@ -45,17 +48,17 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.android.support.constraint:constraint-layout:2.0.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     // firebase
-    implementation 'com.google.firebase:firebase-analytics:17.2.0'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
-    implementation 'com.google.firebase:firebase-firestore:21.2.0'
-    implementation 'com.google.firebase:firebase-storage:19.1.0'
-    implementation 'com.google.firebase:firebase-auth:19.1.0'
+    implementation 'com.google.firebase:firebase-analytics:17.5.0'
+    implementation 'com.google.firebase:firebase-crashlytics:17.2.2'
+    implementation 'com.google.firebase:firebase-firestore:21.7.0'
+    implementation 'com.google.firebase:firebase-storage:19.2.0'
+    implementation 'com.google.firebase:firebase-auth:19.4.0'
 
     // progress
     implementation 'com.wang.avi:library:2.1.3'
@@ -79,10 +82,10 @@ dependencies {
     implementation 'com.karumi:dexter:5.0.0'
 
     // support design library
-    implementation 'com.google.android.material:material:1.1.0-alpha05'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha5'
+    implementation 'com.google.android.material:material:1.3.0-alpha02'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha04'
+    implementation 'androidx.recyclerview:recyclerview:1.2.0-alpha05'
     implementation 'androidx.cardview:cardview:1.0.0'
 
     // glide
@@ -111,6 +114,9 @@ dependencies {
 
     // tflite
     implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
+
+    //Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9"
 
 }
 apply plugin: 'com.google.gms.google-services'
