@@ -48,6 +48,10 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
                     if (response.isSuccessful) {
                         response.body()?.let {
                             //TODO: Handle if GPS in not available
+                            if (Util.lat == null || Util.long == null){
+                                Util.lat = 0.0
+                                Util.long = 0.0
+                            }
                             val measurementResult = MeasurementResult(it.mask!!, bitmap!!, rodLength, rodLengthPixels, sessionManager!!.length, Util.getCurrentDateString(), sessionManager!!.woodType, Util.lat!!, Util.long!!)
                             screen?.successfulUpload(measurementResult, path, "online")
                         }

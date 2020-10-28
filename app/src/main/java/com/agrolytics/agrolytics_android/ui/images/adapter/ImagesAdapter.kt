@@ -68,7 +68,7 @@ class ImagesAdapter(private val listener: OnImageListener,
 			if (item.isPushedToServer) {
 				item.length?.let {
 					itemView.tv_volume_adapter.text =
-						context.getString(R.string.wood_volume_value, ((item.volume ?: 1.0) * (item.length ?: 0.0)))
+						context.getString(R.string.wood_volume_value, (item.volume ?: 1.0))
 				}
 			} else {
 				itemView.tv_volume_adapter.text = "-"
