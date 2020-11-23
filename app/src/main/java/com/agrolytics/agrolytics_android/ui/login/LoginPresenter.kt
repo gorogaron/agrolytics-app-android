@@ -17,6 +17,7 @@ import java.lang.Exception
 import java.lang.NullPointerException
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.*
+import kotlin.math.sign
 
 class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
 
@@ -92,6 +93,9 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
         if ((userDocumentSnapshot["leaderID"] as String?) != null){
             sessionManager?.leaderID = userDocumentSnapshot["leaderID"] as String
         }
+
+        //Update user token. TODO: Move token to shared preferences
+        updateUserToken(auth?.currentUser!!)
     }
 
     private suspend fun getUserDocument(user: FirebaseUser?) : DocumentSnapshot = suspendCoroutine { cont->
@@ -131,6 +135,18 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
         val daysDiff = TimeUnit.MILLISECONDS.toDays(msDiff)
 
         return daysDiff <= 0
+    }
+
+    private suspend fun updateUserToken(user: FirebaseUser) : Boolean = suspendCoroutine{
+        user.getIdToken(false)
+            .addOnSuccessListener { userToken ->
+                appServer?.updateApiService(userToken.token)
+                it.resume(true)
+            }
+            .addOnFailureListener { e ->
+                Log.d("Login", "Error getting user token", e)
+                it.resume(false)
+            }
     }
 
     private fun clearSession() {
