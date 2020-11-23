@@ -13,8 +13,7 @@ import com.agrolytics.agrolytics_android.ui.rodSelector.RodSelectorPresenter
 import com.agrolytics.agrolytics_android.ui.splash.SplashPresenter
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import org.koin.android.ext.koin.androidContext
-import org.koin.dsl.module.applicationContext
-import org.koin.dsl.module.module
+import org.koin.dsl.module
 
 val appModule = module {
 

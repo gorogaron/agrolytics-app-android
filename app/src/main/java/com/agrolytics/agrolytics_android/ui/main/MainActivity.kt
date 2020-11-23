@@ -203,10 +203,12 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         }
     }
 
-    override fun negativeButtonClicked() {}
+    override fun negativeButtonClicked() {
+        //Do nothing
+    }
 
     override fun positiveButtonClicked() {
-        presenter.saveLocalImageItem()
+        //Do nothing
     }
 
     @SuppressLint("MissingPermission")

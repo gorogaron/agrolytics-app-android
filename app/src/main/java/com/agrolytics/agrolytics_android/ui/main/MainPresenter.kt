@@ -23,7 +23,6 @@ import android.provider.MediaStore
 import java.net.SocketTimeoutException
 import java.util.concurrent.TimeoutException
 
-
 class MainPresenter(private val context: Context): BasePresenter<MainScreen>() {
 
 	private var activity: MainActivity? = null
@@ -40,18 +39,4 @@ class MainPresenter(private val context: Context): BasePresenter<MainScreen>() {
 		return Uri.parse(path)
 	}
 
-	fun saveLocalImageItem() {
-		val imageItem = ImageItem(
-			id = (0..10000).random().toString(),
-			localPath = path ?: "",
-			isPushedToServer = false,
-			latitude = Util.lat ?: 0.0,
-			longitude = Util.long ?: 0.0,
-			length = sessionManager?.length?.toDouble() ?: 0.0,
-			volume = 0.0,
-			time = Util.getCurrentDateString())
-		doAsync {
-			roomModule?.database?.imageItemDao()?.addImage(imageItem)
-		}
-	}
 }

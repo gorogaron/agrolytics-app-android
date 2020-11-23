@@ -61,7 +61,6 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
                     screen?.hideLoading()
                 }, { error ->
                     Log.d("Sending", "Could not send image: ${error}")
-                    screen?.showToast("Hiba történt. Kérlek próbáld meg mégegyszer és ellenőrizd az internet kapcsolatot.")
                     screen?.hideLoading()
                     error.printStackTrace()
                     if (error is SocketTimeoutException) {

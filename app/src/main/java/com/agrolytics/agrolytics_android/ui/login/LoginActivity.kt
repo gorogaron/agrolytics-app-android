@@ -11,9 +11,11 @@ import com.agrolytics.agrolytics_android.database.firebase.FireStoreDB
 import com.agrolytics.agrolytics_android.database.tables.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
+import com.agrolytics.agrolytics_android.utils.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 
 
@@ -36,7 +38,28 @@ class LoginActivity: BaseActivity(), LoginScreen {
         presenter.addView(this)
         presenter.addInjections(arrayListOf(sessionManager, fireStoreDB, auth!!, roomModule, appServer))
 
-        btn_login.setOnClickListener { presenter.login(et_email?.text?.toString(), et_password?.text?.toString()) }
+        btn_login.setOnClickListener {login()}
+    }
+
+    fun login() {
+        GlobalScope.launch(Dispatchers.Main) {
+            showLoading()
+            var loginResult: Int
+            withContext(Dispatchers.IO) { loginResult = presenter.login(et_email?.text?.toString(), et_password?.text?.toString()) }
+            hideLoading()
+            when (loginResult) {
+                ConfigInfo.LOGIN.NO_INTERNET -> showToast("Nincs internetkapcsolat")
+                ConfigInfo.LOGIN.AUTH_FAILED -> showToast("Hibás email cím vagy jelszó")
+                ConfigInfo.LOGIN.USER_EXPIRED -> showToast("A felhasználóhoz tartozó licensz lejárt, kérjük vegye fel velünk a kapcsolatot")
+                ConfigInfo.LOGIN.UNDEFINED -> {
+                } //DO NOTHING
+                ConfigInfo.LOGIN.ERROR -> showToast("Váratlan hiba történt a bejelentkezés során")
+                ConfigInfo.LOGIN.SUCCESS -> {
+                    showToast("Sikeres bejelentkezés")
+                    loginSuccess()
+                }
+            }
+        }
     }
 
     override fun loginSuccess() {

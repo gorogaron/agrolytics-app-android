@@ -19,7 +19,7 @@ import org.koin.android.ext.android.inject
 
 interface ApiService {
 	//@POST("processImage")
-	@POST("ww/process")
+	@POST("ww/process_auth")
 	fun uploadImage(@Body body: ImageUploadRequest): Observable<Response<ImageUploadResponse>>
 
 	companion object Factory {
