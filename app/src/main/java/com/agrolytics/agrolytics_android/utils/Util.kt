@@ -12,6 +12,8 @@ import java.net.InetAddress
 import java.net.UnknownHostException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 
 class Util {
@@ -41,20 +43,17 @@ class Util {
              */
 
             /*New Method:*/
-            return runBlocking { isOnline() }
+            return runBlocking { withContext(Dispatchers.IO){ isOnline()} }
         }
 
-        suspend fun isOnline(): Boolean {
+        suspend fun isOnline(): Boolean = suspendCoroutine { cont ->
             try {
-                lateinit var addresses: Array<out InetAddress>
-                GlobalScope.async{
-                    addresses = InetAddress.getAllByName("www.google.com")
-                }.await()
-                return addresses[0].hostAddress != ""
+                var addresses = InetAddress.getAllByName("www.google.com")
+                cont.resume(addresses[0].hostAddress != "")
             } catch (e: UnknownHostException) {
                 // TODO: handle error
+                cont.resume(false)
             }
-            return false
         }
 
     }

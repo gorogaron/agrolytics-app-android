@@ -21,21 +21,18 @@ import kotlin.math.sign
 
 class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
 
+    private lateinit var userDocument : DocumentSnapshot
     val TAG = "LoginPresenter"
 
     suspend fun login(email: String?, password: String?) : Int {
         var signInResult = ConfigInfo.LOGIN.UNDEFINED
         try {
             if (Util.isNetworkAvailable(context)) {
-                if (checkInputFields(email, password)) {
+                if (checkInputFields(email, password)) {0
                     signInResult = signInFirebaseUser(email!!, password!!)
-
                     if (signInResult == ConfigInfo.LOGIN.SUCCESS) {
-                        val user = auth?.currentUser
-                        val userDocument = getUserDocument(user)
-                        val firstLogin = userDocument["first_login"] as String
-
-                        signInResult = if (userDocument["first_login"] != null) {
+                        val firstLogin = getFirstLogin()
+                        signInResult = if (firstLogin != null) {
                             if (hasUserExpired(firstLogin)) {
                                 ConfigInfo.LOGIN.USER_EXPIRED
                             } else {
@@ -43,7 +40,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
                                 ConfigInfo.LOGIN.SUCCESS
                             }
                         } else {
-                            initFirstLogin(user)
+                            initFirstLogin(auth?.currentUser)
                             saveUser(userDocument)
                             ConfigInfo.LOGIN.SUCCESS
                         }
@@ -70,10 +67,17 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
         return email != null && password != null && email.isNotEmpty() && password.isNotEmpty()
     }
 
-    private suspend fun signInFirebaseUser(email: String, password: String) : Int = suspendCoroutine{ cont ->
+    fun getFirstLogin() : String? {
+        return userDocument["first_login"] as String?
+    }
+
+    suspend fun signInFirebaseUser(email: String, password: String) : Int = suspendCoroutine{ cont ->
         auth?.signInWithEmailAndPassword(email, password)?.addOnCompleteListener { task->
             if (task.isSuccessful){
-                cont.resume(ConfigInfo.LOGIN.SUCCESS)
+                GlobalScope.launch {
+                    userDocument = getUserDocument(auth?.currentUser)
+                    cont.resume(ConfigInfo.LOGIN.SUCCESS)
+                }
             }
             else{
                 cont.resume(ConfigInfo.LOGIN.AUTH_FAILED)
@@ -81,7 +85,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
         }
     }
 
-    private suspend fun saveUser(userDocumentSnapshot: DocumentSnapshot) {
+    suspend fun saveUser(userDocumentSnapshot: DocumentSnapshot) {
         val roleDocumentSnapshot = getRoleDocument(userDocumentSnapshot["role"] as DocumentReference)
         sessionManager?.userRole = (roleDocumentSnapshot["role"] as String?)!!
         sessionManager?.userID = userDocumentSnapshot.id
@@ -115,16 +119,15 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
             .addOnFailureListener { cont.resumeWithException(it) }
     }
 
-    private suspend fun initFirstLogin(user: FirebaseUser?) : Void = suspendCoroutine { cont ->
+    suspend fun initFirstLogin(user: FirebaseUser?) : Unit = suspendCoroutine { cont ->
         if (user != null){
             val userDocumentReference = fireStoreDB?.db?.collection("user")?.document(user.uid)
             userDocumentReference?.update("first_login", Util.getCurrentDateString())
-                ?.addOnSuccessListener { cont.resume(it) }
+                ?.addOnSuccessListener { cont.resume(Unit) }
                 ?.addOnFailureListener { cont.resumeWithException(it) }
         } else {
             cont.resumeWithException(NullPointerException())
         }
-
     }
 
     private fun hasUserExpired(firstLogin: String?) : Boolean {
