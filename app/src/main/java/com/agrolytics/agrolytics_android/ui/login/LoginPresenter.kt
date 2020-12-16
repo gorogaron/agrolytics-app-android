@@ -28,7 +28,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
         var signInResult = ConfigInfo.LOGIN.UNDEFINED
         try {
             if (Util.isNetworkAvailable(context)) {
-                if (checkInputFields(email, password)) {0
+                if (checkInputFields(email, password)) {
                     signInResult = signInFirebaseUser(email!!, password!!)
                     if (signInResult == ConfigInfo.LOGIN.SUCCESS) {
                         val firstLogin = getFirstLogin()
@@ -36,12 +36,12 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
                             if (hasUserExpired(firstLogin)) {
                                 ConfigInfo.LOGIN.USER_EXPIRED
                             } else {
-                                saveUser(userDocument)
+                                saveUser()
                                 ConfigInfo.LOGIN.SUCCESS
                             }
                         } else {
                             initFirstLogin(auth?.currentUser)
-                            saveUser(userDocument)
+                            saveUser()
                             ConfigInfo.LOGIN.SUCCESS
                         }
                     } else {
@@ -85,17 +85,17 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
         }
     }
 
-    suspend fun saveUser(userDocumentSnapshot: DocumentSnapshot) {
-        val roleDocumentSnapshot = getRoleDocument(userDocumentSnapshot["role"] as DocumentReference)
+    suspend fun saveUser() {
+        val roleDocumentSnapshot = getRoleDocument(userDocument["role"] as DocumentReference)
         sessionManager?.userRole = (roleDocumentSnapshot["role"] as String?)!!
-        sessionManager?.userID = userDocumentSnapshot.id
-        sessionManager?.userEmail = (userDocumentSnapshot["email"] as String?)!!
-        sessionManager?.forestryID = (userDocumentSnapshot["forestry"] as String?)!!
-        sessionManager?.firstLogin = (userDocumentSnapshot["first_login"] as String?)!!
+        sessionManager?.userID = userDocument.id
+        sessionManager?.userEmail = (userDocument["email"] as String?)!!
+        sessionManager?.forestryID = (userDocument["forestry"] as String?)!!
+        sessionManager?.firstLogin = (userDocument["first_login"] as String?)!!
 
         //Admins don't have leaderID
-        if ((userDocumentSnapshot["leaderID"] as String?) != null){
-            sessionManager?.leaderID = userDocumentSnapshot["leaderID"] as String
+        if ((userDocument["leaderID"] as String?) != null){
+            sessionManager?.leaderID = userDocument["leaderID"] as String
         }
 
         //Update user token. TODO: Move token to shared preferences
@@ -130,7 +130,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
         }
     }
 
-    private fun hasUserExpired(firstLogin: String?) : Boolean {
+    fun hasUserExpired(firstLogin: String?) : Boolean {
         val firstLoginDate = DateTime.parse(firstLogin)
         val firstLoginDateThirtyAdded = firstLoginDate.plusDays(30)
         val currentDate = DateTime.now()
