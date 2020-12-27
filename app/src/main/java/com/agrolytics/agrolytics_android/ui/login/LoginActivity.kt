@@ -2,9 +2,11 @@ package com.agrolytics.agrolytics_android.ui.login
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
-import androidx.core.app.ActivityOptionsCompat
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.base.BaseActivity
 import com.agrolytics.agrolytics_android.database.firebase.FireStoreDB
@@ -15,7 +17,10 @@ import com.agrolytics.agrolytics_android.utils.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
 
 
@@ -38,21 +43,28 @@ class LoginActivity: BaseActivity(), LoginScreen {
         presenter.addView(this)
         presenter.addInjections(arrayListOf(sessionManager, fireStoreDB, auth!!, roomModule, appServer))
 
+        setLoginButtonBackground()
         btn_login.setOnClickListener {login()}
+        setEditTextListeners()
     }
 
     fun login() {
         GlobalScope.launch(Dispatchers.Main) {
-            showLoading()
             var loginResult: Int
-            withContext(Dispatchers.IO) { loginResult = presenter.login(et_email?.text?.toString(), et_password?.text?.toString()) }
-            hideLoading()
+            if (checkInputFields(et_email.text.toString(), et_password.text.toString())) {
+                showLoading()
+                withContext(Dispatchers.IO) { loginResult = presenter.login(et_email?.text?.toString(), et_password?.text?.toString()) }
+                hideLoading()
+            }
+            else {
+                loginResult = ConfigInfo.LOGIN.WRONG_INPUT
+            }
             when (loginResult) {
                 ConfigInfo.LOGIN.NO_INTERNET -> showToast("Nincs internetkapcsolat")
                 ConfigInfo.LOGIN.AUTH_FAILED -> showToast("Hibás email cím vagy jelszó")
                 ConfigInfo.LOGIN.USER_EXPIRED -> showToast("A felhasználóhoz tartozó licensz lejárt, kérjük vegye fel velünk a kapcsolatot")
-                ConfigInfo.LOGIN.UNDEFINED -> {
-                } //DO NOTHING
+                ConfigInfo.LOGIN.UNDEFINED ->  {/*DO NOTHING*/}
+                ConfigInfo.LOGIN.WRONG_INPUT -> showToast("Írja be a felhasználónevet és jelszót.")
                 ConfigInfo.LOGIN.ERROR -> showToast("Váratlan hiba történt a bejelentkezés során")
                 ConfigInfo.LOGIN.SUCCESS -> {
                     showToast("Sikeres bejelentkezés")
@@ -95,5 +107,64 @@ class LoginActivity: BaseActivity(), LoginScreen {
         }
         val dialog: AlertDialog = builder.create()
         dialog.show()
+    }
+
+    fun checkInputFields(email : String?, password : String?) : Boolean{
+        return email != null && password != null && email.isNotEmpty() && password.isNotEmpty()
+    }
+
+    fun setLoginButtonBackground(){
+        if (checkInputFields(et_email.text.toString(), et_password.text.toString())) {
+            btn_login.setBackgroundResource(R.drawable.login_btn_clickable)
+        }
+        else {
+            btn_login.setBackgroundResource(R.drawable.login_btn_unclickable)
+        }
+    }
+
+    fun setEditTextListeners(){
+        et_email.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {
+                setLoginButtonBackground()
+            }
+
+            override fun beforeTextChanged(
+                s: CharSequence,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {
+            }
+
+            override fun onTextChanged(
+                s: CharSequence,
+                start: Int,
+                before: Int,
+                count: Int
+            ) {
+            }
+        })
+
+        et_password.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable) {
+                setLoginButtonBackground()
+            }
+
+            override fun beforeTextChanged(
+                s: CharSequence,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {
+            }
+
+            override fun onTextChanged(
+                s: CharSequence,
+                start: Int,
+                before: Int,
+                count: Int
+            ) {
+            }
+        })
     }
 }

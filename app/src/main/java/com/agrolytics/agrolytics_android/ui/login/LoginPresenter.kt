@@ -28,7 +28,6 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
         var signInResult = ConfigInfo.LOGIN.UNDEFINED
         try {
             if (Util.isNetworkAvailable(context)) {
-                if (checkInputFields(email, password)) {
                     signInResult = signInFirebaseUser(email!!, password!!)
                     if (signInResult == ConfigInfo.LOGIN.SUCCESS) {
                         val firstLogin = getFirstLogin()
@@ -47,8 +46,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
                     } else {
                         signInResult = ConfigInfo.LOGIN.AUTH_FAILED
                     }
-                }
-            } else {
+                } else {
                 signInResult = ConfigInfo.LOGIN.NO_INTERNET
             }
         }
@@ -60,11 +58,6 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
             signInResult = ConfigInfo.LOGIN.ERROR
         }
         return signInResult
-    }
-
-
-    private fun checkInputFields(email : String?, password : String?) : Boolean{
-        return email != null && password != null && email.isNotEmpty() && password.isNotEmpty()
     }
 
     fun getFirstLogin() : String? {

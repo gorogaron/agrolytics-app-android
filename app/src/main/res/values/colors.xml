@@ -23,5 +23,8 @@
 
     <color name="transparent_background">#e13c4f5e</color>
 
-    <color name="transparent_white">#40FFFFFF</color>
+    <color name="transparentWhite">#40FFFFFF</color>
+
+    <color name="darkGrey">#333333</color>
+    <color name="lightGrey">#E0E0E0</color>
 </resources>
