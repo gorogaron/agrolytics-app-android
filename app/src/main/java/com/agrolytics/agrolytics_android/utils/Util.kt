@@ -2,14 +2,13 @@ package com.agrolytics.agrolytics_android.utils
 
 import android.app.Activity
 import android.content.Context
-import android.net.ConnectivityManager
-import android.os.Build
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.io.IOException
-import java.net.InetAddress
-import java.net.UnknownHostException
+import java.net.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.coroutines.resume
@@ -53,6 +52,22 @@ class Util {
             } catch (e: UnknownHostException) {
                 // TODO: handle error
                 cont.resume(false)
+            }
+        }
+
+        fun isInternetAvailable(): Boolean {
+            return try {
+                val sock = Socket()
+                val sockaddr: SocketAddress = InetSocketAddress("8.8.8.8", 53)
+                runBlocking {
+                    withContext(Dispatchers.IO) {
+                        sock.connect(sockaddr, 1000) // This will block no more than timeoutMs
+                    }
+                }
+                sock.close()
+                true
+            } catch (e: IOException) {
+                false
             }
         }
 

@@ -94,7 +94,6 @@ class LoginActivity: BaseActivity(), LoginScreen {
     }
 
     override fun onPause() {
-        finish()
         Log.d("LoginActivity","onPause")
         super.onPause()
     }

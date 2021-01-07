@@ -26,40 +26,6 @@ fun View.showMessageWithSnackBar(message: String, duration: Int) {
 	Snackbar.make(this, message, duration).show()
 }
 
-fun ImageView.loadImage(url: String?) {
-	url?.let {
-		if (it.isEmpty()) {
-			this.setImageResource((R.drawable.ic_menu_share))
-		} else {
-			this.post {
-				Glide.with(this).load(url).placeholder(R.drawable.ic_menu_share).transition(DrawableTransitionOptions.withCrossFade()).into(this)
-			}
-		}
-	} ?: run {
-		this.setImageResource((R.drawable.ic_menu_share))
-	}
-}
-
-fun EditText.debounce(delay: Int) {
-	this.addTextChangedListener(object : TextWatcher {
-		override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-		override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-		override fun afterTextChanged(s: Editable?) {}
-	})
-}
-
-fun View.fadeInPercent(duration: Long, alpha: Float): Completable {
-	val animationSubject = CompletableSubject.create()
-	return animationSubject.doOnSubscribe {
-		ViewCompat.animate(this)
-				.setDuration(duration)
-				.alpha(alpha)
-				.withEndAction {
-					animationSubject.onComplete()
-				}
-	}
-}
-
 fun View.fadeIn(duration: Long): Completable {
 	val animationSubject = CompletableSubject.create()
 	return animationSubject.doOnSubscribe {

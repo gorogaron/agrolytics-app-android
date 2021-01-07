@@ -10,237 +10,65 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/appBarLayout"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/greenDark"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@color/greenDark">
-
+            app:layout_constraintTop_toTopOf="parent"
+            android:paddingTop="15dp">
+            <ImageView
+                android:id="@+id/agrolytics_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/wifi_frame"
+                app:layout_constraintEnd_toStartOf="@id/wifi_frame"
+                android:src="@drawable/ic_agrolytics_text"/>
+            <FrameLayout
+                android:id="@+id/wifi_frame"
+                android:layout_width="50dp"
+                android:layout_height="75dp"
+                app:layout_constraintStart_toEndOf="@id/agrolytics_text"
+                app:layout_constraintEnd_toStartOf="@id/gps_frame"
+                app:layout_constraintTop_toTopOf="parent">
+                <ImageView
+                    android:id="@+id/wifi_icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="15dp"
+                    android:src="@drawable/ic_wifi_on"/>
                 <TextView
-                    android:id="@+id/tv_new_header_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:text="AGROLYTICS"
-                    android:textColor="@android:color/white"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:text="Wifi OK"
+                    android:textColor="@color/darkGrey" />
+            </FrameLayout>
 
+            <FrameLayout
+                android:id="@+id/gps_frame"
+                android:layout_width="50dp"
+                android:layout_height="75dp"
+                app:layout_constraintStart_toEndOf="@id/wifi_frame"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
                 <ImageView
-                    android:id="@+id/drawerHomeBtn"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginTop="6dp"
-                    android:layout_marginBottom="6dp"
-                    android:src="@drawable/ic_menu"
-                    android:tint="@android:color/white" />
-
-            </androidx.appcompat.widget.Toolbar>
-
-        </com.google.android.material.appbar.AppBarLayout>
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="12dp"
-            app:layout_constraintBottom_toTopOf="@+id/frameLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
-
-            <ViewFlipper
-                android:id="@+id/viewFlipper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <!--child = 0-->
-                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/gps_icon"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    tools:visibility="visible">
+                    android:layout_marginBottom="15dp"
+                    android:src="@drawable/ic_gps_on"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:text="GPS OK"
+                    android:textColor="@color/darkGrey" />
+            </FrameLayout>
 
-                    <ImageView
-                        android:id="@+id/btn_guide"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginRight="16dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_info" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    <ImageView
-                        android:id="@+id/iv_logo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="60dp"
-                        android:contentDescription="@string/woodworks_image_content_description"
-                        android:src="@drawable/agrolytics_logo"
-                        android:transitionName="logoImage"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:visibility="visible" />
-
-                    <TextView
-                        android:id="@+id/mainAddPhotoTextView"
-                        android:layout_width="290dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="@string/add_photo_message"
-                        android:textAlignment="center"
-                        android:textColor="@color/textColor"
-                        android:textSize="16sp"
-                        app:fontFamily="sans-serif-medium"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/iv_logo"
-                        tools:visibility="visible" />
-
-                    <ImageView
-                        android:id="@+id/btn_open_camera"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginTop="60dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginRight="8dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.24"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/mainAddPhotoTextView"
-                        app:srcCompat="@drawable/ic_simple_camera"
-                        tools:visibility="visible"
-                        android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                        />
-
-                    <ImageView
-                        android:id="@+id/btn_open_gallery"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginRight="8dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.74"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/btn_open_camera"
-                        app:srcCompat="@drawable/ic_new_folder"
-                        tools:visibility="visible"
-                        android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                        />
-
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    tools:visibility="visible">
-
-                    <ImageView
-                        android:id="@+id/errorStateImageView"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:layout_marginTop="36dp"
-                        android:src="@drawable/ic_error"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintDimensionRatio="H1,1"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.3"
-                        app:layout_constraintWidth_percent="0.5"
-                        tools:visibility="visible" />
-
-                    <TextView
-                        android:id="@+id/errorStateTextView"
-                        android:layout_width="290dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:text="@string/errorMessage"
-                        android:textAlignment="center"
-                        android:textColor="@color/textColor"
-                        android:textSize="16sp"
-                        app:fontFamily="sans-serif-medium"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/errorStateImageView"
-                        tools:visibility="visible" />
-
-                    <Button
-                        android:id="@+id/errorStateBackButton"
-                        style="@style/Widget.MaterialComponents.Button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/backButtonText"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/errorStateTextView"
-                        tools:visibility="visible" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                <!--layout for showing locally saved images  child=6-->
-                <androidx.coordinatorlayout.widget.CoordinatorLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <com.google.android.material.appbar.AppBarLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:theme="@style/AppTheme.AppBarOverlay">
-
-                        <com.google.android.material.tabs.TabLayout
-                            android:id="@+id/tabs"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@android:color/white"
-                            app:tabIndicatorColor="@android:color/black"
-                            app:tabTextColor="@color/greenDark" />
-                    </com.google.android.material.appbar.AppBarLayout>
-
-                    <androidx.viewpager.widget.ViewPager
-                        android:id="@+id/view_pager"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-                </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-            </ViewFlipper>
-        </ScrollView>
-
-        <!--<RelativeLayout-->
-            <!--android:id="@+id/frameLayout"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="60dp"-->
-            <!--android:background="@color/greenDark"-->
-            <!--app:layout_constraintBottom_toBottomOf="parent"-->
-            <!--app:layout_constraintEnd_toEndOf="parent"-->
-            <!--app:layout_constraintStart_toStartOf="parent" />-->
-
+        <!--
         <FrameLayout
             android:id="@+id/frameLayout"
             android:layout_width="0dp"
@@ -249,21 +77,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
-
-        <!--<FrameLayout-->
-        <!--android:id="@+id/frameLayout"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="?attr/actionBarSize"-->
-        <!--android:layout_marginStart="8dp"-->
-        <!--android:layout_marginLeft="8dp"-->
-        <!--android:layout_marginEnd="8dp"-->
-        <!--android:layout_marginRight="8dp"-->
-        <!--android:layout_marginBottom="2dp"-->
-        <!--android:visibility="visible"-->
-        <!--android:background="@drawable/light_green_rectangular_round"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent" />-->
 
         <TextView
             android:id="@+id/tv_show_old_length"
@@ -305,14 +118,7 @@
             app:layout_constraintEnd_toStartOf="@+id/btn_gps"
             app:layout_constraintTop_toTopOf="@+id/frameLayout"
             app:srcCompat="@drawable/ic_wifi_off" />
-
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/groupLengthInfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:constraint_referenced_ids="btn_internet,tv_show_old_length,btn_gps"
-            tools:visibility="visible" />
-
+-->
         <FrameLayout
             android:id="@+id/frame_layout"
             android:layout_width="wrap_content"
@@ -320,6 +126,194 @@
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+                <com.google.android.material.bottomappbar.BottomAppBar
+                    android:id="@+id/bottom_app_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:layout_gravity="bottom"
+                    app:backgroundTint="@color/yellow"
+                    app:contentInsetLeft="0dp"
+                    app:contentInsetStart="0dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="8dp">
+
+                        <FrameLayout
+                            android:id="@+id/menu_frame"
+                            android:layout_width="75dp"
+                            android:layout_height="match_parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/rod_frame"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:clickable="true"
+                            android:focusable="true">
+
+                            <ImageButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginBottom="3dp"
+                                android:background="@null"
+                                android:src="@drawable/ic_menu"
+                                android:clickable="false"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom|center_horizontal"
+                                android:text="MENÜ"
+                                android:textColor="@color/darkGrey"
+                                android:clickable="false"/>
+                        </FrameLayout>
+
+                        <FrameLayout
+                            android:id="@+id/rod_frame"
+                            android:layout_width="75dp"
+                            android:layout_height="match_parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/viewholder_frame"
+                            app:layout_constraintStart_toEndOf="@id/menu_frame"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:clickable="true"
+                            android:focusable="true">
+
+                            <ImageButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginBottom="3dp"
+                                android:background="@null"
+                                android:src="@drawable/ic_rod"
+                                android:clickable="false"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom|center_horizontal"
+                                android:text="RÚD"
+                                android:textColor="@color/darkGrey"
+                                android:clickable="false"/>
+                        </FrameLayout>
+
+                        <FrameLayout
+                            android:id="@+id/viewholder_frame"
+                            android:layout_width="75dp"
+                            android:layout_height="match_parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/images_frame"
+                            app:layout_constraintStart_toEndOf="@+id/rod_frame"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <FrameLayout
+                            android:id="@+id/images_frame"
+                            android:layout_width="75dp"
+                            android:layout_height="match_parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/map_frame"
+                            app:layout_constraintStart_toEndOf="@id/viewholder_frame"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:clickable="true"
+                            android:focusable="true">
+
+                            <ImageButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginBottom="3dp"
+                                android:background="@null"
+                                android:src="@drawable/ic_images"
+                                android:clickable="false"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom|center_horizontal"
+                                android:text="MÉRÉSEK"
+                                android:textColor="@color/darkGrey"
+                                android:clickable="false"/>
+                        </FrameLayout>
+
+                        <FrameLayout
+                            android:id="@+id/map_frame"
+                            android:layout_width="75dp"
+                            android:layout_height="match_parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/images_frame"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:clickable="true"
+                            android:focusable="true">
+
+                            <ImageButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginBottom="3dp"
+                                android:background="@null"
+                                android:src="@drawable/ic_location"
+                                android:clickable="false"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom|center_horizontal"
+                                android:text="TÉRKÉP"
+                                android:textColor="@color/darkGrey"
+                                android:clickable="false"/>
+                        </FrameLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.bottomappbar.BottomAppBar>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/mainFab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_add"
+                app:layout_anchor="@id/bottom_app_bar"
+                app:backgroundTint="@color/darkGrey"
+                app:tint="@color/white"/>
+
+            <View
+                android:id="@+id/gapView"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                app:layout_anchor="@id/mainFab"
+                app:layout_anchorGravity="center_horizontal"
+                />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/cameraFab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_simple_camera"
+                app:layout_anchor="@id/gapView"
+                app:layout_anchorGravity="top|end"
+                app:backgroundTint="@color/darkGrey"
+                android:visibility="gone"
+                app:tint="@color/white"/>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/browseFab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_new_folder"
+                app:layout_anchor="@id/gapView"
+                app:layout_anchorGravity="top|start"
+                app:backgroundTint="@color/darkGrey"
+                android:visibility="gone"
+                app:tint="@color/white"/>
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView

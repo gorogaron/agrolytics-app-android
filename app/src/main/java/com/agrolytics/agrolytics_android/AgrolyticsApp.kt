@@ -21,10 +21,7 @@ class AgrolyticsApp: Application() {
 			modules(appModule)
 		}
 		JodaTimeAndroid.init(this)
-		Mapbox.getInstance(
-				this,
-				ConfigInfo.MAP_BOX_KEY
-		)
+		Mapbox.getInstance(this, ConfigInfo.MAP_BOX_KEY)
 
 		if (BuildConfig.DEBUG){
 			writeLogsToTxt()
@@ -52,8 +49,8 @@ class AgrolyticsApp: Application() {
 
 			// clear the previous logcat and then write the new one to the file
 			try {
-				var process = Runtime.getRuntime().exec("logcat -c")
-				process = Runtime.getRuntime().exec("logcat -f $logFile")
+				Runtime.getRuntime().exec("logcat -c")
+				Runtime.getRuntime().exec("logcat -f $logFile")
 			} catch (e: IOException) {
 				e.printStackTrace()
 			}

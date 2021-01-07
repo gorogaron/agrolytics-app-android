@@ -1,66 +1,60 @@
 package com.agrolytics.agrolytics_android.ui.main
 
 import android.Manifest
+import android.animation.ArgbEvaluator
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
+import android.content.IntentFilter
+import android.content.res.ColorStateList
+import android.location.Location
+import android.location.LocationManager
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.provider.MediaStore
+import android.util.Log
+import android.view.MotionEvent
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.base.BaseActivity
 import com.agrolytics.agrolytics_android.database.tables.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
-import com.agrolytics.agrolytics_android.ui.imageFinished.UploadFinishedActivity
+import com.agrolytics.agrolytics_android.ui.cropper.CropperActivity
+import com.agrolytics.agrolytics_android.ui.guide.GuideActivity
 import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
+import com.agrolytics.agrolytics_android.ui.login.LoginActivity
 import com.agrolytics.agrolytics_android.ui.map.MapActivity
 import com.agrolytics.agrolytics_android.ui.setLength.LengthActivity
+import com.agrolytics.agrolytics_android.utils.*
 import com.agrolytics.agrolytics_android.utils.ConfigInfo.CAMERA_CAPTURE
-import com.agrolytics.agrolytics_android.utils.extensions.*
+import com.agrolytics.agrolytics_android.utils.ConfigInfo.PICK_IMAGE
+import com.agrolytics.agrolytics_android.utils.extensions.cameraPermGiven
+import com.agrolytics.agrolytics_android.utils.extensions.locationPermGiven
+import com.agrolytics.agrolytics_android.utils.extensions.storagePermGiven
+import com.google.firebase.auth.FirebaseAuth
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.theartofdev.edmodo.cropper.CropImage
-import com.theartofdev.edmodo.cropper.CropImageView
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.nav_bar.*
-import org.koin.android.ext.android.inject
-import android.location.LocationManager
-import android.content.Context
-import android.content.IntentFilter
-import android.graphics.BitmapFactory
-import android.location.Location
-import android.net.ConnectivityManager
-import android.util.Log
-import com.agrolytics.agrolytics_android.ui.cropper.CropperActivity
-import com.agrolytics.agrolytics_android.ui.guide.GuideActivity
-import com.agrolytics.agrolytics_android.ui.login.LoginActivity
-import com.agrolytics.agrolytics_android.utils.*
-import com.agrolytics.agrolytics_android.ui.rodSelector.RodSelectorActivity
-import com.agrolytics.agrolytics_android.utils.ConfigInfo.CROPPER
-import com.agrolytics.agrolytics_android.utils.ConfigInfo.PICK_IMAGE
-import com.agrolytics.agrolytics_android.utils.networkListener.EventBus
-import com.agrolytics.agrolytics_android.utils.networkListener.NetworkChangeReceiver
-import com.agrolytics.agrolytics_android.utils.networkListener.NetworkStatus
-import com.google.firebase.auth.FirebaseAuth
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.nav_bar.*
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.uiThread
-import java.io.InputStream
-import java.lang.Exception
-import java.lang.IllegalArgumentException
+import org.koin.android.ext.android.inject
 
 
 class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActivity.OnDialogActions {
@@ -74,10 +68,29 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
 
     private var locationManager: LocationManager? = null
     private var locationListener: AgroLocationListener? = null
-    private var eventBusDisposable: Disposable? = null
-    private val networkChangeReceiver: NetworkChangeReceiver = NetworkChangeReceiver()
 
     private var imageUri: Uri? = null
+
+    /** FAB and animations*/
+    private var fabClicked = false
+    private val rotateOpen : Animation by lazy{ AnimationUtils.loadAnimation(this, R.anim.rotate_open) }
+    private val rotateClose : Animation by lazy{ AnimationUtils.loadAnimation(this, R.anim.rotate_close) }
+    private val fabSlideUpRight : Animation by lazy{ AnimationUtils.loadAnimation(this, R.anim.fab_slide_up_right)}
+    private val fabSlideDownLeft : Animation by lazy{ AnimationUtils.loadAnimation(this, R.anim.fab_slide_down_left)}
+    private val fabSlideUpLeft : Animation by lazy{ AnimationUtils.loadAnimation(this, R.anim.fab_slide_up_left)}
+    private val fabSlideDownRight : Animation by lazy{ AnimationUtils.loadAnimation(this, R.anim.fab_slide_down_right)}
+    private val grayToRedAnim = ValueAnimator()
+    private val redToGrayAnim = ValueAnimator()
+
+    /**Internet Handler*/
+    /**
+     * TODO:
+     * -Add a broadcast receiver to check for connectivity changes. This will only be needed to update the icons
+     * -Decrease periodicity of internetCheckHandler
+     * -Use a combined version of internetCheckHandler and broadcast receiver
+    */
+    private val internetCheckHandler = Handler()
+    private val internetCheckRunnable = Runnable{handleWifiGpsIcons()}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,12 +101,16 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         presenter.setActivity(this)
 
         Detector.init(assets)
+        initFabColorAnimators()
 
-        btn_open_camera.setOnClickListener(this)
-        btn_open_gallery.setOnClickListener(this)
-        btn_guide.setOnClickListener(this)
-        drawerHomeBtn.setOnClickListener(this)
-        tv_show_old_length.setOnClickListener(this)
+        menu_frame.setOnClickListener(this)
+        rod_frame.setOnClickListener(this)
+        images_frame.setOnClickListener(this)
+        map_frame.setOnClickListener(this)
+
+        cameraFab.setOnClickListener(this)
+        browseFab.setOnClickListener(this)
+
         container_images.setOnClickListener(this)
         container_info.setOnClickListener(this)
         container_main_menu.setOnClickListener(this)
@@ -102,142 +119,99 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         container_sign_out.setOnClickListener(this)
 
         checkInternetAndGpsConnection()
-
-        registerNetworkStateReceiver()
-        listenNetworkStatus()
+        
+        internetCheckHandler.postDelayed(internetCheckRunnable, 0)
 
         container_main_menu.setBackgroundColor(ContextCompat.getColor(this, R.color.lightGreen))
         tv_email.text = sessionManager.userEmail
+        mainFab.setOnClickListener { fabHandler() }
 
         checkPermissions(false, true)
 
     }
 
-    override fun onResume() {
-        super.onResume()
-        val length = sessionManager.length
-        if (length != 0f) {
-            tv_show_old_length.text = """${getString(R.string.len)}$length""" + " m"
-        } else {
-            tv_show_old_length.text = getString(R.string.length) + " m"
+    private fun initFabColorAnimators(){
+        val from = ContextCompat.getColor(this, R.color.red)
+        val to = ContextCompat.getColor(this, R.color.darkGrey)
+
+        redToGrayAnim.setIntValues(from, to)
+        redToGrayAnim.setEvaluator(ArgbEvaluator())
+        redToGrayAnim.addUpdateListener { valueAnimator -> mainFab.backgroundTintList = ColorStateList.valueOf(valueAnimator.animatedValue as Int) }
+        redToGrayAnim.duration = 300
+
+        grayToRedAnim.setIntValues(to, from)
+        grayToRedAnim.setEvaluator(ArgbEvaluator())
+        grayToRedAnim.addUpdateListener { valueAnimator -> mainFab.backgroundTintList = ColorStateList.valueOf(valueAnimator.animatedValue as Int) }
+        grayToRedAnim.duration = 300
+    }
+
+    private fun fabHandler() {
+        if (fabClicked) {
+            closeFab()
         }
-        updateLocation()
+        else {
+            openFab()
+        }
+        fabClicked = !fabClicked
+    }
+
+    private fun openFab(){
+        mainFab.startAnimation(rotateOpen)
+        cameraFab.startAnimation(fabSlideUpRight)
+        browseFab.startAnimation(fabSlideUpLeft)
+
+        cameraFab.visibility = View.VISIBLE
+        browseFab.visibility = View.VISIBLE
+
+        cameraFab.isClickable = true
+        browseFab.isClickable = true
+
+        grayToRedAnim.start()
+    }
+
+    private fun closeFab(){
+        mainFab.startAnimation(rotateClose)
+        cameraFab.startAnimation(fabSlideDownLeft)
+        browseFab.startAnimation(fabSlideDownRight)
+
+        cameraFab.visibility = View.GONE
+        browseFab.visibility = View.GONE
+
+        cameraFab.isClickable = false
+        browseFab.isClickable = false
+
+        redToGrayAnim.start()
+    }
+
+    private fun handleWifiGpsIcons() {
+        val connected = Util.isInternetAvailable()
+
+        if(connected){
+            wifi_icon.setImageResource(R.drawable.ic_wifi_on)
+        }
+        else {
+            wifi_icon.setImageResource(R.drawable.ic_wifi_off)
+        }
+
+        internetCheckHandler.postDelayed(internetCheckRunnable, 2000)
     }
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.btn_open_camera -> openCamera()
-            R.id.btn_open_gallery -> openGallery()
-            R.id.drawerHomeBtn -> drawer_layout.openDrawer(GravityCompat.START)
-            R.id.btn_guide -> openActivity(MenuItem.GUIDE)
+            R.id.cameraFab -> openCamera()
+            R.id.browseFab -> openGallery()
+
+            R.id.rod_frame -> openActivity(MenuItem.LENGTH)
+            R.id.images_frame -> openActivity(MenuItem.IMAGES)
+            R.id.menu_frame -> drawer_layout.openDrawer(GravityCompat.START)
+            R.id.gps_frame -> openActivity(MenuItem.MAP)
+
             R.id.container_images -> openActivity(MenuItem.IMAGES)
             R.id.container_info -> openActivity(MenuItem.INFO)
             R.id.container_main_menu -> openActivity(MenuItem.MAIN)
             R.id.container_map -> openActivity(MenuItem.MAP)
             R.id.container_set_length -> openActivity(MenuItem.LENGTH)
-            R.id.tv_show_old_length -> openActivity(MenuItem.LENGTH)
             R.id.container_sign_out -> signOut()
-        }
-    }
-
-    private fun registerNetworkStateReceiver() {
-        val intentFiler = IntentFilter()
-        intentFiler.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
-        registerReceiver(networkChangeReceiver, intentFiler)
-    }
-
-    private fun listenNetworkStatus() {
-        eventBusDisposable = EventBus.instance.networkStatus
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ networkStatus ->
-                when (networkStatus.state) {
-                    NetworkStatus.State.ONLINE -> {
-                        btn_internet.setImageResource(R.drawable.ic_wifi_on)
-                    }
-                    NetworkStatus.State.OFFLINE -> {
-                        btn_internet.setImageResource(R.drawable.ic_wifi_off)
-                    }
-                }
-            }, {
-                it.printStackTrace()
-            })
-    }
-
-    private fun signOut() {
-        FirebaseAuth.getInstance().signOut()
-        sessionManager.clearSession()
-        doAsync {
-            roomModule.database?.clearAllTables()
-            uiThread {
-                startActivity(LoginActivity::class.java, Bundle(), false)
-                //finish()
-            }
-        }
-    }
-
-    private fun checkInternetAndGpsConnection() {
-        if (Util.isNetworkAvailable(this)) {
-            btn_internet.setImageResource(R.drawable.ic_wifi_on)
-
-            //This is needed to retreive user token when during app startup
-            //auto-login was successful, but there was not internet connection.
-            if (appServer.getUserToken() == null){
-                var auth = FirebaseAuth.getInstance()
-                var currentUser = auth.currentUser
-                currentUser?.getIdToken(false)?.addOnSuccessListener { userToken ->
-                    appServer.updateApiService(userToken.token)
-                }?.addOnFailureListener { e ->
-                    //TODO
-                }
-            }
-
-        } else {
-            btn_internet.setImageResource(R.drawable.ic_wifi_off)
-        }
-
-        if (locationPermGiven() && Util.lat != null && Util.long != null) {
-            btn_gps.setImageResource(R.drawable.ic_gps_on)
-        } else {
-            btn_gps.setImageResource(R.drawable.ic_gps_off)
-        }
-    }
-
-    override fun negativeButtonClicked() {
-        //Do nothing
-    }
-
-    override fun positiveButtonClicked() {
-        //Do nothing
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun updateLocation() {
-        if (locationPermGiven()) {
-            locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            locationListener = AgroLocationListener(applicationContext, this)
-            val providers = locationManager?.getProviders(true)
-            var bestLocation: Location? = null
-            if (providers != null) {
-                for (provider in providers) {
-                    val loc: Location? = locationManager?.getLastKnownLocation(provider) ?: continue
-                    if (bestLocation == null || loc!!.accuracy < bestLocation.accuracy) {
-                        bestLocation = loc
-                    }
-                }
-            }
-            val lastKnown = locationManager?.getLastKnownLocation((LocationManager.GPS_PROVIDER))
-            if (lastKnown != null) {
-                Util.lat = lastKnown.latitude
-                Util.long = lastKnown.longitude
-            } else {
-                if (bestLocation != null) {
-                    Util.lat = bestLocation.latitude
-                    Util.long = bestLocation.longitude
-                }
-            }
-            locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0f, locationListener)
-            checkInternetAndGpsConnection()
         }
     }
 
@@ -294,9 +268,9 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
     }
 
     private fun pickImage() {
-      intent = Intent(Intent.ACTION_GET_CONTENT)
-      intent.setType("image/*")
-      startActivityForResult(intent, PICK_IMAGE)
+        intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.setType("image/*")
+        startActivityForResult(intent, PICK_IMAGE)
     }
 
     private fun startCamera() {
@@ -309,16 +283,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
         startActivityForResult(intent, CAMERA_CAPTURE)
-    }
-
-    override fun locationUpdated() {
-        checkInternetAndGpsConnection()
-        locationManager?.removeUpdates(locationListener)
-    }
-
-    override fun onBackPressed() {
-        finish()
-        System.exit(0)
     }
 
     private fun checkPermissions(isCamera: Boolean, isDefault: Boolean) {
@@ -350,27 +314,101 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
             }).check()
     }
 
-    fun startCropper(imgUri: Uri){
+    private fun signOut() {
+        FirebaseAuth.getInstance().signOut()
+        sessionManager.clearSession()
+        doAsync {
+            roomModule.database?.clearAllTables()
+            uiThread {
+                startActivity(LoginActivity::class.java, Bundle(), false)
+                //finish()
+            }
+        }
+    }
+
+    private fun checkInternetAndGpsConnection() {
+        if (Util.isNetworkAvailable(this)) {
+            wifi_icon.setImageResource(R.drawable.ic_wifi_on)
+
+            //This is needed to retrieve user token when during app startup
+            //auto-login was successful, but there was not internet connection.
+            if (appServer.getUserToken() == null){
+                var auth = FirebaseAuth.getInstance()
+                var currentUser = auth.currentUser
+                currentUser?.getIdToken(false)?.addOnSuccessListener { userToken ->
+                    appServer.updateApiService(userToken.token)
+                }?.addOnFailureListener { e ->
+                    //TODO
+                }
+            }
+
+        } else {
+            wifi_icon.setImageResource(R.drawable.ic_wifi_off)
+        }
+
+        if (locationPermGiven() && Util.lat != null && Util.long != null) {
+            gps_icon.setImageResource(R.drawable.ic_gps_on)
+        } else {
+            gps_icon.setImageResource(R.drawable.ic_gps_off)
+        }
+    }
+
+    override fun negativeButtonClicked() {
+        //Do nothing
+    }
+
+    override fun positiveButtonClicked() {
+        //Do nothing
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun updateLocation() {
+        if (locationPermGiven()) {
+            locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            locationListener = AgroLocationListener(applicationContext, this)
+            val providers = locationManager?.getProviders(true)
+            var bestLocation: Location? = null
+            if (providers != null) {
+                for (provider in providers) {
+                    val loc: Location? = locationManager?.getLastKnownLocation(provider) ?: continue
+                    if (bestLocation == null || loc!!.accuracy < bestLocation.accuracy) {
+                        bestLocation = loc
+                    }
+                }
+            }
+            val lastKnown = locationManager?.getLastKnownLocation((LocationManager.GPS_PROVIDER))
+            if (lastKnown != null) {
+                Util.lat = lastKnown.latitude
+                Util.long = lastKnown.longitude
+            } else {
+                if (bestLocation != null) {
+                    Util.lat = bestLocation.latitude
+                    Util.long = bestLocation.longitude
+                }
+            }
+            locationManager?.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0f, locationListener)
+            checkInternetAndGpsConnection()
+        }
+    }
+
+    override fun locationUpdated() {
+        checkInternetAndGpsConnection()
+        locationManager?.removeUpdates(locationListener)
+    }
+
+    override fun onBackPressed() {
+        finish()
+        System.exit(0)
+    }
+
+    private fun startCropper(imgUri: Uri){
         val intent = Intent(this, CropperActivity::class.java)
         intent.putExtra("IMAGE", imgUri)
         startActivity(intent)
     }
 
-    override fun onStop() {
-        super.onStop()
-        try {
-            unregisterReceiver(networkChangeReceiver)
-        } catch (e: IllegalArgumentException) {
-            e.printStackTrace()
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        eventBusDisposable?.dispose()
-    }
-
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             CAMERA_CAPTURE -> {
                 try {
@@ -396,5 +434,8 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
             }
         }
     }
-
+    override fun onResume() {
+        super.onResume()
+        updateLocation()
+    }
 }
