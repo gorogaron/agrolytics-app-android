@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.utils.fragments.CustomFragmentManager
+import kotlinx.android.synthetic.main.nav_bar.*
 
 abstract class BaseActivity : AppCompatActivity(), BaseScreen {
 

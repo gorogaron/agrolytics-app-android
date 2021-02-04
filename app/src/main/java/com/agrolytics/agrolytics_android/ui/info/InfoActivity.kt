@@ -27,24 +27,20 @@ class InfoActivity: BaseActivity(), View.OnClickListener {
 
 		btn_back.setOnClickListener { onBackPressed() }
 
-		container_images.setOnClickListener(this)
-		container_info.setOnClickListener(this)
-		container_main_menu.setOnClickListener(this)
-		container_map.setOnClickListener(this)
-		container_set_length.setOnClickListener(this)
-		container_sign_out.setOnClickListener(this)
+		container_profile.setOnClickListener(this)
+		container_guide.setOnClickListener(this)
+		container_impressum.setOnClickListener(this)
+		container_logout.setOnClickListener(this)
 
-		container_info.setBackgroundColor(ContextCompat.getColor(this, R.color.lightGreen))
-		tv_email.text = sessionManager.userEmail
+		container_impressum.setBackgroundColor(ContextCompat.getColor(this, R.color.lightGreen))
 	}
 
 	override fun onClick(v: View?) {
 		when (v?.id) {
-			R.id.container_images -> openActivity(MenuItem.IMAGES)
-			R.id.container_info -> openActivity(MenuItem.INFO)
-			R.id.container_main_menu -> openActivity(MenuItem.MAIN)
-			R.id.container_map -> openActivity(MenuItem.MAP)
-			R.id.container_set_length -> openActivity(MenuItem.LENGTH)
+			R.id.container_profile -> {/*TODO*/}
+			R.id.container_impressum -> openActivity(MenuItem.INFO)
+			R.id.container_guide -> openActivity(MenuItem.GUIDE)
+			R.id.container_logout -> {/*TODO*/}
 		}
 	}
 

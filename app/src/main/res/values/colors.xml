@@ -26,9 +26,11 @@
     <color name="transparentWhite">#40FFFFFF</color>
 
     <color name="darkGrey">#333333</color>
-    <color name="lightGrey">#E0E0E0</color>
+    <color name="mediumGrey">#E0E0E0</color>
+    <color name="lightGrey">#F8F8F8</color>
 
     <color name="yellow">#F2C94C</color>
+
     <color name="white">#FFFFFF</color>
     <color name="red">#D73434</color>
 </resources>

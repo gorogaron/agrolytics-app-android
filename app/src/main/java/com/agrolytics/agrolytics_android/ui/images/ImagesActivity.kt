@@ -2,11 +2,9 @@ package com.agrolytics.agrolytics_android.ui.images
 
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.icu.util.Measure
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.base.BaseActivity
@@ -14,7 +12,6 @@ import com.agrolytics.agrolytics_android.database.firebase.FireStoreDB
 import com.agrolytics.agrolytics_android.database.tables.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.networking.model.ImageItem
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.imageFinished.UploadFinishedActivity
 import com.agrolytics.agrolytics_android.ui.images.adapter.ImagesAdapter
@@ -58,7 +55,7 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_images)
 
-		adapter = ImagesAdapter(this, sessionManager.length)
+		adapter = ImagesAdapter(this, sessionManager.woodLength)
 		list_images.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
 		list_images.adapter = adapter
 
@@ -72,12 +69,10 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 		btn_delete.setOnClickListener(this)
 		btn_settings.setOnClickListener(this)
 		btn_select_all.setOnClickListener(this)
-		container_images.setOnClickListener(this)
-		container_info.setOnClickListener(this)
-		container_main_menu.setOnClickListener(this)
-		container_map.setOnClickListener(this)
-		container_set_length.setOnClickListener(this)
-		container_sign_out.setOnClickListener(this)
+		container_profile.setOnClickListener(this)
+		container_guide.setOnClickListener(this)
+		container_impressum.setOnClickListener(this)
+		container_logout.setOnClickListener(this)
 
 		setUpView()
 	}
@@ -114,18 +109,14 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 			}
 			R.id.btn_select_all -> adapter?.selectAll()
 			R.id.btn_cancel -> closeBottomToolbar()
-			R.id.container_images -> openActivity(MenuItem.IMAGES)
-			R.id.container_info -> openActivity(MenuItem.INFO)
-			R.id.container_main_menu -> openActivity(MenuItem.MAIN)
-			R.id.container_map -> openActivity(MenuItem.MAP)
-			R.id.container_set_length -> openActivity(MenuItem.LENGTH)
+			R.id.container_profile -> {/*TODO*/}
+			R.id.container_impressum -> openActivity(MenuItem.INFO)
+			R.id.container_guide -> openActivity(MenuItem.GUIDE)
+			R.id.container_logout -> {/*TODO*/}
 		}
 	}
 
 	private fun setUpView() {
-
-		container_images.setBackgroundColor(ContextCompat.getColor(this, R.color.lightGreen))
-		tv_email.text = sessionManager.userEmail
 
 		tab_layout.addTab(tab_layout.newTab().setText(getString(R.string.processed)))
 		tab_layout.addTab(tab_layout.newTab().setText(getString(R.string.not_processed)))

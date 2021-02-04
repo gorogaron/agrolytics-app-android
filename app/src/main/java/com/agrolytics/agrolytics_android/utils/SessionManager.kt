@@ -5,7 +5,8 @@ import android.content.SharedPreferences
 
 class SessionManager(var context: Context) {
 
-	private val KEY_LENGHT = "KeyLenght"
+	private val KEY_WOOD_LENGHT = "KeyWoodLenght"
+	private val KEY_ROD_LENGHT = "KeyRodLenght"
 	private val KEY_WOOD_TYPE = "KeyWoodType"
 	private val KEY_ROLE = "KeyRole"
 	private val KEY_USER_REF = "KeyUserRef"
@@ -19,9 +20,13 @@ class SessionManager(var context: Context) {
 	private val sharedPreferences: SharedPreferences =
 			context.getSharedPreferences(SESSION_PREF_NAME, Context.MODE_PRIVATE)
 
-	var length: Float
-		get() = sharedPreferences.getFloat(KEY_LENGHT, 1.0f)
-		set(length) = sharedPreferences.edit().putFloat(KEY_LENGHT, length).apply()
+	var woodLength: Float
+		get() = sharedPreferences.getFloat(KEY_WOOD_LENGHT, 1.0f)
+		set(length) = sharedPreferences.edit().putFloat(KEY_WOOD_LENGHT, length).apply()
+
+	var rodLength: Float
+		get() = sharedPreferences.getFloat(KEY_ROD_LENGHT, 1.0f)
+		set(length) = sharedPreferences.edit().putFloat(KEY_ROD_LENGHT, length).apply()
 
 	var woodType: String
 		get() = sharedPreferences.getString(KEY_WOOD_TYPE, "")
@@ -63,7 +68,7 @@ class SessionManager(var context: Context) {
 		sharedPreferences.edit()
 				.remove(KEY_ROLE)
 				.remove(KEY_USER_REF)
-				.remove(KEY_LENGHT)
+				.remove(KEY_WOOD_LENGHT)
 				.remove(KEY_USER_ID)
 				.remove(KEY_LEADER_ID)
 				.remove(KEY_USER_EMAIL)

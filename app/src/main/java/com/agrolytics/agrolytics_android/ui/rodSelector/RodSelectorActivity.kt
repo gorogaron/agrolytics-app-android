@@ -4,10 +4,10 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.se.omapi.Session
 import android.view.LayoutInflater
-import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
@@ -129,7 +129,7 @@ class RodSelectorActivity : BaseActivity(), RodSelectorScreen, BaseActivity.OnDi
 		val et_length_wood = view.findViewById<EditText>(R.id.et_wood_length)
 
 		et_length_rod.setText(rodLength.toString())
-		et_length_wood.setText(sessionManager.length.toString())
+		et_length_wood.setText(sessionManager.woodLength.toString())
 
 		val spinner = view.findViewById<Spinner>(R.id.wood_type_spinner)
 		val spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.wood_types, android.R.layout.simple_spinner_item)
@@ -141,12 +141,18 @@ class RodSelectorActivity : BaseActivity(), RodSelectorScreen, BaseActivity.OnDi
 			if (et_length_rod.text.isNotEmpty()) {
 				rodLength = et_length_rod.text.toString().toDouble()
 				sessionManager.woodType = spinner.selectedItem.toString()
-				sessionManager.length = et_length_wood.text.toString().toFloat()
+				sessionManager.woodLength = et_length_wood.text.toString().toFloat()
 			}
 			Util.hideKeyboard(this, et_length_rod)
 		}
-				.setCancelable(false)
-				.show()
+
+		builder.setCancelable(false)
+		val dialog = builder.create()
+		dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+		dialog.show()
+
+
+
 	}
 
 	companion object {

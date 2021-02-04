@@ -3,13 +3,10 @@ package com.agrolytics.agrolytics_android.ui.rodSelector
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Base64
-import android.util.Base64OutputStream
 import android.util.Log
 import com.agrolytics.agrolytics_android.base.BasePresenter
 import com.agrolytics.agrolytics_android.networking.model.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.utils.BitmapUtils
 import com.agrolytics.agrolytics_android.utils.Detector
@@ -18,12 +15,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileInputStream
 import java.net.SocketTimeoutException
-import java.util.concurrent.TimeoutException
-import kotlin.math.pow
 
 class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScreen>() {
 
@@ -52,7 +44,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
                                 Util.lat = 0.0
                                 Util.long = 0.0
                             }
-                            val measurementResult = MeasurementResult(it.mask!!, bitmap!!, rodLength, rodLengthPixels, sessionManager!!.length, Util.getCurrentDateString(), sessionManager!!.woodType, Util.lat!!, Util.long!!)
+                            val measurementResult = MeasurementResult(it.mask!!, bitmap!!, rodLength, rodLengthPixels, sessionManager!!.woodLength, Util.getCurrentDateString(), sessionManager!!.woodType, Util.lat!!, Util.long!!)
                             screen?.successfulUpload(measurementResult, path, "online")
                         }
                     } else {
@@ -87,7 +79,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
             isPushedToServer = false,
             latitude = Util.lat ?: 0.0,
             longitude = Util.long ?: 0.0,
-            length = sessionManager?.length?.toDouble() ?: 0.0,
+            length = sessionManager?.woodLength?.toDouble() ?: 0.0,
             volume = 0.0,
             time = Util.getCurrentDateString(),
             selectionMode = "rod",
@@ -130,7 +122,8 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
                 //TODO: Remove mask visualization and volume counting from Detector, it's done in MeasurementResult class
                 //TODO: Add proper wood type
                 //TODO: When GPS and innternet is turned off, Util.lat and Util.lon are null
-                var measurementResult = MeasurementResult(BitmapUtils.bitmapToBase64(Detector.Result.mask!!)!!,bitmap, rodLength, rodLengthPixels, sessionManager!!.length, Util.getCurrentDateString(), "NoType", Util.lat!!, Util.long!!)
+                //TODO: Refactor MeasurementResult class
+                var measurementResult = MeasurementResult(BitmapUtils.bitmapToBase64(Detector.Result.mask!!)!!,bitmap, rodLength, rodLengthPixels, sessionManager!!.woodLength, Util.getCurrentDateString(), "NoType", Util.lat!!, Util.long!!)
                 screen?.successfulUpload(measurementResult, path, "offline")
                 screen?.hideLoading()
             }

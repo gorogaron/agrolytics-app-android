@@ -8,6 +8,7 @@ import com.agrolytics.agrolytics_android.utils.BitmapUtils
 import com.agrolytics.agrolytics_android.utils.Detector
 import kotlin.math.pow
 
+//TODO: Refactor this class
 class MeasurementResult(mask_b64 : String?,
                         input_bmp : Bitmap?,
                         rod_length : Double,

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@color/lightGrey">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -11,161 +11,133 @@
         android:layout_marginTop="12dp">
 
         <RelativeLayout
-            android:id="@+id/container_header"
+            android:id="@+id/container_menu_text"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
-            android:background="@drawable/green_rectangular_round">
-
+            android:layout_height="40dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="12dp">
             <TextView
-                android:id="@+id/tv_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:textColor="@android:color/white"
-                android:textSize="15sp"
-                tools:text="admin@admin.com"/>
+                android:layout_centerVertical="true"
+                android:drawablePadding="14dp"
+                android:text="Menü"
+                android:textColor="@android:color/black"
+                android:textSize="30sp"
+                android:fontFamily="@font/roboto_bold"/>
+        </RelativeLayout>
 
+        <RelativeLayout
+            android:id="@+id/container_profile"
+            android:layout_below="@id/container_menu_text"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:drawablePadding="14dp"
+                android:text="Profil"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                android:fontFamily="@font/roboto_bold"/>
             <ImageView
-                android:id="@+id/logo"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:src="@drawable/new_logo"
-                android:tint="@android:color/white" />
-
+                android:layout_height="20dp"
+                android:layout_width="20dp"
+                android:src="@drawable/ic_menu_arrow"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="50dp"
+                android:layout_centerVertical="true"/>
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/container_main_menu"
+            android:id="@+id/container_guide"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_below="@+id/container_header"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="12dp">
+            android:layout_below="@+id/container_profile"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="24dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:drawableStart="@drawable/ic_main_menu"
                 android:drawablePadding="14dp"
-                android:text="Fő menü"
+                android:text="Útmutató"
                 android:textColor="@android:color/black"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                android:fontFamily="@font/roboto_bold"/>
+            <ImageView
+                android:layout_height="20dp"
+                android:layout_width="20dp"
+                android:src="@drawable/ic_menu_arrow"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="50dp"
+                android:layout_centerVertical="true"/>
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/container_images"
+            android:id="@+id/container_impressum"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_below="@+id/container_main_menu"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="12dp">
+            android:layout_below="@+id/container_guide"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="24dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:drawableStart="@drawable/ic_nav_image"
                 android:drawablePadding="14dp"
-                android:text="Képek"
+                android:text="Impresszum"
                 android:textColor="@android:color/black"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                android:fontFamily="@font/roboto_bold"/>
+            <ImageView
+                android:layout_height="20dp"
+                android:layout_width="20dp"
+                android:src="@drawable/ic_menu_arrow"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="50dp"
+                android:layout_centerVertical="true"/>
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/container_map"
+            android:id="@+id/container_logout"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_below="@+id/container_images"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="12dp">
+            android:layout_below="@+id/container_impressum"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="24dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:drawableStart="@drawable/ic_map"
-                android:drawablePadding="14dp"
-                android:text="Térkép"
-                android:textColor="@android:color/black"
-                android:textSize="20sp" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/container_set_length"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_below="@+id/container_map"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="12dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:drawableStart="@drawable/ic_settings"
-                android:drawablePadding="14dp"
-                android:text="Hossz beállítás"
-                android:textColor="@android:color/black"
-                android:textSize="20sp" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/container_info"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_below="@+id/container_set_length"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="12dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:drawableStart="@drawable/ic_info"
-                android:drawablePadding="14dp"
-                android:text="Információ"
-                android:textColor="@android:color/black"
-                android:textSize="20sp" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/container_sign_out"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_below="@+id/container_info"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="12dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:drawableStart="@drawable/ic_sign_out"
                 android:drawablePadding="14dp"
                 android:text="Kijelentkezés"
                 android:textColor="@android:color/black"
-                android:textSize="20sp" />
+                android:textSize="20sp"
+                android:fontFamily="@font/roboto_bold"/>
+            <ImageView
+                android:layout_height="20dp"
+                android:layout_width="20dp"
+                android:src="@drawable/ic_menu_arrow"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="50dp"
+                android:layout_centerVertical="true"/>
         </RelativeLayout>
 
-        <FrameLayout
-            android:id="@+id/footer"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_poweredby_agrolytics"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="12dp"
-            android:layout_marginLeft="2dp"
-            android:layout_marginEnd="12dp"
-            android:layout_marginRight="2dp"
-            android:layout_marginBottom="2dp"
-            android:background="@drawable/green_rectangular_round" />
+            android:layout_marginBottom="24dp"
+            android:layout_marginLeft="24dp"/>
 
     </RelativeLayout>
 
