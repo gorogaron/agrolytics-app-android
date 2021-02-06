@@ -36,15 +36,18 @@ class CropperActivity: BaseActivity(), View.OnClickListener {
         var imageUri : Uri = intent.getParcelableExtra("IMAGE")
         image = MediaStore.Images.Media.getBitmap(this.contentResolver, imageUri)
 
-
         rectangle_cropper_view.setImageBitmap(image)
         poly_cropper_view.setImageBitmap(image!!)
 
         polycropper.setOnClickListener {
+            it.isSelected = true
+            rectanglecropper.isSelected = false
             rectangle_cropper_view.visibility = View.GONE
             poly_cropper_view.visibility = View.VISIBLE
         }
         rectanglecropper.setOnClickListener {
+            it.isSelected = true
+            polycropper.isSelected = false
             poly_cropper_view.visibility = View.GONE
             rectangle_cropper_view.visibility = View.VISIBLE
         }

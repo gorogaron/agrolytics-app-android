@@ -430,7 +430,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
     }
 
     private fun createRodDialog() {
-        blur(5)
+        blur(10)
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Adatok")
         val view = LayoutInflater.from(this).inflate(R.layout.rod_dialog, null, false)
@@ -465,21 +465,19 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
     }
 
     fun blur(iRadius : Int){
-        //TODO: Find a way to place yellow_bg above FAB
-        //TODO: Find a better way to blur root view
         val wView = (findViewById<View>(android.R.id.content) as ViewGroup).getChildAt(0) as ViewGroup
         if (iRadius == 0){
-            //Blurry.delete(wView)
+            Blurry.delete(wView)
             yellow_bg.animate().alpha(0f).setDuration(0)
         }
         else {
-            yellow_bg.animate().alpha(0.9f).setDuration(500)
-            /*Blurry.with(this)
+            yellow_bg.animate().alpha(0.95f).setDuration(250)
+            Blurry.with(this)
                 .radius(iRadius)
                 .sampling(8)
                 .async()
-                .animate(500)
-                .onto(wView)*/
+                .animate(250)
+                .onto(wView)
         }
 
     }

@@ -318,8 +318,9 @@
                 android:layout_height="match_parent"
                 android:layout_width="match_parent"
                 android:background="@color/yellow"
-                android:alpha="1"
-                android:animateLayoutChanges="true"/>
+                android:alpha="0"
+                android:elevation="10dp"
+                android:animateLayoutChanges="true" />
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

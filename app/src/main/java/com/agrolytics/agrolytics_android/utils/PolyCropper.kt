@@ -14,6 +14,8 @@ import kotlin.math.min
 import android.graphics.BlurMaskFilter
 import android.graphics.Color.parseColor
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import androidx.core.content.ContextCompat
+import com.agrolytics.agrolytics_android.R
 import kotlin.math.abs
 
 class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
@@ -115,16 +117,10 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
 
         for ((index, point) in polyPoints.withIndex()) {
             polyPointPaint.style = Paint.Style.FILL
-            if (index == selectedPointIdx) {
-                polyPointPaint.color = Color.WHITE
-            } else {
-                polyPointPaint.color = Color.WHITE
-            }
             polyPointPaint.color = parseColor("#444444")
             canvas.drawCircle(point.x.toFloat() + 3, point.y.toFloat() + 3, 20f, polyPointPaint)
-            polyPointPaint.color = Color.WHITE
+            polyPointPaint.color = ContextCompat.getColor(context, R.color.yellow)
             canvas.drawCircle(point.x.toFloat(), point.y.toFloat(), 20f, polyPointPaint)
-
         }
     }
 
