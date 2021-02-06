@@ -1,9 +1,7 @@
 package com.agrolytics.agrolytics_android.ui.splash
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.core.app.ActivityOptionsCompat
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.base.BaseActivity
 import com.agrolytics.agrolytics_android.database.firebase.FireStoreDB
@@ -17,7 +15,6 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_login.*
 import org.koin.android.ext.android.inject
 import java.util.concurrent.TimeUnit
 

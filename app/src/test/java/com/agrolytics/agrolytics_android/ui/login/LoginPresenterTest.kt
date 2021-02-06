@@ -1,21 +1,21 @@
-package com.agrolytics.agrolytics_android
+package com.agrolytics.agrolytics_android.ui.login
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.agrolytics.agrolytics_android.ui.login.LoginPresenter
 import com.agrolytics.agrolytics_android.utils.ConfigInfo
 import com.google.common.truth.Truth.assertThat
 import com.google.firebase.FirebaseApp
 import io.mockk.coEvery
 import io.mockk.spyk
-import kotlinx.coroutines.*
+import kotlinx.coroutines.runBlocking
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
 import org.mockito.MockitoAnnotations
-
 
 
 @RunWith(AndroidJUnit4::class)
@@ -43,6 +43,11 @@ class LoginPresenterTest : KoinTest {
 
         val loginReturnCode = loginPresenter.login(email, password)
 
-        assertThat(loginReturnCode).isEqualTo(ConfigInfo.LOGIN.SUCCESS)
+        assertThat(loginReturnCode).isEqualTo(ConfigInfo.LOGIN.USER_EXPIRED)
+    }
+
+    @After
+    fun tearDown() {
+        stopKoin()
     }
 }
