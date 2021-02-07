@@ -16,7 +16,6 @@ import org.junit.runner.RunWith
 import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
 import org.mockito.MockitoAnnotations
-import kotlin.math.log
 
 
 @RunWith(AndroidJUnit4::class)
