@@ -37,7 +37,7 @@ class LoginPresenterTest : KoinTest {
         val password = "password"
 
         coEvery { loginPresenter.signInFirebaseUser(email, password) } returns ConfigInfo.LOGIN.SUCCESS
-        coEvery { loginPresenter.loginCurrentUser() } returns ConfigInfo.LOGIN.USER_EXPIRED
+        coEvery { loginPresenter.hasLoggedInUserExpired() } returns ConfigInfo.LOGIN.USER_EXPIRED
         coEvery { loginPresenter.saveCurrentUser() } returns Unit
 
         val loginReturnCode = loginPresenter.login(email, password)
@@ -56,7 +56,7 @@ class LoginPresenterTest : KoinTest {
         val password = "password"
 
         coEvery { loginPresenter.signInFirebaseUser(email, password) } returns ConfigInfo.LOGIN.SUCCESS
-        coEvery { loginPresenter.loginCurrentUser() } returns ConfigInfo.LOGIN.SUCCESS
+        coEvery { loginPresenter.hasLoggedInUserExpired() } returns ConfigInfo.LOGIN.SUCCESS
         coEvery { loginPresenter.saveCurrentUser() } returns Unit
 
         val loginReturnCode = loginPresenter.login(email, password)

@@ -80,8 +80,7 @@ class LoginActivity: BaseActivity(), LoginScreen {
     private fun checkUserLoggedInState() {
         if (auth.currentUser != null) {
             GlobalScope.launch(Dispatchers.IO) {
-                when (presenter.loginCurrentUser()) {
-                    ConfigInfo.LOGIN.USER_EXPIRED -> auth.signOut()
+                when (presenter.hasLoggedInUserExpired()) {
                     ConfigInfo.LOGIN.SUCCESS -> loginSuccess()
                 }
             }

@@ -32,7 +32,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
                 signInResult = signInFirebaseUser(email, password)
                 when (signInResult) {
                     ConfigInfo.LOGIN.AUTH_FAILED -> return signInResult
-                    ConfigInfo.LOGIN.SUCCESS -> signInResult = loginCurrentUser()
+                    ConfigInfo.LOGIN.SUCCESS -> signInResult = hasLoggedInUserExpired()
                 }
                 when (signInResult) {
                     ConfigInfo.LOGIN.USER_EXPIRED -> return signInResult
@@ -50,7 +50,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
         return signInResult
     }
 
-    suspend fun loginCurrentUser(): Int {
+    suspend fun hasLoggedInUserExpired(): Int {
         userDocument = getUserDocument(auth?.currentUser)
         val firstLogin = getFirstLogin()
         return if (checkUserExpired(firstLogin)) {
