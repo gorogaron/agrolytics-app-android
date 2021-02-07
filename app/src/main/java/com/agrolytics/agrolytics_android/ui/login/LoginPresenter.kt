@@ -109,7 +109,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
         val msDiff = DateTime.now().millis - firstLoginDate.millis
         val daysDiff = TimeUnit.MILLISECONDS.toDays(msDiff)
 
-        return daysDiff <= 30
+        return daysDiff >= 30
     }
 
     private suspend fun getUserDocument(user: FirebaseUser?) : DocumentSnapshot = suspendCoroutine { cont->

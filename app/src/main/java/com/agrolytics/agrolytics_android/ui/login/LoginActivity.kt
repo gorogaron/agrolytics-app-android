@@ -13,10 +13,7 @@ import com.agrolytics.agrolytics_android.utils.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 import kotlin.system.exitProcess
 
@@ -33,15 +30,16 @@ class LoginActivity: BaseActivity(), LoginScreen {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
 
         auth = FirebaseAuth.getInstance()
 
         presenter.addView(this)
         presenter.addInjections(arrayListOf(sessionManager, fireStoreDB, auth, roomModule, appServer))
-
+        
+        // TODO: Blocking LoginActivity until checkUserLoggedInState() finished
         checkUserLoggedInState()
 
+        setContentView(R.layout.activity_login)
         setLoginButtonBackground()
         btn_login.setOnClickListener {
             loginUser()
@@ -79,7 +77,7 @@ class LoginActivity: BaseActivity(), LoginScreen {
         }
     }
 
-    private fun checkUserLoggedInState()  {
+    private fun checkUserLoggedInState() {
         if (auth.currentUser != null) {
             GlobalScope.launch(Dispatchers.IO) {
                 when (presenter.loginCurrentUser()) {
@@ -101,7 +99,7 @@ class LoginActivity: BaseActivity(), LoginScreen {
     }
 
     private fun setLoginButtonBackground(){
-        if (et_email.text.toString().isEmpty() && et_password.text.toString().isEmpty()) {
+        if (et_email.text.toString().isNotEmpty() && et_password.text.toString().isNotEmpty()) {
             btn_login.setBackgroundResource(R.drawable.login_btn_clickable)
         }
         else {
