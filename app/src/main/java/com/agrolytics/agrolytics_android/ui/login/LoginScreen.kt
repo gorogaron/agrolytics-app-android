@@ -4,5 +4,4 @@ import com.agrolytics.agrolytics_android.base.BaseScreen
 
 interface LoginScreen: BaseScreen {
     fun loginSuccess()
-    fun showAlertDialog()
 }

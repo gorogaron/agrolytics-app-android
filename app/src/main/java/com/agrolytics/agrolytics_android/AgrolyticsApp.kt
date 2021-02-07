@@ -21,7 +21,7 @@ class AgrolyticsApp: Application() {
 			modules(appModule)
 		}
 		JodaTimeAndroid.init(this)
-//		Mapbox.getInstance(this, ConfigInfo.MAP_BOX_KEY)
+		Mapbox.getInstance(this, ConfigInfo.MAP_BOX_KEY)
 
 		if (BuildConfig.DEBUG){
 			writeLogsToTxt()

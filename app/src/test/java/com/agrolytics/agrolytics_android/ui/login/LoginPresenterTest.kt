@@ -37,13 +37,13 @@ class LoginPresenterTest : KoinTest {
         val password = "password"
 
         coEvery { loginPresenter.signInFirebaseUser(email, password) } returns ConfigInfo.LOGIN.SUCCESS
-        coEvery { loginPresenter.getFirstLogin() } returns "2020-12-16"
+        coEvery { loginPresenter.getFirstLogin() } returns "2021-2-6"
         coEvery { loginPresenter.saveUser() } returns Unit
         coEvery { loginPresenter.initFirstLogin(any()) } returns Unit
 
         val loginReturnCode = loginPresenter.login(email, password)
 
-        assertThat(loginReturnCode).isEqualTo(ConfigInfo.LOGIN.USER_EXPIRED)
+        assertThat(loginReturnCode).isEqualTo(ConfigInfo.LOGIN.SUCCESS)
     }
 
     @After

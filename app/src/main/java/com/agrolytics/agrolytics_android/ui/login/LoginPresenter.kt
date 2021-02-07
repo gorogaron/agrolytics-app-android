@@ -9,40 +9,32 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
-import kotlinx.coroutines.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 import org.joda.time.DateTime
-import java.lang.Exception
-import java.lang.NullPointerException
 import java.util.concurrent.TimeUnit
-import kotlin.coroutines.*
-import kotlin.math.sign
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
 
     private lateinit var userDocument : DocumentSnapshot
-    val TAG = "LoginPresenter"
 
     suspend fun login(email: String?, password: String?) : Int {
-        var signInResult = ConfigInfo.LOGIN.UNDEFINED
+        var signInResult: Int
         try {
             if (Util.isNetworkAvailable(context)) {
                     signInResult = signInFirebaseUser(email!!, password!!)
                     if (signInResult == ConfigInfo.LOGIN.SUCCESS) {
                         val firstLogin = getFirstLogin()
-                        signInResult = if (firstLogin != null) {
-                            if (hasUserExpired(firstLogin)) {
+                        signInResult = if (hasUserExpired(firstLogin)) {
                                 ConfigInfo.LOGIN.USER_EXPIRED
                             } else {
                                 saveUser()
                                 ConfigInfo.LOGIN.SUCCESS
                             }
-                        } else {
-                            initFirstLogin(auth?.currentUser)
-                            saveUser()
-                            ConfigInfo.LOGIN.SUCCESS
-                        }
                     } else {
                         signInResult = ConfigInfo.LOGIN.AUTH_FAILED
                     }
@@ -65,7 +57,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
     }
 
     suspend fun signInFirebaseUser(email: String, password: String) : Int = suspendCoroutine{ cont ->
-        auth?.signInWithEmailAndPassword(email, password)?.addOnCompleteListener { task->
+        auth?.signInWithEmailAndPassword(email, password)?.addOnCompleteListener { task ->
             if (task.isSuccessful){
                 GlobalScope.launch {
                     userDocument = getUserDocument(auth?.currentUser)
@@ -79,6 +71,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
     }
 
     suspend fun saveUser() {
+        // TODO: felhasználók egybezárása
         val roleDocumentSnapshot = getRoleDocument(userDocument["role"] as DocumentReference)
         sessionManager?.userRole = (roleDocumentSnapshot["role"] as String?)!!
         sessionManager?.userID = userDocument.id
@@ -112,18 +105,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
             .addOnFailureListener { cont.resumeWithException(it) }
     }
 
-    suspend fun initFirstLogin(user: FirebaseUser?) : Unit = suspendCoroutine { cont ->
-        if (user != null){
-            val userDocumentReference = fireStoreDB?.db?.collection("user")?.document(user.uid)
-            userDocumentReference?.update("first_login", Util.getCurrentDateString())
-                ?.addOnSuccessListener { cont.resume(Unit) }
-                ?.addOnFailureListener { cont.resumeWithException(it) }
-        } else {
-            cont.resumeWithException(NullPointerException())
-        }
-    }
-
-    fun hasUserExpired(firstLogin: String?) : Boolean {
+    private fun hasUserExpired(firstLogin: String?) : Boolean {
         val firstLoginDate = DateTime.parse(firstLogin)
         val firstLoginDateThirtyAdded = firstLoginDate.plusDays(30)
         val currentDate = DateTime.now()
@@ -146,7 +128,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
     }
 
     private fun clearSession() {
-        FirebaseAuth.getInstance().signOut()
+        auth?.signOut()
         doAsync {
             roomModule?.database?.clearAllTables()
             sessionManager?.clearSession()

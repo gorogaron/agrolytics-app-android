@@ -1,8 +1,5 @@
 package com.agrolytics.agrolytics_android.ui.login
 
-import android.app.AlertDialog
-import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -22,6 +19,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
+import kotlin.system.exitProcess
 
 
 class LoginActivity: BaseActivity(), LoginScreen {
@@ -32,23 +30,39 @@ class LoginActivity: BaseActivity(), LoginScreen {
     private val roomModule: RoomModule by inject()
     private val appServer: AppServer by inject()
 
-    private var auth: FirebaseAuth? = null
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        /*
+        0a. checkUserLoggedIn():
+            True -> checkExpire()
+            False -> startLoginActivity
+        0b. checkExpire():
+            True -> logoutUser & startLoginActivity
+            False -> startMainActivity
+
+        1. loginActivity:
+        2. kell email + pw -> ellenőrizni, hogy meg van-e adva
+        3. utána gomblistener, ha click, akkor login()
+        4. presenter.login() -> SUCCESS alapján reroute vagy hibaüzenet
+
+
+
+         */
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
         auth = FirebaseAuth.getInstance()
 
         presenter.addView(this)
-        presenter.addInjections(arrayListOf(sessionManager, fireStoreDB, auth!!, roomModule, appServer))
+        presenter.addInjections(arrayListOf(sessionManager, fireStoreDB, auth, roomModule, appServer))
 
         setLoginButtonBackground()
         btn_login.setOnClickListener {login()}
         setEditTextListeners()
     }
 
-    fun login() {
+    private fun login() {
         GlobalScope.launch(Dispatchers.Main) {
             var loginResult: Int
             if (checkInputFields(et_email.text.toString(), et_password.text.toString())) {
@@ -75,44 +89,20 @@ class LoginActivity: BaseActivity(), LoginScreen {
     }
 
     override fun loginSuccess() {
-        //val activityOptionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(this, iv_logo, "logoImage")
-        val intent = Intent(this, MainActivity::class.java)
-        //intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-        //startActivity(intent, activityOptionsCompat.toBundle())
         startActivity(MainActivity::class.java, Bundle(), false)
         finish()
     }
 
     override fun onBackPressed() {
         finish()
-        System.exit(0)
+        exitProcess(0)
     }
 
-    override fun onStop() {
-        super.onStop()
-        Log.d("LoginActivity","onStop")
-    }
-
-    override fun onPause() {
-        Log.d("LoginActivity","onPause")
-        super.onPause()
-    }
-
-    override fun showAlertDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Hiba")
-        builder.setMessage("Gond van a szerverünkkel. Kérem a problémát jelezze a contact@agrolytics.hu email címen, vagy a +36306122653 telefonszámon.")
-        builder.setNeutralButton("OK"){_,_ ->
-        }
-        val dialog: AlertDialog = builder.create()
-        dialog.show()
-    }
-
-    fun checkInputFields(email : String?, password : String?) : Boolean{
+    private fun checkInputFields(email : String?, password : String?) : Boolean{
         return email != null && password != null && email.isNotEmpty() && password.isNotEmpty()
     }
 
-    fun setLoginButtonBackground(){
+    private fun setLoginButtonBackground(){
         if (checkInputFields(et_email.text.toString(), et_password.text.toString())) {
             btn_login.setBackgroundResource(R.drawable.login_btn_clickable)
         }
@@ -121,7 +111,7 @@ class LoginActivity: BaseActivity(), LoginScreen {
         }
     }
 
-    fun setEditTextListeners(){
+    private fun setEditTextListeners(){
         et_email.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
                 setLoginButtonBackground()
