@@ -5,80 +5,77 @@ import android.util.Log
 import com.agrolytics.agrolytics_android.base.BasePresenter
 import com.agrolytics.agrolytics_android.utils.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.Util
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
-import kotlinx.coroutines.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 import org.joda.time.DateTime
-import java.lang.Exception
-import java.lang.NullPointerException
 import java.util.concurrent.TimeUnit
-import kotlin.coroutines.*
-import kotlin.math.sign
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
 
     private lateinit var userDocument : DocumentSnapshot
-    val TAG = "LoginPresenter"
 
-    suspend fun login(email: String?, password: String?) : Int {
-        var signInResult = ConfigInfo.LOGIN.UNDEFINED
-        try {
-            if (Util.isNetworkAvailable(context)) {
-                    signInResult = signInFirebaseUser(email!!, password!!)
-                    if (signInResult == ConfigInfo.LOGIN.SUCCESS) {
-                        val firstLogin = getFirstLogin()
-                        signInResult = if (firstLogin != null) {
-                            if (hasUserExpired(firstLogin)) {
-                                ConfigInfo.LOGIN.USER_EXPIRED
-                            } else {
-                                saveUser()
-                                ConfigInfo.LOGIN.SUCCESS
-                            }
-                        } else {
-                            initFirstLogin(auth?.currentUser)
-                            saveUser()
-                            ConfigInfo.LOGIN.SUCCESS
-                        }
-                    } else {
-                        signInResult = ConfigInfo.LOGIN.AUTH_FAILED
-                    }
-                } else {
-                signInResult = ConfigInfo.LOGIN.NO_INTERNET
+    companion object {
+        private const val TAG = "LoginPresenter"
+    }
+
+    suspend fun login(email: String, password: String) : Int {
+        var signInResult = ConfigInfo.LOGIN.NO_INTERNET
+        if (Util.isNetworkAvailable()) {
+            try {
+                signInResult = signInFirebaseUser(email, password)
+                when (signInResult) {
+                    ConfigInfo.LOGIN.AUTH_FAILED -> return signInResult
+                    ConfigInfo.LOGIN.SUCCESS -> signInResult = hasLoggedInUserExpired()
+                }
+                when (signInResult) {
+                    ConfigInfo.LOGIN.USER_EXPIRED -> return signInResult
+                    ConfigInfo.LOGIN.SUCCESS -> saveCurrentUser()
+                }
             }
-        }
-        catch(e: Exception) {
-            e.printStackTrace()
-            Log.d("Login", "$e")
-            Log.d("Login", "$e.stackTrace")
-            clearSession()
-            signInResult = ConfigInfo.LOGIN.ERROR
+            catch(e: Exception) {
+                e.printStackTrace()
+                Log.d(TAG, "$e")
+                Log.d(TAG, "$e.stackTrace")
+                clearSession()
+                signInResult = ConfigInfo.LOGIN.ERROR
+            }
         }
         return signInResult
     }
 
-    fun getFirstLogin() : String? {
-        return userDocument["first_login"] as String?
+    suspend fun hasLoggedInUserExpired(): Int {
+        userDocument = getUserDocument(auth?.currentUser)
+        val firstLogin = getFirstLogin()
+        return if (checkUserExpired(firstLogin)) {
+            auth?.signOut()
+            ConfigInfo.LOGIN.USER_EXPIRED
+        } else {
+            ConfigInfo.LOGIN.SUCCESS
+        }
     }
 
     suspend fun signInFirebaseUser(email: String, password: String) : Int = suspendCoroutine{ cont ->
-        auth?.signInWithEmailAndPassword(email, password)?.addOnCompleteListener { task->
-            if (task.isSuccessful){
+        auth?.signInWithEmailAndPassword(email, password)?.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
                 GlobalScope.launch {
-                    userDocument = getUserDocument(auth?.currentUser)
                     cont.resume(ConfigInfo.LOGIN.SUCCESS)
                 }
             }
-            else{
+            else {
                 cont.resume(ConfigInfo.LOGIN.AUTH_FAILED)
             }
         }
     }
 
-    suspend fun saveUser() {
+    suspend fun saveCurrentUser() {
+        // TODO: felhasználók egybezárása
         val roleDocumentSnapshot = getRoleDocument(userDocument["role"] as DocumentReference)
         sessionManager?.userRole = (roleDocumentSnapshot["role"] as String?)!!
         sessionManager?.userID = userDocument.id
@@ -92,7 +89,27 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
         }
 
         //Update user token. TODO: Move token to shared preferences
-        updateUserToken(auth?.currentUser!!)
+        updateUserToken()
+    }
+
+    private suspend fun updateUserToken() : Boolean = suspendCoroutine{
+        auth?.currentUser?.getIdToken(false)
+            ?.addOnSuccessListener { userToken ->
+                appServer?.updateApiService(userToken.token)
+                it.resume(true)
+            }
+            ?.addOnFailureListener { e ->
+                Log.d(TAG, "Error getting user token", e)
+                it.resume(false)
+            }
+    }
+
+    private fun checkUserExpired(firstLogin: String) : Boolean {
+        val firstLoginDate = DateTime.parse(firstLogin)
+        val msDiff = DateTime.now().millis - firstLoginDate.millis
+        val daysDiff = TimeUnit.MILLISECONDS.toDays(msDiff)
+
+        return daysDiff >= 30
     }
 
     private suspend fun getUserDocument(user: FirebaseUser?) : DocumentSnapshot = suspendCoroutine { cont->
@@ -112,41 +129,12 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
             .addOnFailureListener { cont.resumeWithException(it) }
     }
 
-    suspend fun initFirstLogin(user: FirebaseUser?) : Unit = suspendCoroutine { cont ->
-        if (user != null){
-            val userDocumentReference = fireStoreDB?.db?.collection("user")?.document(user.uid)
-            userDocumentReference?.update("first_login", Util.getCurrentDateString())
-                ?.addOnSuccessListener { cont.resume(Unit) }
-                ?.addOnFailureListener { cont.resumeWithException(it) }
-        } else {
-            cont.resumeWithException(NullPointerException())
-        }
-    }
-
-    fun hasUserExpired(firstLogin: String?) : Boolean {
-        val firstLoginDate = DateTime.parse(firstLogin)
-        val firstLoginDateThirtyAdded = firstLoginDate.plusDays(30)
-        val currentDate = DateTime.now()
-        val msDiff = firstLoginDateThirtyAdded.millis - currentDate.millis
-        val daysDiff = TimeUnit.MILLISECONDS.toDays(msDiff)
-
-        return daysDiff <= 0
-    }
-
-    private suspend fun updateUserToken(user: FirebaseUser) : Boolean = suspendCoroutine{
-        user.getIdToken(false)
-            .addOnSuccessListener { userToken ->
-                appServer?.updateApiService(userToken.token)
-                it.resume(true)
-            }
-            .addOnFailureListener { e ->
-                Log.d("Login", "Error getting user token", e)
-                it.resume(false)
-            }
+    private fun getFirstLogin() : String {
+        return userDocument["first_login"] as String
     }
 
     private fun clearSession() {
-        FirebaseAuth.getInstance().signOut()
+        auth?.signOut()
         doAsync {
             roomModule?.database?.clearAllTables()
             sessionManager?.clearSession()

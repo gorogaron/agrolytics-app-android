@@ -20,8 +20,8 @@ android {
             keyPassword 'agr0lytics01'
             storeFile file("/Users/tothendre/Development/agrolytics/keystore/agrolytics_key.jks")
             storePassword 'agr0lytics01'
-            //java.lang.System.console(storePassword)
         }
+
     }
     defaultConfig {
         applicationId "com.agrolytics.agrolytics_android"

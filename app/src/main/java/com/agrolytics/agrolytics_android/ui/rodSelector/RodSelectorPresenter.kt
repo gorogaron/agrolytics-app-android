@@ -28,7 +28,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
 
     fun uploadImage(path: String?, bitmap: Bitmap?, rodLength: Double, rodLengthPixels: Int) {
         this.path = path
-        if (!Util.isNetworkAvailable(context)) {
+        if (!Util.isNetworkAvailable()) {
             handleNoInternet(bitmap!!, rodLength, rodLengthPixels)
         } else {
             screen?.showLoading()
