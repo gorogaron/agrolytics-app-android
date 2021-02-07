@@ -1,7 +1,6 @@
 package com.agrolytics.agrolytics_android.utils
 
 import android.app.Activity
-import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import kotlinx.coroutines.Dispatchers
@@ -34,14 +33,7 @@ class Util {
             return formattedDate
         }
 
-        fun isNetworkAvailable(context: Context): Boolean {
-            /* Old method:
-            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            val activeNetworkInfo = connectivityManager.activeNetworkInfo
-            return activeNetworkInfo != null && activeNetworkInfo.isConnected
-             */
-
-            /*New Method:*/
+        fun isNetworkAvailable(): Boolean {
             return runBlocking { withContext(Dispatchers.IO){ isOnline()} }
         }
 

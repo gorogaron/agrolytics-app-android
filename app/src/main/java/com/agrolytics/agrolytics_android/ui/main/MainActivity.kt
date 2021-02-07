@@ -9,7 +9,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
@@ -49,7 +48,6 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import jp.wasabeef.blurry.Blurry
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_bar.*
 import org.jetbrains.anko.doAsync
@@ -321,7 +319,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
     }
 
     private fun checkInternetAndGpsConnection() {
-        if (Util.isNetworkAvailable(this)) {
+        if (Util.isNetworkAvailable()) {
             wifi_icon.setImageResource(R.drawable.ic_wifi_on)
 
             //This is needed to retrieve user token when during app startup
