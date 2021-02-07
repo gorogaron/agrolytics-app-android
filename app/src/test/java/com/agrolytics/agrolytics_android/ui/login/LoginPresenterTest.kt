@@ -16,6 +16,7 @@ import org.junit.runner.RunWith
 import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
 import org.mockito.MockitoAnnotations
+import kotlin.math.log
 
 
 @RunWith(AndroidJUnit4::class)
@@ -23,11 +24,11 @@ class LoginPresenterTest : KoinTest {
 
     @Before
     fun setUp() {
-        MockitoAnnotations.initMocks(this)
+        MockitoAnnotations.openMocks(this)
     }
 
     @Test
-    fun loginProcess() = runBlocking {
+    fun loginExpiredUser() = runBlocking {
         val context = ApplicationProvider.getApplicationContext<Context>()
         FirebaseApp.initializeApp(context)
 
@@ -37,9 +38,27 @@ class LoginPresenterTest : KoinTest {
         val password = "password"
 
         coEvery { loginPresenter.signInFirebaseUser(email, password) } returns ConfigInfo.LOGIN.SUCCESS
-        coEvery { loginPresenter.getFirstLogin() } returns "2021-2-6"
-        coEvery { loginPresenter.saveUser() } returns Unit
-        coEvery { loginPresenter.initFirstLogin(any()) } returns Unit
+        coEvery { loginPresenter.loginCurrentUser() } returns ConfigInfo.LOGIN.USER_EXPIRED
+        coEvery { loginPresenter.saveCurrentUser() } returns Unit
+
+        val loginReturnCode = loginPresenter.login(email, password)
+
+        assertThat(loginReturnCode).isEqualTo(ConfigInfo.LOGIN.USER_EXPIRED)
+    }
+
+    @Test
+    fun loginValidUser() = runBlocking {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        FirebaseApp.initializeApp(context)
+
+        val loginPresenter = spyk(LoginPresenter(context))
+
+        val email = "admin@admin.com"
+        val password = "password"
+
+        coEvery { loginPresenter.signInFirebaseUser(email, password) } returns ConfigInfo.LOGIN.SUCCESS
+        coEvery { loginPresenter.loginCurrentUser() } returns ConfigInfo.LOGIN.SUCCESS
+        coEvery { loginPresenter.saveCurrentUser() } returns Unit
 
         val loginReturnCode = loginPresenter.login(email, password)
 

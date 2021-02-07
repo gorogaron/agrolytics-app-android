@@ -3,7 +3,6 @@ package com.agrolytics.agrolytics_android.ui.login
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.base.BaseActivity
 import com.agrolytics.agrolytics_android.database.firebase.FireStoreDB
@@ -33,22 +32,6 @@ class LoginActivity: BaseActivity(), LoginScreen {
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        /*
-        0a. checkUserLoggedIn():
-            True -> checkExpire()
-            False -> startLoginActivity
-        0b. checkExpire():
-            True -> logoutUser & startLoginActivity
-            False -> startMainActivity
-
-        1. loginActivity:
-        2. kell email + pw -> ellenőrizni, hogy meg van-e adva
-        3. utána gomblistener, ha click, akkor login()
-        4. presenter.login() -> SUCCESS alapján reroute vagy hibaüzenet
-
-
-
-         */
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
@@ -57,17 +40,25 @@ class LoginActivity: BaseActivity(), LoginScreen {
         presenter.addView(this)
         presenter.addInjections(arrayListOf(sessionManager, fireStoreDB, auth, roomModule, appServer))
 
+        checkUserLoggedInState()
+
         setLoginButtonBackground()
-        btn_login.setOnClickListener {login()}
+        btn_login.setOnClickListener {
+            loginUser()
+        }
         setEditTextListeners()
     }
 
-    private fun login() {
+    private fun loginUser() {
         GlobalScope.launch(Dispatchers.Main) {
             var loginResult: Int
-            if (checkInputFields(et_email.text.toString(), et_password.text.toString())) {
+            val email = et_email.text.toString()
+            val password = et_password.text.toString()
+            if (email.isNotBlank() && password.isNotEmpty()) {
                 showLoading()
-                withContext(Dispatchers.IO) { loginResult = presenter.login(et_email?.text?.toString(), et_password?.text?.toString()) }
+                withContext(Dispatchers.IO) {
+                    loginResult = presenter.login(email, password)
+                }
                 hideLoading()
             }
             else {
@@ -88,6 +79,17 @@ class LoginActivity: BaseActivity(), LoginScreen {
         }
     }
 
+    private fun checkUserLoggedInState()  {
+        if (auth.currentUser != null) {
+            GlobalScope.launch(Dispatchers.IO) {
+                when (presenter.loginCurrentUser()) {
+                    ConfigInfo.LOGIN.USER_EXPIRED -> auth.signOut()
+                    ConfigInfo.LOGIN.SUCCESS -> loginSuccess()
+                }
+            }
+        }
+    }
+
     override fun loginSuccess() {
         startActivity(MainActivity::class.java, Bundle(), false)
         finish()
@@ -98,12 +100,8 @@ class LoginActivity: BaseActivity(), LoginScreen {
         exitProcess(0)
     }
 
-    private fun checkInputFields(email : String?, password : String?) : Boolean{
-        return email != null && password != null && email.isNotEmpty() && password.isNotEmpty()
-    }
-
     private fun setLoginButtonBackground(){
-        if (checkInputFields(et_email.text.toString(), et_password.text.toString())) {
+        if (et_email.text.toString().isEmpty() && et_password.text.toString().isEmpty()) {
             btn_login.setBackgroundResource(R.drawable.login_btn_clickable)
         }
         else {

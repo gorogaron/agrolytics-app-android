@@ -2,7 +2,6 @@ package com.agrolytics.agrolytics_android.ui.images
 
 import android.content.Context
 import android.graphics.BitmapFactory
-import android.icu.util.Measure
 import android.util.Base64
 import android.util.Base64OutputStream
 import com.agrolytics.agrolytics_android.base.BasePresenter
@@ -19,14 +18,12 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.joda.time.LocalDateTime
 import org.joda.time.format.DateTimeFormat
-import org.joda.time.format.DateTimeFormatter
 import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.net.SocketTimeoutException
 import java.util.*
-import java.util.concurrent.TimeoutException
 import kotlin.collections.ArrayList
 
 
@@ -181,7 +178,7 @@ class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
     }
 
     fun loadImagesFromFireBase() {
-        if (Util.isNetworkAvailable(context)) {
+        if (Util.isNetworkAvailable()) {
             screen?.hideLoading()
             Collections.sort(fireBaseList, object : Comparator<ImageItem> {
                 override fun compare(s1: ImageItem, s2: ImageItem): Int {
@@ -249,7 +246,7 @@ class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
     }
 
     fun sendImages(imageList: ArrayList<ImageItem>?) {
-        if (!Util.isNetworkAvailable(context)) {
+        if (!Util.isNetworkAvailable()) {
             activity?.let {
                 screen?.showAlertDialog(
                     "Nincs internet kapcsolat",
@@ -391,7 +388,7 @@ class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
     }
 
     fun deleteImages(imageList: ArrayList<ImageItem>) {
-        if (Util.isNetworkAvailable(context)) {
+        if (Util.isNetworkAvailable()) {
             if (isProcessed) {
                 deleteImagesFromFirebase(imageList)
             } else {

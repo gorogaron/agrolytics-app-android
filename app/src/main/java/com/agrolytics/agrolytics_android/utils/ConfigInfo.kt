@@ -16,14 +16,12 @@ object ConfigInfo {
 
 	/**Firebase login result codes**/
 	object LOGIN {
-		const val SUCCESS 			=  0
+		const val SUCCESS 			= 0
 		const val NO_INTERNET 		= 1
 		const val AUTH_FAILED 		= 2
 		const val ERROR   			= 3
 		const val USER_EXPIRED 		= 4
 		const val WRONG_INPUT 		= 5
 		const val UNDEFINED   		= 6
-
 	}
-
 }
