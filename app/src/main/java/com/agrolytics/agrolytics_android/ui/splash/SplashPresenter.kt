@@ -22,8 +22,8 @@ class SplashPresenter(val context: Context): BasePresenter<SplashScreen>() {
 
     private val TAG = "SplashPresenter"
 
-    fun checkExpire(currentUser: FirebaseUser) {
-        currentUser.let {
+    fun checkExpire(currentUser: FirebaseUser?) {
+        currentUser?.let {
             if (Util.isNetworkAvailable(context)) {
                 currentUser.getIdToken(false).addOnSuccessListener { userToken ->
                     appServer?.updateApiService(userToken.token)
