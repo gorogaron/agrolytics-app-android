@@ -8,6 +8,8 @@ import android.view.View
 import android.graphics.Bitmap
 import kotlin.math.min
 import android.graphics.Color.parseColor
+import androidx.core.content.ContextCompat
+import com.agrolytics.agrolytics_android.R
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.sqrt
@@ -72,18 +74,20 @@ class RodSelectorCanvas(context: Context?, attrs: AttributeSet?) : View(context,
         canvas.drawBitmap(bitmap, srcRect, dstRect, borderPaint)
 
         //Drawing line
-        linePaint.color = parseColor("#444444")
-        canvas.drawLine(linePoints.x1+3, linePoints.y1+3, linePoints.x2+3, linePoints.y2+3, linePaint)
-        linePaint.color = Color.WHITE
-        canvas.drawLine(linePoints.x1, linePoints.y1, linePoints.x2, linePoints.y2, linePaint)
+        //linePaint.color = ContextCompat.getColor(context, R.color.darkGrey)
+        //canvas.drawLine(linePoints.x1+3, linePoints.y1+3, linePoints.x2+3, linePoints.y2+3, linePaint)
+        //linePaint.color = ContextCompat.getColor(context, R.color.yellow)
+        //canvas.drawLine(linePoints.x1, linePoints.y1, linePoints.x2, linePoints.y2, linePaint)
 
         //Drawing circles
-        circlePaint.color = parseColor("#444444")
+        circlePaint.color = ContextCompat.getColor(context, R.color.darkGrey)
         canvas.drawCircle(linePoints.x1+3, linePoints.y1+3, 60f, circlePaint)
         canvas.drawCircle(linePoints.x2+3, linePoints.y2+3, 60f, circlePaint)
-        circlePaint.color = Color.WHITE
+        circlePaint.color = ContextCompat.getColor(context, R.color.yellow)
         canvas.drawCircle(linePoints.x1, linePoints.y1, circleRadius, circlePaint)
         canvas.drawCircle(linePoints.x2, linePoints.y2, circleRadius, circlePaint)
+        canvas.drawCircle(linePoints.x1, linePoints.y1, 8f, Paint().apply { color =  ContextCompat.getColor(context, R.color.red) })
+        canvas.drawCircle(linePoints.x2, linePoints.y2, 8f, Paint().apply { color =  ContextCompat.getColor(context, R.color.red) })
 
         if (zooming){
             if (topSelected){
@@ -186,11 +190,11 @@ class RodSelectorCanvas(context: Context?, attrs: AttributeSet?) : View(context,
         )
 
         // Zoom circle frame
-        framePaint.color = Color.GREEN
+        framePaint.color = ContextCompat.getColor(context, R.color.red)
         canvas.drawCircle(fixedXPosition, fixedYPosition, 5f, framePaint)
         framePaint.color = parseColor("#444444")
         canvas.drawCircle(fixedXPosition+3, fixedYPosition+3, sizeOfMagnifier.toFloat(), framePaint)
-        framePaint.color = Color.WHITE
+        framePaint.color = ContextCompat.getColor(context, R.color.yellow)
         canvas.drawCircle(fixedXPosition, fixedYPosition, sizeOfMagnifier.toFloat(), framePaint)
     }
 

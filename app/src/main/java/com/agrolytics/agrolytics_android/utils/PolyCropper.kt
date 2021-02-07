@@ -10,6 +10,7 @@ import kotlin.math.min
 import android.graphics.Color.parseColor
 import androidx.core.content.ContextCompat
 import com.agrolytics.agrolytics_android.R
+import kotlin.math.abs
 
 class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
@@ -191,7 +192,7 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
         return bitmap
     }
 
-    fun crop(): Bitmap?{
+    fun crop(): Pair<Bitmap?, Bitmap?> {
         if (polyFinished)
         {
             val transformedPolyPoints = transformPointsToOrigImg()
@@ -249,22 +250,54 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
             //Crop with blurred background
             val croppedImgBlurredBackground = Bitmap.createBitmap(maxX - minX + paddingDeltaX, maxY - minY + paddingDeltaY, Bitmap.Config.ARGB_8888)
             var boundingRect = Rect(minX - paddingDeltaX / 2, minY - paddingDeltaY / 2, maxX + paddingDeltaX / 2, maxY + paddingDeltaY / 2)
+            //TODO: Organize shifting to seperate function
+            //TODO: Implement vertical shifting
+            if (boundingRect.left < 0) {
+                //If cropped part would be outside the image (left side), shift src rectangle to right to avoid having blank part on image
+                if ((boundingRect.right + abs(boundingRect.left)) < finalImgBlurredBackground!!.width) {
+                    //If possible, shift to right to totally remove blank space
+                    boundingRect.right += abs(boundingRect.left)
+                    boundingRect.left = 0
+                }
+                else {
+                    //TODO: Shift as much as possible (until boundingRect.right=finalImgBlurredBackground.width)
+                }
+            }
+            if (boundingRect.right > finalImgBlurredBackground!!.width) {
+                //If cropped part would be outside the image (right side), shift src rectangle to right to avoid having blank part on image
+                if ((boundingRect.left - (boundingRect.right - finalImgBlurredBackground!!.width)) > 0) {
+                    //If possible, shift to left to totally remove blank space
+                    boundingRect.left -= (boundingRect.right - finalImgBlurredBackground!!.width)
+                    boundingRect.right = finalImgBlurredBackground!!.width
+                }
+                else {
+                    //TODO: Shift as much as possible (until boundingRect.left=0)
+                }
+            }
             var croppedCanvas = Canvas(croppedImgBlurredBackground)
             croppedCanvas.drawPaint(blackPaint) //Make the bmp black. This is needed to avoid transparency when edge of an image is clipped
-            croppedCanvas.drawBitmap(finalImgBlurredBackground, boundingRect, Rect(0, 0 ,croppedCanvas.width, croppedCanvas.height), borderPaint)
+            var dstHorizontalOffset = 0
+            if (boundingRect.left < 0 || boundingRect.right > finalImgBlurredBackground!!.width){
+                //If the bounding rectangle of the cropped polygon is outside the image to the left or right, shift
+                //the rectangle horizontally to align the polygon into the center of it.
+                val leftBlankSpace = if (boundingRect.left < 0) abs(boundingRect.left) else 0
+                val rightBlankSpace = if (boundingRect.right - finalImgBlurredBackground!!.width > 0) boundingRect.right - finalImgBlurredBackground!!.width else 0
+                dstHorizontalOffset = (leftBlankSpace - rightBlankSpace) / 2
+            }
+            boundingRect.left += dstHorizontalOffset
+            boundingRect.right += dstHorizontalOffset
+
+            croppedCanvas.drawBitmap(finalImgBlurredBackground, boundingRect, Rect(0, 0 , croppedCanvas.width, croppedCanvas.height), borderPaint)
 
             //Crop with black background
             val croppedImgBlackBackground = Bitmap.createBitmap(maxX - minX + paddingDeltaX, maxY - minY + paddingDeltaY, Bitmap.Config.ARGB_8888)
-            boundingRect = Rect(minX, minY, maxX, maxY)
             croppedCanvas = Canvas(croppedImgBlackBackground)
             croppedCanvas.drawPaint(blackPaint)
-            croppedCanvas.drawBitmap(finalImgBlackBackground, boundingRect, Rect(paddingDeltaX/2, paddingDeltaY/2 ,croppedCanvas.width - paddingDeltaX/2, croppedCanvas.height - paddingDeltaY/2), borderPaint)
+            croppedCanvas.drawBitmap(finalImgBlackBackground, boundingRect, Rect(0, 0 , croppedCanvas.width, croppedCanvas.height), borderPaint)
 
-            //TODO: Send finalImgBlackBackground to server, draw mask on finalImgBlurredBackground. On rodSelector screen, show finalImgBlurredBackground
-
-            return croppedImgBlackBackground
+            return Pair(croppedImgBlackBackground, croppedImgBlurredBackground)
         } else {
-            return null
+            return Pair(null, null)
         }
 
     }

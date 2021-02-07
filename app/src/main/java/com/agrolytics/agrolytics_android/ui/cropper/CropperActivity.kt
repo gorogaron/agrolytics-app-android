@@ -64,7 +64,9 @@ class CropperActivity: BaseActivity(), View.OnClickListener {
             croppedImg = rectangle_cropper_view.getCroppedImage()
         }
         else{
-            croppedImg = poly_cropper_view.crop()
+            //TODO: Send finalImgBlackBackground to server, draw mask on finalImgBlurredBackground. On rodSelector screen, show finalImgBlurredBackground
+            val (finalImgBlackBackground, finalImgBlurredBackground) = poly_cropper_view.crop()
+            croppedImg = finalImgBlurredBackground
         }
         if (croppedImg != null)
         {

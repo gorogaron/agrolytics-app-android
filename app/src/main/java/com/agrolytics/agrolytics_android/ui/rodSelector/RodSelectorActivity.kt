@@ -54,6 +54,7 @@ class RodSelectorActivity : BaseActivity(), RodSelectorScreen, BaseActivity.OnDi
 				presenter.uploadImage(path, resizedBitmap, rodLength, rodHeight)
 			}
 		}
+		btn_back.setOnClickListener{onBackPressed()}
 
 		bitmap?.let {
 			val originalRatioY = getOriginalRatioY()
@@ -64,10 +65,10 @@ class RodSelectorActivity : BaseActivity(), RodSelectorScreen, BaseActivity.OnDi
 			}
 		}
 
-		createRodDialog()
+		Util.showParameterSettingsWindow(this, sessionManager)
 	}
 
-	//Not a good function name...
+	//TODO: Not a good function name...
 	override fun successfulUpload(measurementResult: MeasurementResult, path: String?, method: String) {
 			val intent = Intent(this, UploadFinishedActivity::class.java)
 			val results = arrayListOf<MeasurementResult>()
@@ -106,51 +107,6 @@ class RodSelectorActivity : BaseActivity(), RodSelectorScreen, BaseActivity.OnDi
 		val originalBitmapWidth =  originalBitmap?.width?.toDouble() ?: 1.0
 
 		return croppedBitmapWidth / originalBitmapWidth
-	}
-
-	private fun getScaledImageRatio(): Double? {
-		val croppedBitmapHeight = bitmap?.height?.toDouble() ?: 1.0
-		bitmap?.let {
-			val scaledBitmap =  Bitmap.createScaledBitmap(it, 640, 480, true)
-			val scaledBitmapHeight =  scaledBitmap?.height?.toDouble() ?: 1.0
-
-			return scaledBitmapHeight / croppedBitmapHeight
-		} ?: run {
-			return null
-		}
-	}
-
-	private fun createRodDialog() {
-		val builder = AlertDialog.Builder(this)
-		builder.setTitle("Adatok")
-		val view = LayoutInflater.from(this).inflate(R.layout.rod_dialog, null)
-
-		val et_length_rod = view.findViewById<EditText>(R.id.et_length_rod)
-		val et_length_wood = view.findViewById<EditText>(R.id.et_wood_length)
-
-		et_length_rod.setText(rodLength.toString())
-		et_length_wood.setText(sessionManager.woodLength.toString())
-
-		val spinner = view.findViewById<Spinner>(R.id.wood_type_spinner)
-		val spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.wood_types, android.R.layout.simple_spinner_item)
-		spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-		spinner.adapter = spinnerAdapter
-
-		builder.setView(view)
-		builder.setPositiveButton("Ok") { dialog, which ->
-			if (et_length_rod.text.isNotEmpty()) {
-				rodLength = et_length_rod.text.toString().toDouble()
-				sessionManager.woodType = spinner.selectedItem.toString()
-				sessionManager.woodLength = et_length_wood.text.toString().toFloat()
-			}
-			Util.hideKeyboard(this, et_length_rod)
-		}
-
-		builder.setCancelable(false)
-		val dialog = builder.create()
-		dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-		dialog.show()
-
 	}
 
 	companion object {
