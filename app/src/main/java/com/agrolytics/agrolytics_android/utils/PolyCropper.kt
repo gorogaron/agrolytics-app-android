@@ -6,29 +6,23 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.graphics.Bitmap
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
 import kotlin.math.min
-import android.graphics.BlurMaskFilter
 import android.graphics.Color.parseColor
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import androidx.core.content.ContextCompat
 import com.agrolytics.agrolytics_android.R
-import kotlin.math.abs
 
 class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     var bitmap : Bitmap? = null
-    var finalImg : Bitmap? = null
+    var finalImgBlackBackground : Bitmap? = null
+    var finalImgBlurredBackground : Bitmap? = null
 
-    val borderPaint = Paint()
-    val polyPointPaint = Paint()
-    val polyPathPaint = Paint()
-    val polyPoints = ArrayList<Point>()
-    var selectedPointIdx : Int? = null
-    var polyFinished = false
+    private val borderPaint = Paint()
+    private val polyPointPaint = Paint()
+    private val polyPathPaint = Paint()
+    private val polyPoints = ArrayList<Point>()
+    private var selectedPointIdx : Int? = null
+    private var polyFinished = false
 
     var srcRect = Rect()
     var dstRect = Rect()
@@ -60,7 +54,13 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
 
     fun setImageBitmap(img: Bitmap){
         bitmap = img
-        finalImg = Bitmap.createBitmap(bitmap!!.width, bitmap!!.height, Bitmap.Config.ARGB_8888) //TODO : REMOVE!!!
+        finalImgBlackBackground = Bitmap.createBitmap(bitmap!!.width, bitmap!!.height, Bitmap.Config.ARGB_8888)
+
+        //TODO: Find a better way to blur image
+        //Create blurred image by down and upscaling image
+        val scaleRatioForBlurring = 0.05f
+        finalImgBlurredBackground = Bitmap.createScaledBitmap(bitmap, (bitmap!!.width*scaleRatioForBlurring).toInt(), (bitmap!!.height*scaleRatioForBlurring).toInt(), true)
+        finalImgBlurredBackground = Bitmap.createScaledBitmap(finalImgBlurredBackground, bitmap!!.width, bitmap!!.height, true)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -80,6 +80,7 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
             dstRect.top = dstRect.top + verticalOffset
             dstRect.bottom = dstRect.bottom + verticalOffset
         }
+
         //Drawing image
         canvas.drawBitmap(bitmap, srcRect, dstRect, borderPaint)
 
@@ -91,14 +92,13 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
             canvas.drawBitmap(bitmap, Rect(0, 0, maskWidth, maskHeight), dstRect, null)
         }
 
-        for ((index, _) in polyPoints.withIndex()) {
+        //Drawing lines
+        for ((index, point) in polyPoints.withIndex()) {
             if (index > 0){
-                var x1 = polyPoints[index-1].x.toFloat()
-                var y1 = polyPoints[index-1].y.toFloat()
-
-                var x2 = polyPoints[index].x.toFloat()
-                var y2 = polyPoints[index].y.toFloat()
-
+                val x1 = polyPoints[index-1].x.toFloat()
+                val y1 = polyPoints[index-1].y.toFloat()
+                val x2 = polyPoints[index].x.toFloat()
+                val y2 = polyPoints[index].y.toFloat()
                 canvas.drawLine(x1, y1, x2, y2, polyPathPaint)
                 polyPathPaint.color = parseColor("#444444")
                 canvas.drawLine(x1+3, y1+3, x2+3, y2+3, polyPathPaint)
@@ -106,21 +106,24 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
             }
         }
 
-        if (polyFinished) {
-            var x1 = polyPoints[polyPoints.size-1].x.toFloat()
-            var y1 = polyPoints[polyPoints.size-1].y.toFloat()
+        //Drawing points
+        for ((_, point) in polyPoints.withIndex()) {
 
-            var x2 = polyPoints[0].x.toFloat()
-            var y2 = polyPoints[0].y.toFloat()
-            canvas.drawLine(x1, y1, x2, y2, polyPathPaint)
-        }
-
-        for ((index, point) in polyPoints.withIndex()) {
             polyPointPaint.style = Paint.Style.FILL
             polyPointPaint.color = parseColor("#444444")
             canvas.drawCircle(point.x.toFloat() + 3, point.y.toFloat() + 3, 20f, polyPointPaint)
             polyPointPaint.color = ContextCompat.getColor(context, R.color.yellow)
             canvas.drawCircle(point.x.toFloat(), point.y.toFloat(), 20f, polyPointPaint)
+        }
+
+        //Draw line between first and last point if polygon is finished
+        if (polyFinished) {
+            val x1 = polyPoints[polyPoints.size-1].x.toFloat()
+            val y1 = polyPoints[polyPoints.size-1].y.toFloat()
+
+            val x2 = polyPoints[0].x.toFloat()
+            val y2 = polyPoints[0].y.toFloat()
+            canvas.drawLine(x1, y1, x2, y2, polyPathPaint)
         }
     }
 
@@ -158,7 +161,6 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
                 //System.out.println("Moving event : x = " + touchX + " y = " + touchY)
             }
             MotionEvent.ACTION_UP -> {
-                System.out.println("Up event : x = " + touchX + " y = " + touchY)
                 selectedPointIdx = null
             }
 
@@ -173,16 +175,16 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
         invalidate()
     }
 
-    fun createPolyMask(polyPoints: ArrayList<Point>, width: Int, height: Int, xOffset: Int, yOffset: Int): Bitmap{
+    private fun createPolyMask(polyPoints: ArrayList<Point>, width: Int, height: Int, xOffset: Int, yOffset: Int): Bitmap{
 
-        var path = getTransformedPathFromPoints(polyPoints, xOffset, yOffset)
-        var bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val path = getTransformedPathFromPoints(polyPoints, xOffset, yOffset)
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         bitmap!!.eraseColor(Color.TRANSPARENT)
-        var maskCanvas = Canvas(bitmap)
-        var paint = Paint()
+        val maskCanvas = Canvas(bitmap)
+        val paint = Paint()
         paint.setColor(Color.BLACK)
         paint.alpha = 100
-        paint.setStyle(Paint.Style.FILL)
+        paint.style = Paint.Style.FILL
 
         maskCanvas.drawPath(path, paint)
 
@@ -193,16 +195,27 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
         if (polyFinished)
         {
             val transformedPolyPoints = transformPointsToOrigImg()
-            var path = getTransformedPathFromPoints(transformedPolyPoints, 0, 0)
+            val path = getTransformedPathFromPoints(transformedPolyPoints, 0, 0)
             path.fillType = Path.FillType.EVEN_ODD
-            var paint = Paint()
+            val paint = Paint()
+            paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
 
-            paint.setColor(Color.BLACK)
+            /**Draw cropped image on black image*/
+            var canvas = Canvas(finalImgBlackBackground)
+            canvas.drawPath(path, Paint())
+            canvas.drawBitmap(bitmap, 0f, 0f, paint)
 
-            val canvas = Canvas(finalImg)
-            canvas.drawPath(path, paint);
-            paint.setXfermode(PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-            canvas.drawBitmap(bitmap, 0f, 0f, paint);
+            /**Draw cropped image on blurred image*/
+            // croppedImgBitmap - this will be an image containing the cropped chunk, with transparent background
+            val croppedImgBitmap = Bitmap.createBitmap(bitmap!!.width, bitmap!!.height, Bitmap.Config.ARGB_8888)
+            canvas = Canvas(croppedImgBitmap)
+            canvas.drawPath(path, Paint())
+            canvas.drawBitmap(bitmap, 0f, 0f, paint)
+            // Copy croppedImgBitmap on blurred original image
+            canvas = Canvas(finalImgBlurredBackground)
+            canvas.drawBitmap(croppedImgBitmap, 0f, 0f, borderPaint)
+            canvas.drawBitmap(createPolyMask(transformedPolyPoints, bitmap!!.width, bitmap!!.height, 0, 0), 0f, 0f, borderPaint)
+
 
             var minX = canvas.width
             var minY = canvas.height
@@ -227,28 +240,42 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
                 paddingDeltaX = (1/0.75 * (maxY - minY) - (maxX - minX)).toInt()
             }
 
-            var croppedImg = Bitmap.createBitmap(maxX - minX + paddingDeltaX, maxY - minY + paddingDeltaY, Bitmap.Config.ARGB_8888) //TODO : REMOVE!!!
-            var blackPaint = Paint()
-            blackPaint.setColor(Color.BLACK)
+            /**Crop relevant parts of finalImgBlackBackground and finalImgBlurredBackground based on the
+            bounding rectangle of the polygon*/
+            val blackPaint = Paint()
+            blackPaint.color = Color.BLACK
             blackPaint.style = Paint.Style.FILL
-            val croppedCanvas = Canvas(croppedImg)
+
+            //Crop with blurred background
+            val croppedImgBlurredBackground = Bitmap.createBitmap(maxX - minX + paddingDeltaX, maxY - minY + paddingDeltaY, Bitmap.Config.ARGB_8888)
+            var boundingRect = Rect(minX - paddingDeltaX / 2, minY - paddingDeltaY / 2, maxX + paddingDeltaX / 2, maxY + paddingDeltaY / 2)
+            var croppedCanvas = Canvas(croppedImgBlurredBackground)
+            croppedCanvas.drawPaint(blackPaint) //Make the bmp black. This is needed to avoid transparency when edge of an image is clipped
+            croppedCanvas.drawBitmap(finalImgBlurredBackground, boundingRect, Rect(0, 0 ,croppedCanvas.width, croppedCanvas.height), borderPaint)
+
+            //Crop with black background
+            val croppedImgBlackBackground = Bitmap.createBitmap(maxX - minX + paddingDeltaX, maxY - minY + paddingDeltaY, Bitmap.Config.ARGB_8888)
+            boundingRect = Rect(minX, minY, maxX, maxY)
+            croppedCanvas = Canvas(croppedImgBlackBackground)
             croppedCanvas.drawPaint(blackPaint)
-            var boundingRect = Rect(minX, minY, maxX, maxY)
-            croppedCanvas.drawBitmap(finalImg, boundingRect, Rect(paddingDeltaX/2, paddingDeltaY/2 ,croppedCanvas.width - paddingDeltaX/2, croppedCanvas.height - paddingDeltaY/2), blackPaint)
-            return croppedImg
+            croppedCanvas.drawBitmap(finalImgBlackBackground, boundingRect, Rect(paddingDeltaX/2, paddingDeltaY/2 ,croppedCanvas.width - paddingDeltaX/2, croppedCanvas.height - paddingDeltaY/2), borderPaint)
+
+            //TODO: Send finalImgBlackBackground to server, draw mask on finalImgBlurredBackground. On rodSelector screen, show finalImgBlurredBackground
+
+            return croppedImgBlackBackground
         } else {
             return null
         }
 
     }
 
-    fun getTransformedPathFromPoints(polyPoints: ArrayList<Point>, xOffset: Int, yOffset: Int): Path{
-        var path = Path()
+    private fun getTransformedPathFromPoints(polyPoints: ArrayList<Point>, xOffset: Int, yOffset: Int): Path{
+        val path = Path()
         path.fillType = Path.FillType.INVERSE_EVEN_ODD
         for ((index, point) in polyPoints.withIndex()){
 
-            var x = (point.x - xOffset).toFloat()
-            var y = (point.y - yOffset).toFloat()
+            val x = (point.x - xOffset).toFloat()
+            val y = (point.y - yOffset).toFloat()
 
             if (index == 0){
                 path.moveTo(x, y)
@@ -260,18 +287,18 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
         return path
     }
 
-    fun transformPointsToOrigImg(): ArrayList<Point>{
+    private fun transformPointsToOrigImg(): ArrayList<Point>{
         val xOffset = dstRect.left
         val yOffset = dstRect.top
 
         val xScale = srcRect.right/(dstRect.right-dstRect.left).toFloat()
         val yScale = srcRect.bottom/(dstRect.bottom - dstRect.top).toFloat()
 
-        var transformedPolyPoints = ArrayList<Point>()
+        val transformedPolyPoints = ArrayList<Point>()
 
         for (p in polyPoints){
-            var x = p.x
-            var y = p.y
+            val x = p.x
+            val y = p.y
             transformedPolyPoints.add(Point(x, y))
         }
 

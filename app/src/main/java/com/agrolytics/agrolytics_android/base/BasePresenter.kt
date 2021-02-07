@@ -9,6 +9,7 @@ import io.reactivex.disposables.CompositeDisposable
 
 abstract class BasePresenter<T> {
 
+    // TODO: clear subscriptions when needed
     var subscriptions: CompositeDisposable? = null
     var screen: T? = null
     var appServer: AppServer? = null

@@ -151,8 +151,6 @@ class RodSelectorActivity : BaseActivity(), RodSelectorScreen, BaseActivity.OnDi
 		dialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 		dialog.show()
 
-
-
 	}
 
 	companion object {
