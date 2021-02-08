@@ -4,7 +4,6 @@ import android.Manifest
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -16,12 +15,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import androidx.core.content.ContextCompat
@@ -39,6 +36,7 @@ import com.agrolytics.agrolytics_android.ui.map.MapActivity
 import com.agrolytics.agrolytics_android.utils.*
 import com.agrolytics.agrolytics_android.utils.ConfigInfo.CAMERA_CAPTURE
 import com.agrolytics.agrolytics_android.utils.ConfigInfo.PICK_IMAGE
+import com.agrolytics.agrolytics_android.utils.Util.Companion.showParameterSettingsWindow
 import com.agrolytics.agrolytics_android.utils.extensions.cameraPermGiven
 import com.agrolytics.agrolytics_android.utils.extensions.locationPermGiven
 import com.agrolytics.agrolytics_android.utils.extensions.storagePermGiven
@@ -48,6 +46,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import jp.wasabeef.blurry.Blurry
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_bar.*
 import org.jetbrains.anko.doAsync
@@ -145,7 +144,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         else {
             openFab()
         }
-        fabClicked = !fabClicked
     }
 
     private fun openFab(){
@@ -160,6 +158,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         browseFab.isClickable = true
 
         grayToRedAnim.start()
+        fabClicked = true
     }
 
     private fun closeFab(){
@@ -174,6 +173,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         browseFab.isClickable = false
 
         redToGrayAnim.start()
+        fabClicked = false
     }
 
     private fun handleWifiGpsIcons() {
@@ -210,7 +210,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         when (menuItem) {
             MenuItem.LENGTH -> {
                 if (MenuItem.LENGTH.tag != TAG) {
-                    createRodDialog()
+                    showParameterSettingsWindow(this, sessionManager, ::blur)
                     //startActivity(LengthActivity::class.java, Bundle(), true)
                 }
             }
@@ -427,57 +427,20 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         }
     }
 
-    private fun createRodDialog() {
-        blur(5)
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Adatok")
-        val view = LayoutInflater.from(this).inflate(R.layout.rod_dialog, null, false)
-
-        val et_length_rod = view.findViewById<EditText>(R.id.et_length_rod)
-        val et_length_wood = view.findViewById<EditText>(R.id.et_wood_length)
-
-        et_length_rod.setText(sessionManager.rodLength.toString())
-        et_length_wood.setText(sessionManager.woodLength.toString())
-
-        val spinner = view.findViewById<Spinner>(R.id.wood_type_spinner)
-        val spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.wood_types, android.R.layout.simple_spinner_item)
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner.adapter = spinnerAdapter
-
-        builder.setView(view)
-        builder.setPositiveButton("Ok") { dialog, which ->
-            if (et_length_rod.text.isNotEmpty()) {
-                sessionManager.rodLength = et_length_rod.text.toString().toFloat()
-                sessionManager.woodType = spinner.selectedItem.toString()
-                sessionManager.woodLength = et_length_wood.text.toString().toFloat()
-            }
-            Util.hideKeyboard(this, et_length_rod)
-            blur(0)
-        }
-
-        builder.setCancelable(false)
-        val dialog = builder.create()
-        dialog.window!!.setBackgroundDrawableResource(R.drawable.parameter_dialog_bg)
-        dialog.window.setDimAmount(0.0f)
-        dialog.show()
-    }
-
     fun blur(iRadius : Int){
-        //TODO: Find a way to place yellow_bg above FAB
-        //TODO: Find a better way to blur root view
         val wView = (findViewById<View>(android.R.id.content) as ViewGroup).getChildAt(0) as ViewGroup
         if (iRadius == 0){
-            //Blurry.delete(wView)
+            Blurry.delete(wView)
             yellow_bg.animate().alpha(0f).setDuration(0)
         }
         else {
-            yellow_bg.animate().alpha(0.9f).setDuration(500)
-            /*Blurry.with(this)
+            yellow_bg.animate().alpha(0.95f).setDuration(250)
+            Blurry.with(this)
                 .radius(iRadius)
                 .sampling(8)
                 .async()
-                .animate(500)
-                .onto(wView)*/
+                .animate(250)
+                .onto(wView)
         }
 
     }
@@ -485,5 +448,10 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
     override fun onResume() {
         super.onResume()
         updateLocation()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        closeFab()
     }
 }

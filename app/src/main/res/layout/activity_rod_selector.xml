@@ -2,50 +2,45 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-android:background="#222222">
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/greenDark">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/greenDark">
-
-            <TextView
-                android:id="@+id/tv_toolbar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/toolbar_rod_selector"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/btn_next"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="end"
-                android:gravity="center"
-                android:layout_marginEnd="12dp"
-                android:text="@string/done"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-        </androidx.appcompat.widget.Toolbar>
-
-    </com.google.android.material.appbar.AppBarLayout>
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#222222">
 
     <com.agrolytics.agrolytics_android.utils.RodSelectorCanvas
         android:id="@+id/rod_selector_canvas"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/app_bar"/>
+        android:layout_below="@+id/app_bar"
+        android:background="#111111"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:background="@color/yellow">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_arrow_back"
+                android:tint="@color/darkGrey" />
+            <TextView
+                android:id="@+id/btn_next"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/done"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:textColor="@color/darkGrey"
+                android:textStyle="bold" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+
 
 </RelativeLayout>

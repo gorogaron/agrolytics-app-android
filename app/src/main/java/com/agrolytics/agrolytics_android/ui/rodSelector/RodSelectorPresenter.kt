@@ -117,7 +117,8 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScre
 
     private fun startOfflineDetection(bitmap: Bitmap, rodLength: Double, rodLengthPixels: Int){
         screen?.showLoading()
-        doAsync {var seg = Detector.segmentOffline(bitmap!!)
+        doAsync {
+            var seg = Detector.segmentOffline(bitmap!!)
             uiThread {
                 //TODO: Remove mask visualization and volume counting from Detector, it's done in MeasurementResult class
                 //TODO: Add proper wood type

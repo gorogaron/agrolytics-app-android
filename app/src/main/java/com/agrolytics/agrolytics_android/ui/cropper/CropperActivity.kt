@@ -33,18 +33,22 @@ class CropperActivity: BaseActivity(), View.OnClickListener {
         setContentView(com.agrolytics.agrolytics_android.R.layout.activity_cropper)
         btn_back.setOnClickListener { onBackPressed() }
 
-        var imageUri : Uri = intent.getParcelableExtra("IMAGE")
+        val imageUri : Uri = intent.getParcelableExtra("IMAGE")
         image = MediaStore.Images.Media.getBitmap(this.contentResolver, imageUri)
-
 
         rectangle_cropper_view.setImageBitmap(image)
         poly_cropper_view.setImageBitmap(image!!)
+        polycropper.isSelected = true
 
         polycropper.setOnClickListener {
+            it.isSelected = true
+            rectanglecropper.isSelected = false
             rectangle_cropper_view.visibility = View.GONE
             poly_cropper_view.visibility = View.VISIBLE
         }
         rectanglecropper.setOnClickListener {
+            it.isSelected = true
+            polycropper.isSelected = false
             poly_cropper_view.visibility = View.GONE
             rectangle_cropper_view.visibility = View.VISIBLE
         }
@@ -54,30 +58,31 @@ class CropperActivity: BaseActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
     }
 
-    fun cropImg(){
-        var croppedImg : Bitmap?
+    private fun cropImg(){
+        val croppedImg : Bitmap?
         if (rectangle_cropper_view.visibility == View.VISIBLE){
             croppedImg = rectangle_cropper_view.getCroppedImage()
         }
         else{
-            croppedImg = poly_cropper_view.crop()
+            //TODO: Send finalImgBlackBackground to server, draw mask on finalImgBlurredBackground. On rodSelector screen, show finalImgBlurredBackground
+            val (finalImgBlackBackground, finalImgBlurredBackground) = poly_cropper_view.crop()
+            croppedImg = finalImgBlurredBackground
         }
         if (croppedImg != null)
         {
-            var cropImgUri = BitmapToTempUri(Bitmap.createScaledBitmap(croppedImg, 640, 480, true), "cropped_img")
+            val cropImgUri = BitmapToTempUri(Bitmap.createScaledBitmap(croppedImg, 640, 480, true), "cropped_img")
 
             val intent = Intent(this, RodSelectorActivity::class.java)
             intent.putExtra(ConfigInfo.PATH, cropImgUri?.path)
             RodSelectorActivity.bitmap = croppedImg
             startActivity(intent)
-            finish()
         }
         else {
             toast("Jelöljön ki megfelelő területet a képen.")
         }
     }
 
-    fun BitmapToTempUri(inImage: Bitmap, title: String): Uri? {
+    private fun BitmapToTempUri(inImage: Bitmap, title: String): Uri? {
         var tempDir = getExternalStorageDirectory()
         tempDir = File(tempDir.getAbsolutePath() + "/.temp/")
         tempDir.mkdir()

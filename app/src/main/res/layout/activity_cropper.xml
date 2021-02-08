@@ -9,24 +9,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="#222222">
+        android:background="#000000">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/app_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/greenDark">
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:contentInsetLeft="0dp"
-                app:contentInsetStart="0dp"
-                app:contentInsetRight="0dp"
-                app:contentInsetEnd="0dp"
-                android:background="@color/greenDark">
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:orientation="horizontal"
+    android:background="@color/yellow">
                 <ImageButton
                     android:id="@+id/btn_back"
                     android:layout_width="60dp"
@@ -34,25 +23,37 @@
                     android:background="@android:color/transparent"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_arrow_back"
-                    android:tint="@android:color/white" />
+                    android:tint="@color/darkGrey" />
                 <View
                     android:layout_width="20dp"
                     android:layout_height="match_parent"/>
                 <ImageButton
                     android:id="@+id/polycropper"
-                    android:layout_width="50dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:padding="8dp"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:layout_height="50dp"
-                    android:background="@drawable/poly"/>
+                    android:src="@drawable/poly_icon_selector"
+                    android:background="#00000000"
+                    android:tint="@color/darkGrey"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY" />
                 <View
                     android:layout_width="20dp"
                     android:layout_height="match_parent"/>
                 <ImageButton
                     android:id="@+id/rectanglecropper"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:padding="8dp"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:background="@drawable/rect" />
+                    android:src="@drawable/rectangle_icon_selector"
+                    android:background="#00000000"
+                    android:tint="@color/darkGrey"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY"/>
                 <LinearLayout
                     android:gravity="right"
                     android:paddingRight="0dp"
@@ -64,15 +65,12 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                        android:textColor="#ffffff"
+                        android:textColor="@color/darkGrey"
                         android:text="Kivágás"
                         android:tint="@android:color/white" />
                 </LinearLayout>
 
-            </androidx.appcompat.widget.Toolbar>
-
-        </com.google.android.material.appbar.AppBarLayout>
-
+</LinearLayout>
         <com.theartofdev.edmodo.cropper.CropImageView
             xmlns:custom="http://schemas.android.com/apk/res-auto"
             android:id="@+id/rectangle_cropper_view"
@@ -82,7 +80,11 @@
             android:visibility="gone"
             custom:cropFixAspectRatio="true"
             custom:cropAspectRatioX="640"
-            custom:cropAspectRatioY="480"/>
+            custom:cropAspectRatioY="480"
+            custom:cropBorderLineColor="@color/yellow"
+            custom:cropGuidelines="off"
+
+            />
 
         <com.agrolytics.agrolytics_android.utils.PolyCropper
             android:id="@+id/poly_cropper_view"

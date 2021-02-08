@@ -70,6 +70,7 @@ object Detector {
                 }
             }
         } catch (e: Exception){
+            //TODO: Handle error
             val a = 2
         }
 
