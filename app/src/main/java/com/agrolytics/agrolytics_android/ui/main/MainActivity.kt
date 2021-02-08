@@ -19,8 +19,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.EditText
-import android.widget.Spinner
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import com.agrolytics.agrolytics_android.R
@@ -34,8 +32,8 @@ import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.login.LoginActivity
 import com.agrolytics.agrolytics_android.ui.map.MapActivity
 import com.agrolytics.agrolytics_android.utils.*
-import com.agrolytics.agrolytics_android.utils.ConfigInfo.CAMERA_CAPTURE
-import com.agrolytics.agrolytics_android.utils.ConfigInfo.PICK_IMAGE
+import com.agrolytics.agrolytics_android.utils.ConfigInfo.IMAGE_CAPTURE
+import com.agrolytics.agrolytics_android.utils.ConfigInfo.IMAGE_BROWSE
 import com.agrolytics.agrolytics_android.utils.Util.Companion.showParameterSettingsWindow
 import com.agrolytics.agrolytics_android.utils.extensions.cameraPermGiven
 import com.agrolytics.agrolytics_android.utils.extensions.locationPermGiven
@@ -52,6 +50,7 @@ import kotlinx.android.synthetic.main.nav_bar.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
+import kotlin.system.exitProcess
 
 
 class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActivity.OnDialogActions {
@@ -66,7 +65,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
     private var locationManager: LocationManager? = null
     private var locationListener: AgroLocationListener? = null
 
-    private var imageUri: Uri? = null
+    private lateinit var imageUri: Uri
 
     /** FAB and animations*/
     private var fabClicked = false
@@ -118,7 +117,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
 
         mainFab.setOnClickListener { fabHandler() }
 
-        checkPermissions(false, true)
+        checkPermissions(isCamera = false, isDefault = true)
 
     }
 
@@ -128,21 +127,23 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
 
         redToGrayAnim.setIntValues(from, to)
         redToGrayAnim.setEvaluator(ArgbEvaluator())
-        redToGrayAnim.addUpdateListener { valueAnimator -> mainFab.backgroundTintList = ColorStateList.valueOf(valueAnimator.animatedValue as Int) }
+        redToGrayAnim.addUpdateListener { valueAnimator ->
+            mainFab.backgroundTintList = ColorStateList.valueOf(valueAnimator.animatedValue as Int)
+        }
         redToGrayAnim.duration = 300
 
         grayToRedAnim.setIntValues(to, from)
         grayToRedAnim.setEvaluator(ArgbEvaluator())
-        grayToRedAnim.addUpdateListener { valueAnimator -> mainFab.backgroundTintList = ColorStateList.valueOf(valueAnimator.animatedValue as Int) }
+        grayToRedAnim.addUpdateListener { valueAnimator ->
+            mainFab.backgroundTintList = ColorStateList.valueOf(valueAnimator.animatedValue as Int)
+        }
         grayToRedAnim.duration = 300
     }
 
     private fun fabHandler() {
-        if (fabClicked) {
-            closeFab()
-        }
-        else {
-            openFab()
+        when (fabClicked) {
+            true -> closeFab()
+            false -> openFab()
         }
     }
 
@@ -194,9 +195,9 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
             R.id.cameraFab -> openCamera()
             R.id.browseFab -> openGallery()
 
-            R.id.rod_frame -> openActivity(MenuItem.LENGTH)
-            R.id.images_frame -> openActivity(MenuItem.IMAGES)
             R.id.menu_frame -> drawer_layout.openDrawer(GravityCompat.START)
+            R.id.rod_frame -> openActivity(MenuItem.ROD)
+            R.id.images_frame -> openActivity(MenuItem.IMAGES)
             R.id.gps_frame -> openActivity(MenuItem.MAP)
 
             R.id.container_profile -> {/*TODO*/}
@@ -208,73 +209,51 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
 
     private fun openActivity(menuItem: MenuItem) {
         when (menuItem) {
-            MenuItem.LENGTH -> {
-                if (MenuItem.LENGTH.tag != TAG) {
-                    showParameterSettingsWindow(this, sessionManager, ::blur)
-                    //startActivity(LengthActivity::class.java, Bundle(), true)
-                }
-            }
-            MenuItem.MAIN -> {
-                if (MenuItem.MAIN.tag != TAG) {
-                    startActivity(MainActivity::class.java, Bundle(), true)
-                }
-            }
-            MenuItem.IMAGES -> {
-                if (MenuItem.IMAGES.tag != TAG) {
-                    startActivity(ImagesActivity::class.java, Bundle(), true)
-                }
-            }
-            MenuItem.MAP -> {
-                if (MenuItem.MAP.tag != TAG) {
-                    startActivity(MapActivity::class.java, Bundle(), true)
-                }
-            }
-            MenuItem.INFO -> {
-                if (MenuItem.INFO.tag != TAG) {
-                    startActivity(InfoActivity::class.java, Bundle(), true)
-                }
-            }
-            MenuItem.GUIDE -> {
-                if (MenuItem.GUIDE.tag != TAG) {
-                    startActivity(GuideActivity::class.java, Bundle(), true)
-                }
-            }
+            MenuItem.INFO -> startActivity(InfoActivity::class.java, Bundle(), true)
+            MenuItem.GUIDE -> startActivity(GuideActivity::class.java, Bundle(), true)
+            MenuItem.IMAGES -> startActivity(ImagesActivity::class.java, Bundle(), true)
+            MenuItem.MAP -> startActivity(MapActivity::class.java, Bundle(), true)
+            MenuItem.ROD -> showParameterSettingsWindow(this, sessionManager, ::blur)
+            MenuItem.MAIN -> startActivity(MainActivity::class.java, Bundle(), true)
         }
         drawer_layout.closeDrawers()
     }
 
     private fun openGallery() {
         if (cameraPermGiven() && storagePermGiven() && locationPermGiven()) {
-            pickImage()
+            browseImageActivity()
         } else {
-            checkPermissions(false, false)
+            checkPermissions(isCamera = false, isDefault = false)
         }
     }
 
     private fun openCamera() {
         if (cameraPermGiven() && storagePermGiven()) {
-            startCamera()
+            startCameraActivity()
         } else {
-            checkPermissions(true, false)
+            checkPermissions(isCamera = true, isDefault = false)
         }
     }
 
-    private fun pickImage() {
-        intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.setType("image/*")
-        startActivityForResult(intent, PICK_IMAGE)
+    private fun browseImageActivity() {
+        intent = Intent(Intent.ACTION_GET_CONTENT).setType("image/*")
+        startActivityForResult(intent, IMAGE_BROWSE)
     }
 
-    private fun startCamera() {
+    private fun startCameraActivity() {
         val values = ContentValues()
         values.put(MediaStore.Images.Media.TITLE, "New Picture")
         values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera")
-        imageUri = contentResolver.insert(
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values
-        )
+        imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)!!
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-        startActivityForResult(intent, CAMERA_CAPTURE)
+        startActivityForResult(intent, IMAGE_CAPTURE)
+    }
+
+    private fun startCropperActivity(imgUri: Uri){
+        val intent = Intent(this, CropperActivity::class.java)
+        intent.putExtra("IMAGE", imgUri)
+        startActivity(intent)
     }
 
     private fun checkPermissions(isCamera: Boolean, isDefault: Boolean) {
@@ -289,9 +268,9 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if (!isDefault) {
                         if (isCamera) {
-                            startCamera()
+                            startCameraActivity()
                         } else {
-                            pickImage()
+                            browseImageActivity()
                         }
                     }
                     updateLocation()
@@ -313,7 +292,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
             roomModule.database?.clearAllTables()
             uiThread {
                 startActivity(LoginActivity::class.java, Bundle(), false)
-                //finish()
             }
         }
     }
@@ -325,11 +303,11 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
             //This is needed to retrieve user token when during app startup
             //auto-login was successful, but there was not internet connection.
             if (appServer.getUserToken() == null){
-                var auth = FirebaseAuth.getInstance()
-                var currentUser = auth.currentUser
+                val auth = FirebaseAuth.getInstance()
+                val currentUser = auth.currentUser
                 currentUser?.getIdToken(false)?.addOnSuccessListener { userToken ->
                     appServer.updateApiService(userToken.token)
-                }?.addOnFailureListener { e ->
+                }?.addOnFailureListener {
                     //TODO
                 }
             }
@@ -345,14 +323,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         }
     }
 
-    override fun negativeButtonClicked() {
-        //Do nothing
-    }
-
-    override fun positiveButtonClicked() {
-        //Do nothing
-    }
-
     @SuppressLint("MissingPermission")
     private fun updateLocation() {
         if (locationPermGiven()) {
@@ -362,8 +332,8 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
             var bestLocation: Location? = null
             if (providers != null) {
                 for (provider in providers) {
-                    val loc: Location? = locationManager?.getLastKnownLocation(provider) ?: continue
-                    if (bestLocation == null || loc!!.accuracy < bestLocation.accuracy) {
+                    val loc: Location = locationManager?.getLastKnownLocation(provider) ?: continue
+                    if (bestLocation == null || loc.accuracy < bestLocation.accuracy) {
                         bestLocation = loc
                     }
                 }
@@ -388,53 +358,32 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         locationManager?.removeUpdates(locationListener)
     }
 
-    override fun onBackPressed() {
-        finish()
-        System.exit(0)
-    }
-
-    private fun startCropper(imgUri: Uri){
-        val intent = Intent(this, CropperActivity::class.java)
-        intent.putExtra("IMAGE", imgUri)
-        startActivity(intent)
-    }
-
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-            CAMERA_CAPTURE -> {
+            IMAGE_CAPTURE -> {
                 try {
-                    val thumbnail = MediaStore.Images.Media.getBitmap(
-                        contentResolver, imageUri
-                    )
+                    val thumbnail = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
                     val uri = presenter.getImageUri(thumbnail)
                     Log.d("HGXQR", "MAIN ACTIVITY UNCROPPED bitmap height" + thumbnail.height)
-                    startCropper(uri)
+                    startCropperActivity(uri)
                 } catch (e: Exception) {
-                    Log.d("Camera", "Failed to get camera image Uri: ${e}")
+                    Log.d("Camera", "Failed to get camera image Uri: $e")
                     e.printStackTrace()
                 }
             }
-            PICK_IMAGE -> {
-                try {
-                    var imageUri = data!!.getData()
-                    startCropper(imageUri)
-                }
-                catch (e: Exception){
-                    //showToast("Hiba a kép megnyitása közben.")
-                }
+            IMAGE_BROWSE -> startCropperActivity(data!!.data!!)
             }
         }
-    }
 
-    fun blur(iRadius : Int){
+    private fun blur(iRadius : Int){
         val wView = (findViewById<View>(android.R.id.content) as ViewGroup).getChildAt(0) as ViewGroup
         if (iRadius == 0){
             Blurry.delete(wView)
-            yellow_bg.animate().alpha(0f).setDuration(0)
+            yellow_bg.animate().alpha(0f).duration = 0
         }
         else {
-            yellow_bg.animate().alpha(0.95f).setDuration(250)
+            yellow_bg.animate().alpha(0.95f).duration = 250
             Blurry.with(this)
                 .radius(iRadius)
                 .sampling(8)
@@ -443,6 +392,15 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
                 .onto(wView)
         }
 
+    }
+
+    override fun positiveButtonClicked() {}
+
+    override fun negativeButtonClicked() {}
+
+    override fun onBackPressed() {
+        finish()
+        exitProcess(0)
     }
 
     override fun onResume() {

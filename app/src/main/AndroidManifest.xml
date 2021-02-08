@@ -43,9 +43,6 @@
             android:name=".ui.imageFinished.UploadFinishedActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.setLength.LengthActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.map.MapActivity"
             android:screenOrientation="portrait" />
         <activity

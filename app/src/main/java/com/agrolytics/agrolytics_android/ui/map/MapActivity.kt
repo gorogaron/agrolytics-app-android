@@ -11,7 +11,6 @@ import com.agrolytics.agrolytics_android.networking.model.ImageItem
 import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
-import com.agrolytics.agrolytics_android.ui.setLength.LengthActivity
 import com.agrolytics.agrolytics_android.utils.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.MarkerInfoBottomSheetDialog
 import com.agrolytics.agrolytics_android.utils.MenuItem
@@ -128,11 +127,6 @@ class MapActivity : BaseActivity(), MapScreen, View.OnClickListener {
 
     private fun openActivity(menuItem: MenuItem) {
         when (menuItem) {
-            MenuItem.LENGTH -> {
-                if (MenuItem.LENGTH.tag != TAG) {
-                    startActivity(LengthActivity::class.java, Bundle(), false)
-                }
-            }
             MenuItem.MAIN -> {
                 if (MenuItem.MAIN.tag != TAG) {
                     startActivity(MainActivity::class.java, Bundle(), false)

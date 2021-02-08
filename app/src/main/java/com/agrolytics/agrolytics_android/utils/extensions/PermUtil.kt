@@ -3,7 +3,6 @@ package com.agrolytics.agrolytics_android.utils.extensions
 import android.app.Activity
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
-import com.agrolytics.agrolytics_android.utils.ConfigInfo
 
 fun Activity.locationPermGiven(): Boolean {
     return ActivityCompat.checkSelfPermission(

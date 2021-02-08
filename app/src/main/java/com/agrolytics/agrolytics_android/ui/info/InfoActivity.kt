@@ -8,7 +8,6 @@ import com.agrolytics.agrolytics_android.base.BaseActivity
 import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
 import com.agrolytics.agrolytics_android.ui.map.MapActivity
-import com.agrolytics.agrolytics_android.ui.setLength.LengthActivity
 import com.agrolytics.agrolytics_android.utils.MenuItem
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import kotlinx.android.synthetic.main.activity_info.*
@@ -46,11 +45,6 @@ class InfoActivity: BaseActivity(), View.OnClickListener {
 
 	private fun openActivity(menuItem: MenuItem) {
 		when (menuItem) {
-			MenuItem.LENGTH -> {
-				if (MenuItem.LENGTH.tag != TAG) {
-					startActivity(LengthActivity::class.java, Bundle(), false)
-				}
-			}
 			MenuItem.MAIN -> {
 				if (MenuItem.MAIN.tag != TAG) {
 					startActivity(MainActivity::class.java, Bundle(), false)
