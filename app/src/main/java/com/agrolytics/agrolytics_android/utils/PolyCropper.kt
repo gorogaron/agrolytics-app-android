@@ -217,29 +217,8 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
             canvas.drawBitmap(croppedImgBitmap, 0f, 0f, borderPaint)
             canvas.drawBitmap(createPolyMask(transformedPolyPoints, bitmap!!.width, bitmap!!.height, 0, 0), 0f, 0f, borderPaint)
 
-
-            var minX = canvas.width
-            var minY = canvas.height
-            var maxX = 0
-            var maxY = 0
-            for (point in transformedPolyPoints){
-                if (point.x > maxX) maxX = point.x
-                if (point.y > maxY) maxY = point.y
-
-                if (point.x < minX) minX = point.x
-                if (point.y < minY) minY = point.y
-            }
-
-            var paddingDeltaY = 0
-            var paddingDeltaX = 0
-            val aspectRatio = (maxY - minY)/(maxX - minX)
-            if (aspectRatio < 0.75) {
-                //Add padding to top and bottom
-                paddingDeltaY = (0.75*(maxX - minX) - (maxY - minY)).toInt()
-            } else{
-                //Add padding to right and left
-                paddingDeltaX = (1/0.75 * (maxY - minY) - (maxX - minX)).toInt()
-            }
+            val (minX, minY, maxX, maxY) = getMinMaxCoordinatesOfPolygon(transformedPolyPoints)
+            val (paddingDeltaX, paddingDeltaY) = getPaddingForAspectRatio(0.75, minX, minY, maxX, maxY)
 
             /**Crop relevant parts of finalImgBlackBackground and finalImgBlurredBackground based on the
             bounding rectangle of the polygon*/
@@ -341,6 +320,40 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
         }
 
         return transformedPolyPoints
+    }
+
+    //This function calculates the minimum and maximum coordinates of a polygon
+    //to get a minimum sized bounding box.
+    private fun getMinMaxCoordinatesOfPolygon(polygon: ArrayList<Point>): Array<Int> {
+        var minX = this.width
+        var minY = this.height
+        var maxX = 0
+        var maxY = 0
+        for (point in polygon){
+            if (point.x > maxX) maxX = point.x
+            if (point.y > maxY) maxY = point.y
+
+            if (point.x < minX) minX = point.x
+            if (point.y < minY) minY = point.y
+        }
+        return arrayOf(minX, minY, maxX, maxY)
+    }
+
+    //This function calculates the horizontal and vertical padding for bounding box defined
+    //by min/max x/y points. By adding the padding values to the bounding box left/right/top/bot
+    //parameters, the bounding box will have 'aspectRatioNeeded' aspect ratio.
+    private fun getPaddingForAspectRatio(aspectRatioNeeded: Double, minX:Int, minY:Int, maxX:Int, maxY:Int) : Pair<Int,Int> {
+        var paddingDeltaY = 0
+        var paddingDeltaX = 0
+        val aspectRatio = (maxY - minY)/(maxX - minX)
+        if (aspectRatio < aspectRatioNeeded) {
+            //Add padding to top and bottom
+            paddingDeltaY = (aspectRatioNeeded*(maxX - minX) - (maxY - minY)).toInt()
+        } else{
+            //Add padding to right and left
+            paddingDeltaX = (1/aspectRatioNeeded * (maxY - minY) - (maxX - minX)).toInt()
+        }
+        return Pair(paddingDeltaX, paddingDeltaY)
     }
 
 }
