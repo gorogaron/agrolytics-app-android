@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.net.SocketTimeoutException
+import java.time.LocalDate
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -183,8 +184,8 @@ class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
             Collections.sort(fireBaseList, object : Comparator<ImageItem> {
                 override fun compare(s1: ImageItem, s2: ImageItem): Int {
                     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                    val date1 = LocalDateTime.parse(s1.time).format(formatter)
-                    val date2 = LocalDateTime.parse(s2.time).format(formatter)
+                    val date1 = LocalDate.parse(s1.time).format(formatter)
+                    val date2 = LocalDate.parse(s2.time).format(formatter)
                     return date1.compareTo(date2)
                 }
             })
