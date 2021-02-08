@@ -16,8 +16,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import org.joda.time.LocalDateTime
-import org.joda.time.format.DateTimeFormat
+import java.time.format.DateTimeFormatter
+import java.time.LocalDateTime
 import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -182,8 +182,9 @@ class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
             screen?.hideLoading()
             Collections.sort(fireBaseList, object : Comparator<ImageItem> {
                 override fun compare(s1: ImageItem, s2: ImageItem): Int {
-                    val date1 = LocalDateTime.parse(s1.time, DateTimeFormat.forPattern("yyyy-MM-dd"))
-                    val date2 = LocalDateTime.parse(s2.time, DateTimeFormat.forPattern("yyyy-MM-dd"))
+                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                    val date1 = LocalDateTime.parse(s1.time).format(formatter)
+                    val date2 = LocalDateTime.parse(s2.time).format(formatter)
                     return date1.compareTo(date2)
                 }
             })

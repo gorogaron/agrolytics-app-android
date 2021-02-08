@@ -5,7 +5,6 @@ import android.os.Environment
 import com.agrolytics.agrolytics_android.koin.appModule
 import com.agrolytics.agrolytics_android.utils.ConfigInfo
 import com.mapbox.mapboxsdk.Mapbox
-import net.danlew.android.joda.JodaTimeAndroid
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import java.io.File
@@ -20,7 +19,6 @@ class AgrolyticsApp: Application() {
 			androidContext(this@AgrolyticsApp)
 			modules(appModule)
 		}
-		JodaTimeAndroid.init(this)
 		Mapbox.getInstance(this, ConfigInfo.MAP_BOX_KEY)
 
 		if (BuildConfig.DEBUG){

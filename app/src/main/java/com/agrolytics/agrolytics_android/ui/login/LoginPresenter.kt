@@ -11,8 +11,8 @@ import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.doAsync
-import org.joda.time.DateTime
-import java.util.concurrent.TimeUnit
+import java.time.LocalDate
+import java.time.Period
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -105,11 +105,10 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
     }
 
     private fun checkUserExpired(firstLogin: String) : Boolean {
-        val firstLoginDate = DateTime.parse(firstLogin)
-        val msDiff = DateTime.now().millis - firstLoginDate.millis
-        val daysDiff = TimeUnit.MILLISECONDS.toDays(msDiff)
+        val firstLoginDate = LocalDate.parse(firstLogin)
+        val period = Period.between(firstLoginDate, LocalDate.now())
 
-        return daysDiff >= 30
+        return period.months >= 1
     }
 
     private suspend fun getUserDocument(user: FirebaseUser?) : DocumentSnapshot = suspendCoroutine { cont->
