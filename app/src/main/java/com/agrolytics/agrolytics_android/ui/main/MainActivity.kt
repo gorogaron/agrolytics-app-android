@@ -452,6 +452,9 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
 
     override fun onPause() {
         super.onPause()
-        closeFab()
+        if (fabClicked)
+        {
+            closeFab()
+        }
     }
 }
