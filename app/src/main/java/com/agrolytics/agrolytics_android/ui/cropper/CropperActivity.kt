@@ -99,4 +99,8 @@ class CropperActivity: BaseActivity(), View.OnClickListener {
         return Uri.fromFile(tempFile)
     }
 
+    override fun onResume() {
+        super.onResume()
+        poly_cropper_view.resetFinalImages()
+    }
 }

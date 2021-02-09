@@ -1,5 +1,6 @@
 package com.agrolytics.agrolytics_android.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
@@ -14,9 +15,9 @@ import kotlin.math.abs
 
 class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
-    var bitmap : Bitmap? = null
-    var finalImgBlackBackground : Bitmap? = null
-    var finalImgBlurredBackground : Bitmap? = null
+    lateinit var bitmap : Bitmap
+    private lateinit var finalImgBlackBackground : Bitmap
+    private lateinit var finalImgBlurredBackground : Bitmap
 
     private val borderPaint = Paint()
     private val polyPointPaint = Paint()
@@ -25,8 +26,8 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
     private var selectedPointIdx : Int? = null
     private var polyFinished = false
 
-    var srcRect = Rect()
-    var dstRect = Rect()
+    private var srcRect = Rect()
+    private var dstRect = Rect()
 
     init {
         polyPointPaint.isAntiAlias = true
@@ -55,25 +56,20 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
 
     fun setImageBitmap(img: Bitmap){
         bitmap = img
-        finalImgBlackBackground = Bitmap.createBitmap(bitmap!!.width, bitmap!!.height, Bitmap.Config.ARGB_8888)
-
-        //TODO: Find a better way to blur image
-        //Create blurred image by down and upscaling image
-        val scaleRatioForBlurring = 0.05f
-        finalImgBlurredBackground = Bitmap.createScaledBitmap(bitmap, (bitmap!!.width*scaleRatioForBlurring).toInt(), (bitmap!!.height*scaleRatioForBlurring).toInt(), true)
-        finalImgBlurredBackground = Bitmap.createScaledBitmap(finalImgBlurredBackground, bitmap!!.width, bitmap!!.height, true)
+        resetFinalImages()
     }
 
+    @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         if (srcRect.bottom == 0) //if Rects not initialized
         {
-            val wRatio = this.width.toFloat() / bitmap!!.width.toFloat()
-            val hRatio = this.height.toFloat() / bitmap!!.height.toFloat()
+            val wRatio = this.width.toFloat() / bitmap.width.toFloat()
+            val hRatio = this.height.toFloat() / bitmap.height.toFloat()
             val scalingRatio = min(wRatio, hRatio)
-            srcRect = Rect(0, 0, bitmap!!.width, bitmap!!.height)
-            dstRect = Rect(0, 0, (bitmap!!.width * scalingRatio).toInt(), (bitmap!!.height * scalingRatio).toInt())
+            srcRect = Rect(0, 0, bitmap.width, bitmap.height)
+            dstRect = Rect(0, 0, (bitmap.width * scalingRatio).toInt(), (bitmap.height * scalingRatio).toInt())
             val horizontalOffset = (this.width - dstRect.right) / 2
             val verticalOffset = (this.height - dstRect.bottom) / 2
             dstRect.left = dstRect.left + horizontalOffset
@@ -87,14 +83,14 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
 
         //Drawing transparent black bg around finished polygon
         if (polyFinished) {
-            var maskWidth = (dstRect.right - dstRect.left)
-            var maskHeight = (dstRect.bottom - dstRect.top)
-            var bitmap = createPolyMask(polyPoints, maskWidth, maskHeight, dstRect.left, dstRect.top)
+            val maskWidth = (dstRect.right - dstRect.left)
+            val maskHeight = (dstRect.bottom - dstRect.top)
+            val bitmap = createPolyMask(polyPoints, maskWidth, maskHeight, dstRect.left, dstRect.top)
             canvas.drawBitmap(bitmap, Rect(0, 0, maskWidth, maskHeight), dstRect, null)
         }
 
         //Drawing lines
-        for ((index, point) in polyPoints.withIndex()) {
+        for ((index, _) in polyPoints.withIndex()) {
             if (index > 0){
                 val x1 = polyPoints[index-1].x.toFloat()
                 val y1 = polyPoints[index-1].y.toFloat()
@@ -108,8 +104,7 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
         }
 
         //Drawing points
-        for ((_, point) in polyPoints.withIndex()) {
-
+        for (point in polyPoints) {
             polyPointPaint.style = Paint.Style.FILL
             polyPointPaint.color = parseColor("#444444")
             canvas.drawCircle(point.x.toFloat() + 3, point.y.toFloat() + 3, 20f, polyPointPaint)
@@ -170,6 +165,7 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
         return true
     }
 
+    //TODO: create reset button and call this
     fun reset(){
         polyFinished = false
         polyPoints.clear()
@@ -183,7 +179,7 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
         bitmap!!.eraseColor(Color.TRANSPARENT)
         val maskCanvas = Canvas(bitmap)
         val paint = Paint()
-        paint.setColor(Color.BLACK)
+        paint.color = Color.BLACK
         paint.alpha = 100
         paint.style = Paint.Style.FILL
 
@@ -208,17 +204,19 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
 
             /**Draw cropped image on blurred image*/
             // croppedImgBitmap - this will be an image containing the cropped chunk, with transparent background
-            val croppedImgBitmap = Bitmap.createBitmap(bitmap!!.width, bitmap!!.height, Bitmap.Config.ARGB_8888)
+            val croppedImgBitmap = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
             canvas = Canvas(croppedImgBitmap)
             canvas.drawPath(path, Paint())
             canvas.drawBitmap(bitmap, 0f, 0f, paint)
             // Copy croppedImgBitmap on blurred original image
             canvas = Canvas(finalImgBlurredBackground)
             canvas.drawBitmap(croppedImgBitmap, 0f, 0f, borderPaint)
-            canvas.drawBitmap(createPolyMask(transformedPolyPoints, bitmap!!.width, bitmap!!.height, 0, 0), 0f, 0f, borderPaint)
+            canvas.drawBitmap(createPolyMask(transformedPolyPoints, bitmap.width, bitmap.height, 0, 0), 0f, 0f, borderPaint)
 
+            /**Create bounding rectangle for cropping*/
             val (minX, minY, maxX, maxY) = getMinMaxCoordinatesOfPolygon(transformedPolyPoints)
             val (paddingDeltaX, paddingDeltaY) = getPaddingForAspectRatio(0.75, minX, minY, maxX, maxY)
+            val boundingRect = getBoundingRectForCropping(minX, minY, maxX, maxY, paddingDeltaX, paddingDeltaY)
 
             /**Crop relevant parts of finalImgBlackBackground and finalImgBlurredBackground based on the
             bounding rectangle of the polygon*/
@@ -226,49 +224,13 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
             blackPaint.color = Color.BLACK
             blackPaint.style = Paint.Style.FILL
 
-            //Crop with blurred background
+            //Crop from finalImgBlurredBackground
             val croppedImgBlurredBackground = Bitmap.createBitmap(maxX - minX + paddingDeltaX, maxY - minY + paddingDeltaY, Bitmap.Config.ARGB_8888)
-            var boundingRect = Rect(minX - paddingDeltaX / 2, minY - paddingDeltaY / 2, maxX + paddingDeltaX / 2, maxY + paddingDeltaY / 2)
-            //TODO: Organize shifting to seperate function
-            //TODO: Implement vertical shifting
-            if (boundingRect.left < 0) {
-                //If cropped part would be outside the image (left side), shift src rectangle to right to avoid having blank part on image
-                if ((boundingRect.right + abs(boundingRect.left)) < finalImgBlurredBackground!!.width) {
-                    //If possible, shift to right to totally remove blank space
-                    boundingRect.right += abs(boundingRect.left)
-                    boundingRect.left = 0
-                }
-                else {
-                    //TODO: Shift as much as possible (until boundingRect.right=finalImgBlurredBackground.width)
-                }
-            }
-            if (boundingRect.right > finalImgBlurredBackground!!.width) {
-                //If cropped part would be outside the image (right side), shift src rectangle to right to avoid having blank part on image
-                if ((boundingRect.left - (boundingRect.right - finalImgBlurredBackground!!.width)) > 0) {
-                    //If possible, shift to left to totally remove blank space
-                    boundingRect.left -= (boundingRect.right - finalImgBlurredBackground!!.width)
-                    boundingRect.right = finalImgBlurredBackground!!.width
-                }
-                else {
-                    //TODO: Shift as much as possible (until boundingRect.left=0)
-                }
-            }
             var croppedCanvas = Canvas(croppedImgBlurredBackground)
             croppedCanvas.drawPaint(blackPaint) //Make the bmp black. This is needed to avoid transparency when edge of an image is clipped
-            var dstHorizontalOffset = 0
-            if (boundingRect.left < 0 || boundingRect.right > finalImgBlurredBackground!!.width){
-                //If the bounding rectangle of the cropped polygon is outside the image to the left or right, shift
-                //the rectangle horizontally to align the polygon into the center of it.
-                val leftBlankSpace = if (boundingRect.left < 0) abs(boundingRect.left) else 0
-                val rightBlankSpace = if (boundingRect.right - finalImgBlurredBackground!!.width > 0) boundingRect.right - finalImgBlurredBackground!!.width else 0
-                dstHorizontalOffset = (leftBlankSpace - rightBlankSpace) / 2
-            }
-            boundingRect.left += dstHorizontalOffset
-            boundingRect.right += dstHorizontalOffset
-
             croppedCanvas.drawBitmap(finalImgBlurredBackground, boundingRect, Rect(0, 0 , croppedCanvas.width, croppedCanvas.height), borderPaint)
 
-            //Crop with black background
+            //Crop from finalImgBlackBackground
             val croppedImgBlackBackground = Bitmap.createBitmap(maxX - minX + paddingDeltaX, maxY - minY + paddingDeltaY, Bitmap.Config.ARGB_8888)
             croppedCanvas = Canvas(croppedImgBlackBackground)
             croppedCanvas.drawPaint(blackPaint)
@@ -345,7 +307,7 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
     private fun getPaddingForAspectRatio(aspectRatioNeeded: Double, minX:Int, minY:Int, maxX:Int, maxY:Int) : Pair<Int,Int> {
         var paddingDeltaY = 0
         var paddingDeltaX = 0
-        val aspectRatio = (maxY - minY)/(maxX - minX)
+        val aspectRatio = (maxY - minY).toDouble()/(maxX - minX).toDouble()
         if (aspectRatio < aspectRatioNeeded) {
             //Add padding to top and bottom
             paddingDeltaY = (aspectRatioNeeded*(maxX - minX) - (maxY - minY)).toInt()
@@ -354,6 +316,77 @@ class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs
             paddingDeltaX = (1/aspectRatioNeeded * (maxY - minY) - (maxX - minX)).toInt()
         }
         return Pair(paddingDeltaX, paddingDeltaY)
+    }
+
+    private fun getBoundingRectForCropping(minX:Int, minY:Int, maxX:Int, maxY:Int, paddingDeltaX:Int, paddingDeltaY:Int) : Rect{
+        val boundingRect = Rect(minX - paddingDeltaX / 2, minY - paddingDeltaY / 2, maxX + paddingDeltaX / 2, maxY + paddingDeltaY / 2)
+        val widthOfImage = finalImgBlurredBackground.width    //width of image to be cropped from
+        val heightOfImage = finalImgBlurredBackground.height    //height of image to be cropped from
+
+        /**Shift to left is needed*/
+        if (boundingRect.left < 0) {
+            //If cropped part would be outside the image (left side), shift src rectangle to right to avoid having blank part on image
+            val rightShift: Int = if ((boundingRect.right + abs(boundingRect.left)) < widthOfImage) {
+                //If possible, shift to right to totally remove blank space
+                abs(boundingRect.left)
+            } else {
+                //Shift right so that blank spaces on right and left will be equal
+                val remainingSpaceOnRight = widthOfImage - boundingRect.right
+                remainingSpaceOnRight + (abs(boundingRect.left) - remainingSpaceOnRight)/2
+            }
+            boundingRect.right += rightShift
+            boundingRect.left += rightShift
+        }
+
+        /**Shift to right if needed*/
+        if (boundingRect.right > widthOfImage) {
+            //If cropped part would be outside the image (right side), shift src rectangle to right to avoid having blank part on image
+            val leftShift: Int = if ((boundingRect.left - (boundingRect.right - widthOfImage)) > 0) {
+                //If possible, shift to left to totally remove blank space
+                boundingRect.right - widthOfImage
+            } else {
+                //Shift left so that blank spaces on right and left will be equal
+                boundingRect.left + (boundingRect.right - widthOfImage - boundingRect.left)/2
+            }
+            boundingRect.left -= leftShift
+            boundingRect.right -= leftShift
+        }
+
+        /**Shift to bottom if needed*/
+        if (boundingRect.top < 0){
+            val bottomShift : Int = if ((boundingRect.bottom + abs(boundingRect.top)) < heightOfImage){
+                abs(boundingRect.top)
+            }
+            else {
+                heightOfImage + (abs(boundingRect.top) - heightOfImage)/2
+            }
+            boundingRect.top += bottomShift
+            boundingRect.bottom += bottomShift
+        }
+
+        /**Shift to top if needed*/
+        if (boundingRect.bottom > heightOfImage){
+            val topShift : Int = if (boundingRect.top - (boundingRect.bottom - heightOfImage) > 0) {
+                boundingRect.bottom - heightOfImage
+            }
+            else {
+                boundingRect.top + (boundingRect.bottom - heightOfImage - boundingRect.top)/2
+            }
+            boundingRect.top -= topShift
+            boundingRect.bottom -= topShift
+        }
+
+        return boundingRect
+    }
+
+    fun resetFinalImages(){
+        finalImgBlackBackground = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+
+        //TODO: Find a better way to blur image
+        //Create blurred image by down and upscaling image
+        val scaleRatioForBlurring = 0.05f
+        finalImgBlurredBackground = Bitmap.createScaledBitmap(bitmap, (bitmap.width*scaleRatioForBlurring).toInt(), (bitmap.height*scaleRatioForBlurring).toInt(), true)
+        finalImgBlurredBackground = Bitmap.createScaledBitmap(finalImgBlurredBackground, bitmap.width, bitmap.height, true)
     }
 
 }

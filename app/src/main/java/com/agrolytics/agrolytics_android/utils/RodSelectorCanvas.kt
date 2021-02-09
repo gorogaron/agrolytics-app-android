@@ -160,7 +160,8 @@ class RodSelectorCanvas(context: Context?, attrs: AttributeSet?) : View(context,
         var fixedXPosition = 225f
         if (x < canvas.width/2) fixedXPosition = canvas.width - 225f
 
-        val fixedYPosition = 225f
+        //TODO: Link zoom circle directly below top bar with some padding
+        val fixedYPosition = 338f
 
         // Frame of zoom
         val framePaint = Paint()
