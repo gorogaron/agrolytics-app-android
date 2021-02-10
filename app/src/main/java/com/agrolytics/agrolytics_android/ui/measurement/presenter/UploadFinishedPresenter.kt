@@ -1,11 +1,12 @@
-package com.agrolytics.agrolytics_android.ui.imageFinished
+package com.agrolytics.agrolytics_android.ui.measurement.presenter
 
 import android.graphics.Bitmap
 import android.util.Log
-import com.agrolytics.agrolytics_android.base.BasePresenter
+import com.agrolytics.agrolytics_android.ui.base.BasePresenter
 import com.agrolytics.agrolytics_android.networking.model.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.imageFinished.fragment.UploadFinishedFragment
+import com.agrolytics.agrolytics_android.ui.measurement.activity.UploadFinishedActivity
 import com.agrolytics.agrolytics_android.utils.BitmapUtils
 import com.agrolytics.agrolytics_android.utils.Util
 import com.google.firebase.storage.StorageMetadata
@@ -13,7 +14,7 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.io.File
 
-class UploadFinishedPresenter : BasePresenter<UploadFinishedScreen>() {
+class UploadFinishedPresenter : BasePresenter<UploadFinishedActivity>() {
 
     val TAG = "UploadFinishedPresenter"
 

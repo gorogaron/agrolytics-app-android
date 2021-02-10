@@ -1,13 +1,12 @@
-package com.agrolytics.agrolytics_android.ui.imageFinished
+package com.agrolytics.agrolytics_android.ui.measurement.activity
 
 import android.os.Bundle
 import android.view.View
 import androidx.viewpager.widget.ViewPager
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.base.BaseActivity
+import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.database.firebase.FireStoreDB
 import com.agrolytics.agrolytics_android.database.tables.RoomModule
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
 import com.agrolytics.agrolytics_android.ui.imageFinished.adapter.ImagePagerAdapter
 import com.agrolytics.agrolytics_android.ui.imageFinished.fragment.UploadFinishedFragment
 import com.agrolytics.agrolytics_android.utils.ConfigInfo
@@ -16,10 +15,11 @@ import kotlinx.android.synthetic.main.activity_upload_finished.*
 import org.koin.android.ext.android.inject
 import android.content.Intent
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
+import com.agrolytics.agrolytics_android.ui.measurement.presenter.UploadFinishedPresenter
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
 
 
-class UploadFinishedActivity : BaseActivity(), UploadFinishedScreen {
+class UploadFinishedActivity : BaseActivity() {
 
 	private val sessionManager: SessionManager by inject()
 	private val roomModule: RoomModule by inject()
@@ -115,21 +115,21 @@ class UploadFinishedActivity : BaseActivity(), UploadFinishedScreen {
 		}
 	}
 
-	override fun onNextPage(fragment: UploadFinishedFragment) {
+	fun onNextPage(fragment: UploadFinishedFragment) {
 		val currentItem = viewpager.currentItem
 		viewpager.setCurrentItem(currentItem + 1,true)
 	}
 
-	override fun onPreviousPage(fragment: UploadFinishedFragment) {
+	fun onPreviousPage(fragment: UploadFinishedFragment) {
 		val currentItem = viewpager.currentItem
 		viewpager.setCurrentItem(currentItem - 1,true)
 	}
 
-	override fun updateView(fragment: UploadFinishedFragment) {
+	fun updateView(fragment: UploadFinishedFragment) {
 		fragment.updateView()
 	}
 
-	override fun onDeclineClicked(fragment: UploadFinishedFragment, id: String?) {
+	fun onDeclineClicked(fragment: UploadFinishedFragment, id: String?) {
 		if (fragmentList.size == 1) {
 			//Return to main activity
 			val intent = Intent(this, MainActivity::class.java)
@@ -141,7 +141,7 @@ class UploadFinishedActivity : BaseActivity(), UploadFinishedScreen {
 		}
 	}
 
-	override fun onAcceptClicked(measurementResult: MeasurementResult, path: String?,
+	fun onAcceptClicked(measurementResult: MeasurementResult, path: String?,
 								 fragment: UploadFinishedFragment, id: String?) {
 
 		val processMethod = intent.extras.getString(ConfigInfo.METHOD)

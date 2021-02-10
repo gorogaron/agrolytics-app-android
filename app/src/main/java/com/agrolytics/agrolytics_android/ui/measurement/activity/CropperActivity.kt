@@ -1,23 +1,16 @@
-package com.agrolytics.agrolytics_android.ui.cropper
+package com.agrolytics.agrolytics_android.ui.measurement.activity
 
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import com.agrolytics.agrolytics_android.base.BaseActivity
+import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_cropper.*
 import kotlinx.android.synthetic.main.activity_info.btn_back
 import android.provider.MediaStore
-import com.agrolytics.agrolytics_android.ui.rodSelector.RodSelectorActivity
 import com.agrolytics.agrolytics_android.utils.ConfigInfo
-import com.google.common.io.Flushables.flush
-import android.system.Os.mkdir
 import android.os.Environment.getExternalStorageDirectory
-import androidx.core.app.ComponentActivity.ExtraData
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import android.os.Environment
 import org.jetbrains.anko.toast
 import java.io.ByteArrayOutputStream
 import java.io.File

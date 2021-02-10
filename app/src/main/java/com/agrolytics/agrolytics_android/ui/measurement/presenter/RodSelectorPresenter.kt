@@ -1,13 +1,14 @@
-package com.agrolytics.agrolytics_android.ui.rodSelector
+package com.agrolytics.agrolytics_android.ui.measurement.presenter
 
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
-import com.agrolytics.agrolytics_android.base.BasePresenter
+import com.agrolytics.agrolytics_android.ui.base.BasePresenter
 import com.agrolytics.agrolytics_android.networking.model.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
+import com.agrolytics.agrolytics_android.ui.measurement.activity.RodSelectorActivity
 import com.agrolytics.agrolytics_android.utils.BitmapUtils
 import com.agrolytics.agrolytics_android.utils.Detector
 import com.agrolytics.agrolytics_android.utils.Util
@@ -17,7 +18,7 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.net.SocketTimeoutException
 
-class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorScreen>() {
+class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActivity>() {
 
     private var activity: RodSelectorActivity? = null
     private var path: String? = null

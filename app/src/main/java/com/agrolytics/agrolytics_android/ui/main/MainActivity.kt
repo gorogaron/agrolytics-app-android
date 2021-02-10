@@ -22,10 +22,10 @@ import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.base.BaseActivity
+import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.database.tables.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
-import com.agrolytics.agrolytics_android.ui.cropper.CropperActivity
+import com.agrolytics.agrolytics_android.ui.measurement.activity.CropperActivity
 import com.agrolytics.agrolytics_android.ui.guide.GuideActivity
 import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
@@ -35,9 +35,9 @@ import com.agrolytics.agrolytics_android.utils.*
 import com.agrolytics.agrolytics_android.utils.ConfigInfo.IMAGE_CAPTURE
 import com.agrolytics.agrolytics_android.utils.ConfigInfo.IMAGE_BROWSE
 import com.agrolytics.agrolytics_android.utils.Util.Companion.showParameterSettingsWindow
-import com.agrolytics.agrolytics_android.utils.extensions.cameraPermGiven
-import com.agrolytics.agrolytics_android.utils.extensions.locationPermGiven
-import com.agrolytics.agrolytics_android.utils.extensions.storagePermGiven
+import com.agrolytics.agrolytics_android.ui.measurement.utils.cameraPermGiven
+import com.agrolytics.agrolytics_android.ui.measurement.utils.locationPermGiven
+import com.agrolytics.agrolytics_android.ui.measurement.utils.storagePermGiven
 import com.google.firebase.auth.FirebaseAuth
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -410,6 +410,9 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
 
     override fun onPause() {
         super.onPause()
-        closeFab()
+        if (fabClicked)
+        {
+            closeFab()
+        }
     }
 }

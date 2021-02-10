@@ -1,15 +1,12 @@
 package com.agrolytics.agrolytics_android.ui.imageFinished.fragment
 
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Base64
 import android.view.View
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.base.BaseFragment
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
+import com.agrolytics.agrolytics_android.ui.base.BaseFragment
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
-import com.agrolytics.agrolytics_android.ui.imageFinished.UploadFinishedScreen
+import com.agrolytics.agrolytics_android.ui.measurement.activity.UploadFinishedActivity
 import com.agrolytics.agrolytics_android.utils.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.bumptech.glide.Glide
@@ -18,7 +15,7 @@ import org.koin.android.ext.android.inject
 
 class UploadFinishedFragment: BaseFragment() {
 
-    private var listener: UploadFinishedScreen? = null
+    private var listener: UploadFinishedActivity? = null
 
     private val sessionManager: SessionManager by inject()
 
@@ -83,7 +80,7 @@ class UploadFinishedFragment: BaseFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is UploadFinishedScreen) {
+        if (context is UploadFinishedActivity) {
             listener = context
         } else {
             throw RuntimeException("$context must implement UploadFinishedScreen")

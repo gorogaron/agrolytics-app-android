@@ -40,7 +40,7 @@
             android:name=".ui.images.ImagesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.imageFinished.UploadFinishedActivity"
+            android:name=".ui.measurement.activity.UploadFinishedActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.map.MapActivity"
@@ -52,12 +52,12 @@
             android:name=".ui.guide.GuideActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.cropper.CropperActivity"
+            android:name=".ui.measurement.activity.CropperActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.login.LoginActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ui.rodSelector.RodSelectorActivity"
+        <activity android:name=".ui.measurement.activity.RodSelectorActivity"
                   android:configChanges="keyboardHidden|orientation|screenSize"
         />
     </application>

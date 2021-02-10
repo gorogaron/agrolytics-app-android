@@ -1,30 +1,22 @@
-package com.agrolytics.agrolytics_android.ui.rodSelector
+package com.agrolytics.agrolytics_android.ui.measurement.activity
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.Spinner
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.base.BaseActivity
+import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.database.tables.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
-import com.agrolytics.agrolytics_android.ui.imageFinished.UploadFinishedActivity
+import com.agrolytics.agrolytics_android.ui.measurement.presenter.RodSelectorPresenter
 import com.agrolytics.agrolytics_android.utils.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.agrolytics.agrolytics_android.utils.Util
 import kotlinx.android.synthetic.main.activity_rod_selector.*
 import org.koin.android.ext.android.inject
 
-
-class RodSelectorActivity : BaseActivity(), RodSelectorScreen, BaseActivity.OnDialogActions {
+class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 
 	private val presenter: RodSelectorPresenter by inject()
 	private val appServer: AppServer by inject()
@@ -69,7 +61,7 @@ class RodSelectorActivity : BaseActivity(), RodSelectorScreen, BaseActivity.OnDi
 	}
 
 	//TODO: Not a good function name...
-	override fun successfulUpload(measurementResult: MeasurementResult, path: String?, method: String) {
+	fun successfulUpload(measurementResult: MeasurementResult, path: String?, method: String) {
 			val intent = Intent(this, UploadFinishedActivity::class.java)
 			val results = arrayListOf<MeasurementResult>()
 			val pathList = arrayListOf<String>()
@@ -91,7 +83,7 @@ class RodSelectorActivity : BaseActivity(), RodSelectorScreen, BaseActivity.OnDi
 		}
 	}
 
-	override fun back() {
+	fun back() {
 		finish()
 	}
 

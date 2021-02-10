@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
-import com.agrolytics.agrolytics_android.base.BasePresenter
+import com.agrolytics.agrolytics_android.ui.base.BasePresenter
 import java.io.ByteArrayOutputStream
 
 class MainPresenter(private val context: Context): BasePresenter<MainScreen>() {

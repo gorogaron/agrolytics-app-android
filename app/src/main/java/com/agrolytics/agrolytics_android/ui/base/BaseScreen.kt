@@ -1,4 +1,4 @@
-package com.agrolytics.agrolytics_android.base
+package com.agrolytics.agrolytics_android.ui.base
 
 import android.app.Activity
 import android.content.Context

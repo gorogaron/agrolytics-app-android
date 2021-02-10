@@ -4,7 +4,7 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.base.BaseActivity
+import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.database.firebase.FireStoreDB
 import com.agrolytics.agrolytics_android.database.tables.RoomModule
 import com.agrolytics.agrolytics_android.networking.model.ImageItem

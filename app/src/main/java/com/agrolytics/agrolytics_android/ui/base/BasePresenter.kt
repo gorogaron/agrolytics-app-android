@@ -1,4 +1,4 @@
-package com.agrolytics.agrolytics_android.base
+package com.agrolytics.agrolytics_android.ui.base
 
 import com.agrolytics.agrolytics_android.database.firebase.FireStoreDB
 import com.agrolytics.agrolytics_android.database.tables.RoomModule

@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.agrolytics.agrolytics_android.R;
-import com.agrolytics.agrolytics_android.base.BaseFragment;
+import com.agrolytics.agrolytics_android.ui.base.BaseFragment;
 import com.bumptech.glide.Glide;
 
 public class GalleryItemFragment extends BaseFragment {

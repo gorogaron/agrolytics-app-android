@@ -4,7 +4,7 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Base64OutputStream
-import com.agrolytics.agrolytics_android.base.BasePresenter
+import com.agrolytics.agrolytics_android.ui.base.BasePresenter
 import com.agrolytics.agrolytics_android.networking.model.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
@@ -17,7 +17,6 @@ import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.time.format.DateTimeFormatter
-import java.time.LocalDateTime
 import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.io.File

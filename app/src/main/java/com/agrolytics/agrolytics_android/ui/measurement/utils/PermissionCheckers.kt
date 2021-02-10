@@ -1,4 +1,4 @@
-package com.agrolytics.agrolytics_android.utils.extensions
+package com.agrolytics.agrolytics_android.ui.measurement.utils
 
 import android.app.Activity
 import android.content.pm.PackageManager

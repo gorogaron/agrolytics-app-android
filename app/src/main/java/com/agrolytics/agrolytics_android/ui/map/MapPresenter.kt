@@ -1,6 +1,6 @@
 package com.agrolytics.agrolytics_android.ui.map
 
-import com.agrolytics.agrolytics_android.base.BasePresenter
+import com.agrolytics.agrolytics_android.ui.base.BasePresenter
 import com.agrolytics.agrolytics_android.networking.model.ImageItem
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import org.jetbrains.anko.doAsync
