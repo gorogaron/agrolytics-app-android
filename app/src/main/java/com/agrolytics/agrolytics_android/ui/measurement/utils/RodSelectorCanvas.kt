@@ -1,4 +1,4 @@
-package com.agrolytics.agrolytics_android.utils
+package com.agrolytics.agrolytics_android.ui.measurement.utils
 
 import android.content.Context
 import android.graphics.*
@@ -26,7 +26,8 @@ class RodSelectorCanvas(context: Context?, attrs: AttributeSet?) : View(context,
     var dstRect = Rect()
     val circleRadius = 60f
 
-    var linePoints = LinePoints()
+    var linePoints =
+        LinePoints()
     var topSelected = false
     var bottomSelected = false
     var zooming = false
@@ -217,7 +218,8 @@ class RodSelectorCanvas(context: Context?, attrs: AttributeSet?) : View(context,
     fun getRodLengthPixels_640_480(): Int{
         var canvasImgHeight = dstRect.bottom - dstRect.top
         var canvasImgWidth = dstRect.right - dstRect.left
-        var linePoints_640_480 = LinePoints()
+        var linePoints_640_480 =
+            LinePoints()
 
         val wRatio = 640f/canvasImgWidth
         val hRatio = 480f/canvasImgHeight

@@ -1,4 +1,4 @@
-package com.agrolytics.agrolytics_android.utils
+package com.agrolytics.agrolytics_android.ui.measurement.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat
 import com.agrolytics.agrolytics_android.R
 import kotlin.math.abs
 
-class PolyCropper(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
+class PolyCropperCanvas(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     lateinit var bitmap : Bitmap
     private lateinit var finalImgBlackBackground : Bitmap

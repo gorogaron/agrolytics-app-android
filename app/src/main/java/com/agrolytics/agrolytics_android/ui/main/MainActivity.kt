@@ -35,9 +35,9 @@ import com.agrolytics.agrolytics_android.utils.*
 import com.agrolytics.agrolytics_android.utils.ConfigInfo.IMAGE_CAPTURE
 import com.agrolytics.agrolytics_android.utils.ConfigInfo.IMAGE_BROWSE
 import com.agrolytics.agrolytics_android.utils.Util.Companion.showParameterSettingsWindow
-import com.agrolytics.agrolytics_android.ui.measurement.utils.cameraPermGiven
-import com.agrolytics.agrolytics_android.ui.measurement.utils.locationPermGiven
-import com.agrolytics.agrolytics_android.ui.measurement.utils.storagePermGiven
+import com.agrolytics.agrolytics_android.utils.permissions.cameraPermGiven
+import com.agrolytics.agrolytics_android.utils.permissions.locationPermGiven
+import com.agrolytics.agrolytics_android.utils.permissions.storagePermGiven
 import com.google.firebase.auth.FirebaseAuth
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
