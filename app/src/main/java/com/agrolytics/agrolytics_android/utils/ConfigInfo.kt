@@ -3,8 +3,8 @@ package com.agrolytics.agrolytics_android.utils
 object ConfigInfo {
 	const val STORAGE_CODE = 100
 	const val CAMERA_CODE = 101
-	const val CAMERA_CAPTURE = 102
-	const val PICK_IMAGE = 103
+	const val IMAGE_CAPTURE = 102
+	const val IMAGE_BROWSE = 103
 	const val CROPPER = 104
 	const val IMAGE = "image"
 	const val PATH = "path"

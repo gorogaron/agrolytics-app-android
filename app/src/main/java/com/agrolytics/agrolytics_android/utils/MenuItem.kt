@@ -4,7 +4,7 @@ enum class MenuItem(var tag: String) {
 	MAIN("MainActivity"),
 	IMAGES("ImagesActivity"),
 	MAP("MapActivity"),
-	LENGTH("LengthActivity"),
 	INFO("InfoActivity"),
-	GUIDE("GuideActivity")
+	GUIDE("GuideActivity"),
+	ROD("RodSettingsPopup")
 }

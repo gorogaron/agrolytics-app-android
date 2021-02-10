@@ -3,7 +3,6 @@ package com.agrolytics.agrolytics_android.ui.map
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
-import androidx.core.content.ContextCompat
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.base.BaseActivity
 import com.agrolytics.agrolytics_android.database.firebase.FireStoreDB
@@ -12,10 +11,11 @@ import com.agrolytics.agrolytics_android.networking.model.ImageItem
 import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
-import com.agrolytics.agrolytics_android.ui.setLength.LengthActivity
+import com.agrolytics.agrolytics_android.utils.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.MarkerInfoBottomSheetDialog
 import com.agrolytics.agrolytics_android.utils.MenuItem
 import com.agrolytics.agrolytics_android.utils.SessionManager
+import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.annotations.IconFactory
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
@@ -58,6 +58,7 @@ class MapActivity : BaseActivity(), MapScreen, View.OnClickListener {
     }
 
     private fun setUpMap() {
+        Mapbox.getInstance(this, ConfigInfo.MAP_BOX_KEY)
         mapView.getMapAsync { map ->
             mapboxMap = map
             mapboxMap.setStyle(Style.MAPBOX_STREETS) {
@@ -126,11 +127,6 @@ class MapActivity : BaseActivity(), MapScreen, View.OnClickListener {
 
     private fun openActivity(menuItem: MenuItem) {
         when (menuItem) {
-            MenuItem.LENGTH -> {
-                if (MenuItem.LENGTH.tag != TAG) {
-                    startActivity(LengthActivity::class.java, Bundle(), false)
-                }
-            }
             MenuItem.MAIN -> {
                 if (MenuItem.MAIN.tag != TAG) {
                     startActivity(MainActivity::class.java, Bundle(), false)
