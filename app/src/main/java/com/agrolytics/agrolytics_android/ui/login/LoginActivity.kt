@@ -49,20 +49,20 @@ class LoginActivity: BaseActivity(), LoginScreen {
 
     private fun loginUser() {
         GlobalScope.launch(Dispatchers.Main) {
-            var loginResult: Int
+            var loginResultCode: ConfigInfo.LOGIN
             val email = et_email.text.toString()
             val password = et_password.text.toString()
             if (email.isNotBlank() && password.isNotEmpty()) {
                 showLoading()
                 withContext(Dispatchers.IO) {
-                    loginResult = presenter.login(email, password)
+                    loginResultCode = presenter.login(email, password)
                 }
                 hideLoading()
             }
             else {
-                loginResult = ConfigInfo.LOGIN.WRONG_INPUT
+                loginResultCode = ConfigInfo.LOGIN.WRONG_INPUT
             }
-            when (loginResult) {
+            when (loginResultCode) {
                 ConfigInfo.LOGIN.NO_INTERNET -> showToast("Nincs internetkapcsolat")
                 ConfigInfo.LOGIN.AUTH_FAILED -> showToast("Hibás email cím vagy jelszó")
                 ConfigInfo.LOGIN.USER_EXPIRED -> showToast("A felhasználóhoz tartozó licensz lejárt, kérjük vegye fel velünk a kapcsolatot")
@@ -82,6 +82,7 @@ class LoginActivity: BaseActivity(), LoginScreen {
             GlobalScope.launch(Dispatchers.IO) {
                 when (presenter.hasLoggedInUserExpired()) {
                     ConfigInfo.LOGIN.SUCCESS -> loginSuccess()
+                    else -> {}
                 }
             }
         }

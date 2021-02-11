@@ -25,17 +25,17 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
         private const val TAG = "LoginPresenter"
     }
 
-    suspend fun login(email: String, password: String) : Int {
-        var signInResult = ConfigInfo.LOGIN.NO_INTERNET
+    suspend fun login(email: String, password: String) : ConfigInfo.LOGIN {
+        var signInResultCode = ConfigInfo.LOGIN.NO_INTERNET
         if (Util.isNetworkAvailable()) {
             try {
-                signInResult = signInFirebaseUser(email, password)
-                when (signInResult) {
-                    ConfigInfo.LOGIN.AUTH_FAILED -> return signInResult
-                    ConfigInfo.LOGIN.SUCCESS -> signInResult = hasLoggedInUserExpired()
+                signInResultCode = signInFirebaseUser(email, password)
+                when (signInResultCode) {
+                    ConfigInfo.LOGIN.AUTH_FAILED -> return signInResultCode
+                    ConfigInfo.LOGIN.SUCCESS -> signInResultCode = hasLoggedInUserExpired()
                 }
-                when (signInResult) {
-                    ConfigInfo.LOGIN.USER_EXPIRED -> return signInResult
+                when (signInResultCode) {
+                    ConfigInfo.LOGIN.USER_EXPIRED -> return signInResultCode
                     ConfigInfo.LOGIN.SUCCESS -> saveCurrentUser()
                 }
             }
@@ -44,13 +44,13 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
                 Log.d(TAG, "$e")
                 Log.d(TAG, "$e.stackTrace")
                 clearSession()
-                signInResult = ConfigInfo.LOGIN.ERROR
+                signInResultCode = ConfigInfo.LOGIN.ERROR
             }
         }
-        return signInResult
+        return signInResultCode
     }
 
-    suspend fun hasLoggedInUserExpired(): Int {
+    suspend fun hasLoggedInUserExpired(): ConfigInfo.LOGIN {
         userDocument = getUserDocument(auth?.currentUser)
         val firstLogin = getFirstLogin()
         return if (checkUserExpired(firstLogin)) {
@@ -61,7 +61,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
         }
     }
 
-    suspend fun signInFirebaseUser(email: String, password: String) : Int = suspendCoroutine{ cont ->
+    suspend fun signInFirebaseUser(email: String, password: String) : ConfigInfo.LOGIN = suspendCoroutine{ cont ->
         auth?.signInWithEmailAndPassword(email, password)?.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 GlobalScope.launch {
