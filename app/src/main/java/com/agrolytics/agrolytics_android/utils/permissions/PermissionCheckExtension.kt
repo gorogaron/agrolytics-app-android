@@ -4,7 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
-import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageHooker
+import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -42,23 +42,27 @@ fun Activity.cameraPermGiven(): Boolean {
     ) == PackageManager.PERMISSION_GRANTED
 }
 
-fun Activity.requestForAllPermissions(a : MultiplePermissionsListener) {
-    Dexter.withActivity(ImageHooker.callingActivity)
+fun Activity.requestForAllPermissions(activity: Activity, listener : MultiplePermissionsListener? = null) {
+    Dexter.withActivity(activity)
         .withPermissions(
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.CAMERA
-        ).withListener(a).check()
+        ).withListener(listener ?: createPermissionCheckListener()).check()
 }
 
-val defaultPermissionCheckListener = object : MultiplePermissionsListener {
-    override fun onPermissionsChecked(report: MultiplePermissionsReport) {
-        //DO NOTHING
-    }
+fun createPermissionCheckListener(onPermissionCheckedAction : (() -> Unit)? = null) : MultiplePermissionsListener{
+    return object : MultiplePermissionsListener {
+        override fun onPermissionsChecked(report: MultiplePermissionsReport) {
+            if (onPermissionCheckedAction != null){
+                onPermissionCheckedAction()
+            }
+        }
 
-    override fun onPermissionRationaleShouldBeShown(permissions: List<PermissionRequest>, token: PermissionToken) {
-        token.continuePermissionRequest()
+        override fun onPermissionRationaleShouldBeShown(permissions: List<PermissionRequest>, token: PermissionToken) {
+            token.continuePermissionRequest()
+        }
     }
 }
