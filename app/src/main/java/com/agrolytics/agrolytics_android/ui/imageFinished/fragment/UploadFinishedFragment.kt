@@ -7,7 +7,7 @@ import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.ui.base.BaseFragment
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.measurement.activity.UploadFinishedActivity
-import com.agrolytics.agrolytics_android.utils.ConfigInfo
+import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_upload_finished.*
@@ -27,11 +27,15 @@ class UploadFinishedFragment: BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         arguments?.let {
-            if (it.containsKey(ConfigInfo.UPLOAD_RESPONSE) && it.containsKey(ConfigInfo.PATH)) {
+            if (it.containsKey(ConfigInfo.UPLOAD_RESPONSE) && it.containsKey(
+                    ConfigInfo.PATH)) {
                 if (it.containsKey(ConfigInfo.ID)) {
-                    setUpView(it.getParcelable(ConfigInfo.UPLOAD_RESPONSE), it.getString(ConfigInfo.PATH), it.getString(ConfigInfo.ID))
+                    setUpView(it.getParcelable(ConfigInfo.UPLOAD_RESPONSE), it.getString(
+                        ConfigInfo.PATH), it.getString(
+                        ConfigInfo.ID))
                 } else {
-                    setUpView(it.getParcelable(ConfigInfo.UPLOAD_RESPONSE), it.getString(ConfigInfo.PATH), null)
+                    setUpView(it.getParcelable(ConfigInfo.UPLOAD_RESPONSE), it.getString(
+                        ConfigInfo.PATH), null)
                 }
             }
         }

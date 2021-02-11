@@ -1,4 +1,4 @@
-package com.agrolytics.agrolytics_android.utils
+package com.agrolytics.agrolytics_android.ui.measurement.utils
 
 import android.content.res.AssetFileDescriptor
 import android.content.res.AssetManager
@@ -12,9 +12,6 @@ import java.nio.ByteOrder
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import java.util.HashMap
-import android.opengl.ETC1.getHeight
-import android.opengl.ETC1.getWidth
-
 
 
 object Detector {
@@ -44,20 +41,34 @@ object Detector {
     }
 
     fun init(assetManager: AssetManager){
-        this.assetManager = assetManager
-        this.model = Interpreter(loadModelFile("deeplabv3_640_480.tflite"))
+        Detector.assetManager = assetManager
+        model = Interpreter(
+            loadModelFile(
+                "deeplabv3_640_480.tflite"
+            )
+        )
 
-        this.imgData = ByteBuffer.allocateDirect(1*input_height*input_width*4*3)
-        this.imgData?.order(ByteOrder.nativeOrder())
-        this.intValues = IntArray(input_height* input_width)
-        this.output = Array(1, { Array(input_width) { Array(input_height) { FloatArray(2) } } })
+        imgData = ByteBuffer.allocateDirect(1* input_height * input_width *4*3)
+        imgData?.order(ByteOrder.nativeOrder())
+        intValues = IntArray(
+            input_height * input_width
+        )
+        output = Array(1, { Array(
+            input_width
+        ) { Array(input_height) { FloatArray(2) } } })
     }
 
     fun segmentOffline(inputImage: Bitmap){
-        val resizedInput = Bitmap.createScaledBitmap(inputImage, input_width, input_height, false)
-        val rotatedBitmap = rotateBitmap(resizedInput, 90f)
+        val resizedInput = Bitmap.createScaledBitmap(inputImage,
+            input_width,
+            input_height, false)
+        val rotatedBitmap =
+            rotateBitmap(
+                resizedInput,
+                90f
+            )
 
-        rotatedBitmap.getPixels(this.intValues, 0, rotatedBitmap.width, 0, 0, rotatedBitmap.width, rotatedBitmap.height)
+        rotatedBitmap.getPixels(intValues, 0, rotatedBitmap.width, 0, 0, rotatedBitmap.width, rotatedBitmap.height)
         imgData?.rewind()
 
         try {
@@ -76,13 +87,15 @@ object Detector {
 
 
         var outputSegment =
-            Array(1) { Array(input_height) { Array(input_width) { FloatArray(2) } } }
+            Array(1) { Array(input_height) { Array(
+                input_width
+            ) { FloatArray(2) } } }
 
         val inputArray = arrayOf<ByteBuffer?>(imgData)
         val outputMap = HashMap<Int, Any>()
         outputMap.put(0,outputSegment)
 
-        this.model!!.runForMultipleInputsOutputs(inputArray, outputMap)
+        model!!.runForMultipleInputsOutputs(inputArray, outputMap)
 
         val output: Bitmap = Bitmap.createBitmap(rotatedBitmap.width, rotatedBitmap.height, Bitmap.Config.ARGB_8888)
         for (i in 0 until rotatedBitmap.width) {
@@ -99,7 +112,11 @@ object Detector {
         }
 
         Result.input = resizedInput
-        Result.mask = rotateBitmap(output, -90f)
+        Result.mask =
+            rotateBitmap(
+                output,
+                -90f
+            )
     }
 
     private fun rotateBitmap(img: Bitmap, deg: Float): Bitmap{

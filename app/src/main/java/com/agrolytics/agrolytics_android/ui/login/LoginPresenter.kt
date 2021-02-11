@@ -3,7 +3,7 @@ package com.agrolytics.agrolytics_android.ui.login
 import android.content.Context
 import android.util.Log
 import com.agrolytics.agrolytics_android.ui.base.BasePresenter
-import com.agrolytics.agrolytics_android.utils.ConfigInfo
+import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.Util
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.DocumentReference

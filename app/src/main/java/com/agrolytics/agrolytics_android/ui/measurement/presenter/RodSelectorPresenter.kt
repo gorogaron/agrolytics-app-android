@@ -9,8 +9,8 @@ import com.agrolytics.agrolytics_android.networking.model.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.measurement.activity.RodSelectorActivity
-import com.agrolytics.agrolytics_android.utils.BitmapUtils
-import com.agrolytics.agrolytics_android.utils.Detector
+import com.agrolytics.agrolytics_android.utils.ImageUtils
+import com.agrolytics.agrolytics_android.ui.measurement.utils.Detector
 import com.agrolytics.agrolytics_android.utils.Util
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -97,7 +97,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
     private fun createImageUploadRequest(bitmap: Bitmap?, rodLength: Double, rodLengthPixels: Int): ImageUploadRequest {
         //val file = File(path)
         val imageUploadRequest = ImageUploadRequest()
-        bitmap?.let { imageUploadRequest.image = BitmapUtils.bitmapToBase64(bitmap) }
+        bitmap?.let { imageUploadRequest.image = ImageUtils.bitmapToBase64(bitmap) }
         return imageUploadRequest
     }
 
@@ -125,7 +125,8 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
                 //TODO: Add proper wood type
                 //TODO: When GPS and innternet is turned off, Util.lat and Util.lon are null
                 //TODO: Refactor MeasurementResult class
-                var measurementResult = MeasurementResult(BitmapUtils.bitmapToBase64(Detector.Result.mask!!)!!,bitmap, rodLength, rodLengthPixels, sessionManager!!.woodLength, Util.getCurrentDateString(), "NoType", Util.lat!!, Util.long!!)
+                var measurementResult = MeasurementResult(ImageUtils.bitmapToBase64(
+                    Detector.Result.mask!!)!!,bitmap, rodLength, rodLengthPixels, sessionManager!!.woodLength, Util.getCurrentDateString(), "NoType", Util.lat!!, Util.long!!)
                 screen?.successfulUpload(measurementResult, path, "offline")
                 screen?.hideLoading()
             }

@@ -18,8 +18,8 @@ import com.agrolytics.agrolytics_android.ui.images.adapter.ImagesAdapter
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
 import com.agrolytics.agrolytics_android.ui.map.MapActivity
-import com.agrolytics.agrolytics_android.utils.ConfigInfo
-import com.agrolytics.agrolytics_android.utils.MenuItem
+import com.agrolytics.agrolytics_android.types.ConfigInfo
+import com.agrolytics.agrolytics_android.types.MenuItem
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.agrolytics.agrolytics_android.utils.extensions.animateSlide
 import com.agrolytics.agrolytics_android.utils.extensions.fadeIn

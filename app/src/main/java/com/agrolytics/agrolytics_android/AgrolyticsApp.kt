@@ -1,6 +1,7 @@
 package com.agrolytics.agrolytics_android
 
 import android.app.Application
+import android.content.Context
 import android.os.Environment
 import com.agrolytics.agrolytics_android.koin.appModule
 import org.koin.android.ext.koin.androidContext
@@ -10,6 +11,8 @@ import java.io.IOException
 
 
 class AgrolyticsApp: Application() {
+
+	private var currentActivity : Context? = null
 
 	override fun onCreate() {
 		super.onCreate()

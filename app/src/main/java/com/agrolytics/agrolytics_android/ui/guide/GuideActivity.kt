@@ -9,7 +9,7 @@ import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
 import com.agrolytics.agrolytics_android.ui.map.MapActivity
-import com.agrolytics.agrolytics_android.utils.MenuItem
+import com.agrolytics.agrolytics_android.types.MenuItem
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import kotlinx.android.synthetic.main.activity_info.*
 import kotlinx.android.synthetic.main.nav_bar.*

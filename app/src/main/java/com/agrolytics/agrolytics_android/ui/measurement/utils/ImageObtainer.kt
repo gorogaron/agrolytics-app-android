@@ -3,7 +3,7 @@ package com.agrolytics.agrolytics_android.ui.measurement.utils
 import android.app.Activity
 import android.content.Intent
 import android.provider.MediaStore
-import com.agrolytics.agrolytics_android.utils.ConfigInfo
+import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.permissions.*
 
 

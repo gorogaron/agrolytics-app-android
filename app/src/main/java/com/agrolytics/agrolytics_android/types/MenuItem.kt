@@ -1,4 +1,4 @@
-package com.agrolytics.agrolytics_android.utils
+package com.agrolytics.agrolytics_android.types
 
 enum class MenuItem(var tag: String) {
 	MAIN("MainActivity"),

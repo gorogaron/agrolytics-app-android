@@ -9,7 +9,7 @@ import com.agrolytics.agrolytics_android.database.firebase.FireStoreDB
 import com.agrolytics.agrolytics_android.database.tables.RoomModule
 import com.agrolytics.agrolytics_android.ui.imageFinished.adapter.ImagePagerAdapter
 import com.agrolytics.agrolytics_android.ui.imageFinished.fragment.UploadFinishedFragment
-import com.agrolytics.agrolytics_android.utils.ConfigInfo
+import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import kotlinx.android.synthetic.main.activity_upload_finished.*
 import org.koin.android.ext.android.inject

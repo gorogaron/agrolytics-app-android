@@ -1,4 +1,4 @@
-package com.agrolytics.agrolytics_android.utils
+package com.agrolytics.agrolytics_android.ui.map.utils
 
 import android.app.Dialog
 import android.os.Bundle

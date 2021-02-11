@@ -4,8 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Parcel
 import android.os.Parcelable
-import com.agrolytics.agrolytics_android.utils.BitmapUtils
-import com.agrolytics.agrolytics_android.utils.Detector
+import com.agrolytics.agrolytics_android.utils.ImageUtils
 import kotlin.math.pow
 
 //TODO: Refactor this class
@@ -19,7 +18,7 @@ class MeasurementResult(mask_b64 : String?,
                         lat : Double,
                         lon : Double): Parcelable {
 
-    private var mask = BitmapUtils.getImage(mask_b64)
+    private var mask = ImageUtils.getImage(mask_b64)
     private var input =  input_bmp
     private var maskedInput = visualizeMask(input!!, mask)
     private var volume = 0.toDouble()

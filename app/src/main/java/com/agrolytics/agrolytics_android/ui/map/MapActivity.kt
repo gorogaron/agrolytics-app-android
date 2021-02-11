@@ -11,9 +11,9 @@ import com.agrolytics.agrolytics_android.networking.model.ImageItem
 import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
-import com.agrolytics.agrolytics_android.utils.ConfigInfo
-import com.agrolytics.agrolytics_android.utils.MarkerInfoBottomSheetDialog
-import com.agrolytics.agrolytics_android.utils.MenuItem
+import com.agrolytics.agrolytics_android.types.ConfigInfo
+import com.agrolytics.agrolytics_android.ui.map.utils.MarkerInfoBottomSheetDialog
+import com.agrolytics.agrolytics_android.types.MenuItem
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.annotations.IconFactory

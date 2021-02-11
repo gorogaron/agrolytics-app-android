@@ -1,4 +1,4 @@
-package com.agrolytics.agrolytics_android.utils
+package com.agrolytics.agrolytics_android.types
 
 
 object ConfigInfo {

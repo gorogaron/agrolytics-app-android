@@ -3,14 +3,11 @@ package com.agrolytics.agrolytics_android.ui.images.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.networking.model.ImageItem
-import com.agrolytics.agrolytics_android.utils.BitmapUtils
-import com.agrolytics.agrolytics_android.utils.Util
+import com.agrolytics.agrolytics_android.utils.ImageUtils
 import com.agrolytics.agrolytics_android.utils.extensions.animateSlide
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.item_images.view.*
@@ -90,7 +87,7 @@ class ImagesAdapter(private val listener: OnImageListener,
 					if (it.startsWith("https",true)) {
 						Glide.with(context).load(it).into(itemView.iv_image)
 					} else {
-						Glide.with(context).load(BitmapUtils.getImage(item.serverImage)).into(itemView.iv_image)
+						Glide.with(context).load(ImageUtils.getImage(item.serverImage)).into(itemView.iv_image)
 					}
 				}
 			} ?: run {

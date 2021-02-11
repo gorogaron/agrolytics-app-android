@@ -1,20 +1,15 @@
 package com.agrolytics.agrolytics_android.ui.main
 
-import android.Manifest
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.location.Location
 import android.location.LocationManager
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.provider.MediaStore
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -25,27 +20,19 @@ import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.database.tables.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
-import com.agrolytics.agrolytics_android.ui.measurement.activity.CropperActivity
+import com.agrolytics.agrolytics_android.types.MenuItem
 import com.agrolytics.agrolytics_android.ui.guide.GuideActivity
 import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.login.LoginActivity
 import com.agrolytics.agrolytics_android.ui.map.MapActivity
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
+import com.agrolytics.agrolytics_android.ui.measurement.utils.Detector
 import com.agrolytics.agrolytics_android.utils.*
-import com.agrolytics.agrolytics_android.utils.ConfigInfo.IMAGE_CAPTURE
-import com.agrolytics.agrolytics_android.utils.ConfigInfo.IMAGE_BROWSE
 import com.agrolytics.agrolytics_android.utils.Util.Companion.showParameterSettingsWindow
-import com.agrolytics.agrolytics_android.utils.permissions.cameraPermGiven
 import com.agrolytics.agrolytics_android.utils.permissions.locationPermGiven
 import com.agrolytics.agrolytics_android.utils.permissions.requestForAllPermissions
-import com.agrolytics.agrolytics_android.utils.permissions.storagePermGiven
 import com.google.firebase.auth.FirebaseAuth
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import jp.wasabeef.blurry.Blurry
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_bar.*
@@ -235,6 +222,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
 
             //This is needed to retrieve user token when during app startup
             //auto-login was successful, but there was not internet connection.
+            //TODO: Check when else to update
             if (appServer.getUserToken() == null){
                 val auth = FirebaseAuth.getInstance()
                 val currentUser = auth.currentUser
@@ -293,12 +281,10 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)
-
-        lateinit var hookedImageUri : Uri
-        if (requestCode == IMAGE_BROWSE || requestCode == IMAGE_CAPTURE) {
-            hookedImageUri = intent?.data!!
+        //Can only return from camera or browser activity
+        if (intent?.data != null) {
+            MeasurementManager.startCropperActivity(this, intent.data!!)
         }
-        MeasurementManager.startCropperActivity(hookedImageUri)
      }
 
     private fun blur(iRadius : Int){

@@ -1,6 +1,5 @@
 package com.agrolytics.agrolytics_android.ui.measurement.activity
 
-import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
@@ -9,12 +8,8 @@ import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_cropper.*
 import kotlinx.android.synthetic.main.activity_info.btn_back
 import android.provider.MediaStore
-import com.agrolytics.agrolytics_android.utils.ConfigInfo
-import android.os.Environment.getExternalStorageDirectory
+import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import org.jetbrains.anko.toast
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
 
 
 class CropperActivity: BaseActivity(), View.OnClickListener {
@@ -63,33 +58,11 @@ class CropperActivity: BaseActivity(), View.OnClickListener {
         }
         if (croppedImg != null)
         {
-            val cropImgUri = BitmapToTempUri(Bitmap.createScaledBitmap(croppedImg, 640, 480, true), "cropped_img")
-
-            val intent = Intent(this, RodSelectorActivity::class.java)
-            intent.putExtra(ConfigInfo.PATH, cropImgUri?.path)
-            RodSelectorActivity.bitmap = croppedImg
-            startActivity(intent)
+            MeasurementManager.startRodSelectorActivity(this, croppedImg)
         }
         else {
             toast("Jelöljön ki megfelelő területet a képen.")
         }
-    }
-
-    private fun BitmapToTempUri(inImage: Bitmap, title: String): Uri? {
-        var tempDir = getExternalStorageDirectory()
-        tempDir = File(tempDir.getAbsolutePath() + "/.temp/")
-        tempDir.mkdir()
-        val tempFile = File.createTempFile(title, ".jpg", tempDir)
-        val bytes = ByteArrayOutputStream()
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-        val bitmapData = bytes.toByteArray()
-
-        //write the bytes in file
-        val fos = FileOutputStream(tempFile)
-        fos.write(bitmapData)
-        fos.flush()
-        fos.close()
-        return Uri.fromFile(tempFile)
     }
 
     override fun onResume() {

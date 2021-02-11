@@ -7,7 +7,7 @@ import com.agrolytics.agrolytics_android.networking.model.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.imageFinished.fragment.UploadFinishedFragment
 import com.agrolytics.agrolytics_android.ui.measurement.activity.UploadFinishedActivity
-import com.agrolytics.agrolytics_android.utils.BitmapUtils
+import com.agrolytics.agrolytics_android.utils.ImageUtils
 import com.agrolytics.agrolytics_android.utils.Util
 import com.google.firebase.storage.StorageMetadata
 import org.jetbrains.anko.doAsync
@@ -64,9 +64,9 @@ class UploadFinishedPresenter : BasePresenter<UploadFinishedActivity>() {
                             reference?.child("$forestryName/thumbnail/$imageName")
 
                         measurementResult?.getMaskedInput().let {
-                            val bytes = BitmapUtils.getBytes(it)
+                            val bytes = ImageUtils.getBytes(it)
                             val resizedBitmap = Bitmap.createScaledBitmap(it, 64, 48, true);
-                            val resizedBytes = BitmapUtils.getBytes(resizedBitmap)
+                            val resizedBytes = ImageUtils.getBytes(resizedBitmap)
 
                             if (bytes != null && resizedBytes != null) {
                                 val thumbnailUploadTask =
