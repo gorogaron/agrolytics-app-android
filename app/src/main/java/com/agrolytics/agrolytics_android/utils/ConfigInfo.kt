@@ -1,5 +1,6 @@
 package com.agrolytics.agrolytics_android.utils
 
+
 object ConfigInfo {
 	const val STORAGE_CODE = 100
 	const val CAMERA_CODE = 101
@@ -15,13 +16,13 @@ object ConfigInfo {
 	const val MAP_BOX_KEY = "pk.eyJ1IjoidGhlMDExMWRlbW9wcm9qZWN0IiwiYSI6ImNqeXVlaDdiNTBlMjUzaW9iYXpwN21lazIifQ.UT3O8C9YAocVt-zvExjbAQ"
 
 	/**Firebase login result codes**/
-	object LOGIN {
-		const val SUCCESS 			= 0
-		const val NO_INTERNET 		= 1
-		const val AUTH_FAILED 		= 2
-		const val ERROR   			= 3
-		const val USER_EXPIRED 		= 4
-		const val WRONG_INPUT 		= 5
-		const val UNDEFINED   		= 6
+	enum class LOGIN {
+		SUCCESS,
+		AUTH_FAILED,
+		USER_EXPIRED,
+		WRONG_INPUT,
+		NO_INTERNET,
+		ERROR,
+		UNDEFINED
 	}
 }
