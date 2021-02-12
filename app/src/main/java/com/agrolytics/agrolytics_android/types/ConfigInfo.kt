@@ -8,7 +8,7 @@ object ConfigInfo {
 	const val IMAGE_BROWSE = 103
 	const val CROPPER = 104
 	const val IMAGE = "image"
-	const val PATH = "path"
+	const val CROPPED_RESIZED_IMG_PATH = "path"
 	const val ORIGINAL_HEIGHT = "original_height"
 	const val ID = "id"
 	const val METHOD = "method"

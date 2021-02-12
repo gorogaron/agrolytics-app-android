@@ -3,12 +3,13 @@ package com.agrolytics.agrolytics_android.koin
 import com.agrolytics.agrolytics_android.database.firebase.FireStoreDB
 import com.agrolytics.agrolytics_android.database.tables.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
-import com.agrolytics.agrolytics_android.ui.measurement.activity.UploadFinishedActivity
-import com.agrolytics.agrolytics_android.ui.measurement.presenter.UploadFinishedPresenter
+import com.agrolytics.agrolytics_android.ui.measurement.activity.ApproveMeasurementActivity
+import com.agrolytics.agrolytics_android.ui.measurement.presenter.ApproveMeasurementPresenter
 import com.agrolytics.agrolytics_android.ui.images.ImagesPresenter
 import com.agrolytics.agrolytics_android.ui.login.LoginPresenter
 import com.agrolytics.agrolytics_android.ui.main.MainPresenter
 import com.agrolytics.agrolytics_android.ui.map.MapPresenter
+import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.presenter.RodSelectorPresenter
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import org.koin.android.ext.koin.androidContext
@@ -23,12 +24,12 @@ val appModule = module {
     single { FireStoreDB() }
 
     // Views
-    single { UploadFinishedActivity() }
+    single { ApproveMeasurementActivity() }
 
     // Presenter
     factory { MainPresenter(androidContext()) }
     factory { ImagesPresenter(androidContext()) }
-    factory { UploadFinishedPresenter() }
+    factory { ApproveMeasurementPresenter() }
     factory { MapPresenter() }
     factory { LoginPresenter(androidContext()) }
     factory {

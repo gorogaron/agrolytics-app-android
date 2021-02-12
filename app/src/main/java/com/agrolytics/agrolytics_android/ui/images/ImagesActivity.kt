@@ -13,7 +13,7 @@ import com.agrolytics.agrolytics_android.database.tables.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.networking.model.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
-import com.agrolytics.agrolytics_android.ui.measurement.activity.UploadFinishedActivity
+import com.agrolytics.agrolytics_android.ui.measurement.activity.ApproveMeasurementActivity
 import com.agrolytics.agrolytics_android.ui.images.adapter.ImagesAdapter
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
@@ -168,7 +168,7 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 	}
 
 	override fun sendResultsToFragment(responseList: ArrayList<Pair<MeasurementResult, Pair<String, String>>>?) {
-		val intent = Intent(this, UploadFinishedActivity::class.java)
+		val intent = Intent(this, ApproveMeasurementActivity::class.java)
 		val responses = arrayListOf<MeasurementResult>()
 		val pathList = arrayListOf<String>()
 		val idList = arrayListOf<String>()
@@ -182,8 +182,8 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 					}
 				}
 				if (pathList.isNotEmpty() && idList.isNotEmpty() && responseList.isNotEmpty()) {
-					UploadFinishedActivity.responseList = responses
-					intent.putStringArrayListExtra(ConfigInfo.PATH, pathList)
+					ApproveMeasurementActivity.responseList = responses
+					intent.putStringArrayListExtra(ConfigInfo.CROPPED_RESIZED_IMG_PATH, pathList)
 					intent.putStringArrayListExtra(ConfigInfo.ID, idList)
 					intent.putExtra(ConfigInfo.METHOD, "online")
 					startActivity(intent)

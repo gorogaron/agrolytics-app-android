@@ -34,6 +34,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
         } else {
             screen?.showLoading()
             val imageUploadRequest = createImageUploadRequest(bitmap, rodLength, rodLengthPixels)
+            //TODO: TIMEOUT IS NOT HANDLE CORRECTLY! TRY OUT WHILE BACKEND DNS IS DOWN
             val upload = appServer?.uploadImage(imageUploadRequest)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())

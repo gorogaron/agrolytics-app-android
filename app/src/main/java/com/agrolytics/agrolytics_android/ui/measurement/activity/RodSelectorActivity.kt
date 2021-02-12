@@ -34,41 +34,31 @@ class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 		presenter.addInjections(arrayListOf(appServer, roomModule, sessionManager))
 		presenter.setActivity(this)
 
-		intent.getStringExtra(ConfigInfo.PATH)?.let {
+		intent.getStringExtra(ConfigInfo.CROPPED_RESIZED_IMG_PATH)?.let {
 			this.path = it
 		}
 
 		btn_next.setOnClickListener {
 			val rodHeight = rod_selector_canvas.getRodLengthPixels_640_480()
-			if (rodHeight != null) {
-				val defaultBitmap = BitmapFactory.decodeFile(path)
-				val resizedBitmap = Bitmap.createScaledBitmap(defaultBitmap, 640, 480, true)
-				presenter.uploadImage(path, resizedBitmap, rodLength, rodHeight)
-			}
+			val defaultBitmap = BitmapFactory.decodeFile(path)
+			val resizedBitmap = Bitmap.createScaledBitmap(defaultBitmap, 640, 480, true)
+			presenter.uploadImage(path, resizedBitmap, rodLength, rodHeight)
 		}
 		btn_back.setOnClickListener{onBackPressed()}
-
-		bitmap?.let {
-			val originalRatioY = getOriginalRatioY()
-			val originalRatioX = getOriginalRatioX()
-
-			if (originalRatioX != null && originalRatioY != null) {
-				rod_selector_canvas.setImage(bitmap!!)
-			}
-		}
+		rod_selector_canvas.setImage(bitmap!!)
 
 		Util.showParameterSettingsWindow(this, sessionManager)
 	}
 
 	//TODO: Not a good function name...
 	fun successfulUpload(measurementResult: MeasurementResult, path: String?, method: String) {
-			val intent = Intent(this, UploadFinishedActivity::class.java)
+			val intent = Intent(this, ApproveMeasurementActivity::class.java)
 			val results = arrayListOf<MeasurementResult>()
 			val pathList = arrayListOf<String>()
 			results.add(measurementResult)
 			path?.let { pathList.add(path) }
-			UploadFinishedActivity.responseList = results
-			intent.putStringArrayListExtra(ConfigInfo.PATH, pathList)
+			ApproveMeasurementActivity.responseList = results
+			intent.putStringArrayListExtra(ConfigInfo.CROPPED_RESIZED_IMG_PATH, pathList)
 			intent.putExtra(ConfigInfo.METHOD, method)
 			startActivity(intent)
 			finish()
@@ -87,23 +77,8 @@ class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 		finish()
 	}
 
-	private fun getOriginalRatioY(): Double? {
-		val croppedBitmapHeight = bitmap?.height?.toDouble() ?: 1.0
-		val originalBitmapHeight =  originalBitmap?.height?.toDouble() ?: 1.0
-
-		return croppedBitmapHeight / originalBitmapHeight
-	}
-
-	private fun getOriginalRatioX(): Double? {
-		val croppedBitmapWidth = bitmap?.width?.toDouble() ?: 1.0
-		val originalBitmapWidth =  originalBitmap?.width?.toDouble() ?: 1.0
-
-		return croppedBitmapWidth / originalBitmapWidth
-	}
-
 	companion object {
 		var bitmap: Bitmap? = null
-		var originalBitmap: Bitmap? = null
 	}
 
 }

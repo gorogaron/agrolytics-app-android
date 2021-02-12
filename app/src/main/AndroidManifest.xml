@@ -40,7 +40,7 @@
             android:name=".ui.images.ImagesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.measurement.activity.UploadFinishedActivity"
+            android:name=".ui.measurement.activity.ApproveMeasurementActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.map.MapActivity"

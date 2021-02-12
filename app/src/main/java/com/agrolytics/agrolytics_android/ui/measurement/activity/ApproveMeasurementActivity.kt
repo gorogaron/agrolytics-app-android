@@ -15,15 +15,15 @@ import kotlinx.android.synthetic.main.activity_upload_finished.*
 import org.koin.android.ext.android.inject
 import android.content.Intent
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
-import com.agrolytics.agrolytics_android.ui.measurement.presenter.UploadFinishedPresenter
+import com.agrolytics.agrolytics_android.ui.measurement.presenter.ApproveMeasurementPresenter
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
 
 
-class UploadFinishedActivity : BaseActivity() {
+class ApproveMeasurementActivity : BaseActivity() {
 
 	private val sessionManager: SessionManager by inject()
 	private val roomModule: RoomModule by inject()
-	private val presenter: UploadFinishedPresenter by inject()
+	private val presenter: ApproveMeasurementPresenter by inject()
 	private val fireStoreDB: FireStoreDB by inject()
 
 	private var pagerAdapter: ImagePagerAdapter? = null
@@ -34,7 +34,7 @@ class UploadFinishedActivity : BaseActivity() {
 		setContentView(R.layout.activity_upload_finished)
 
 		responseList.let { responseList ->
-			intent.getStringArrayListExtra(ConfigInfo.PATH)?.let { pathList ->
+			intent.getStringArrayListExtra(ConfigInfo.CROPPED_RESIZED_IMG_PATH)?.let { pathList ->
 				if (intent.hasExtra(ConfigInfo.ID)) {
 					intent.getStringArrayListExtra(ConfigInfo.ID)?.let { idList ->
 						for (item in responseList) {
