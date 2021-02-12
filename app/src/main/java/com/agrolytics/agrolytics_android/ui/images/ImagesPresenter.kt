@@ -5,7 +5,7 @@ import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Base64OutputStream
 import com.agrolytics.agrolytics_android.ui.base.BasePresenter
-import com.agrolytics.agrolytics_android.networking.model.ImageItem
+import com.agrolytics.agrolytics_android.database.local.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
@@ -229,6 +229,7 @@ class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
 
         return ImageItem(
             id = document.id,
+            session_id = "",
             isPushedToServer = true,
             latitude = document["lat"] as Double?,
             longitude = document["long"] as Double?,

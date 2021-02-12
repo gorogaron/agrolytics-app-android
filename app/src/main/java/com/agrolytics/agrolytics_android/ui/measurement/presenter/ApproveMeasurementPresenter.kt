@@ -2,8 +2,11 @@ package com.agrolytics.agrolytics_android.ui.measurement.presenter
 
 import android.graphics.Bitmap
 import android.util.Log
+import com.agrolytics.agrolytics_android.database.firestore.FireStoreCollection
+import com.agrolytics.agrolytics_android.database.firestore.FireStoreForestryField
+import com.agrolytics.agrolytics_android.database.firestore.FireStoreImagesField
 import com.agrolytics.agrolytics_android.ui.base.BasePresenter
-import com.agrolytics.agrolytics_android.networking.model.ImageItem
+import com.agrolytics.agrolytics_android.database.local.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.imageFinished.fragment.UploadFinishedFragment
 import com.agrolytics.agrolytics_android.ui.measurement.activity.ApproveMeasurementActivity
@@ -27,6 +30,7 @@ class ApproveMeasurementPresenter : BasePresenter<ApproveMeasurementActivity>() 
     ) {
         val imageItem = ImageItem(
             id = id ?: (0..10000).random().toString(),
+            session_id = "",
             localPath = path ?: "",
             isPushedToServer = true,
             latitude = Util.lat ?: 0.0,
@@ -54,10 +58,10 @@ class ApproveMeasurementPresenter : BasePresenter<ApproveMeasurementActivity>() 
 
                 var forestryName = ""
 
-                fireStoreDB?.db?.collection("forestry")?.document(forestryID)
+                fireStoreDB?.db?.collection(FireStoreCollection.FORESTRY.tag)?.document(forestryID)
                     ?.get()
                     ?.addOnSuccessListener {
-                        forestryName = it["name"] as String
+                        forestryName = it[FireStoreForestryField.NAME.tag] as String
 
                         val forestryRef = reference?.child("$forestryName/masked/$imageName")
                         val thumbnailForestryRef =
@@ -178,32 +182,31 @@ class ApproveMeasurementPresenter : BasePresenter<ApproveMeasurementActivity>() 
         thumbnailUrl: String?
     ) {
         val imageDocument = hashMapOf(
-            "time" to measurementResult?.date,
-            "lat" to measurementResult?.lat,
-            "long" to measurementResult?.lon,
-            "role" to sessionManager?.userRole,
-            "url" to url,
-            //"volume" to (imageUploadResponse?.result?.toDouble() ?: 1.0) * (sessionManager?.length?.toDouble() ?: 1.0),
-            "volume" to measurementResult?.getVolume(),
-            "length" to measurementResult?.getWoodLength(),
-            "imageRef" to imageRef,
-            "userID" to sessionManager?.userID,
-            "leaderID" to sessionManager?.leaderID,
-            "forestryID" to sessionManager?.forestryID,
-            "thumbnailRef" to thumbnailRef,
-            "thumbnailUrl" to thumbnailUrl,
-            "wood_type" to measurementResult?.woodType
+            FireStoreImagesField.TIME.tag to measurementResult?.date,
+            FireStoreImagesField.LOC_LAT.tag to measurementResult?.lat,
+            FireStoreImagesField.LOC_LON.tag to measurementResult?.lon,
+            FireStoreImagesField.USER_ROLE.tag to sessionManager?.userRole,
+            FireStoreImagesField.IMAGE_URL.tag to url,
+            FireStoreImagesField.WOOD_VOLUME.tag to measurementResult?.getVolume(),
+            FireStoreImagesField.WOOD_LENGTH.tag to measurementResult?.getWoodLength(),
+            FireStoreImagesField.IMAGE_REFERENCE.tag to imageRef,
+            FireStoreImagesField.USER_ID.tag to sessionManager?.userID,
+            FireStoreImagesField.LEADER_ID.tag to sessionManager?.leaderID,
+            FireStoreImagesField.FORESTRY_ID.tag to sessionManager?.forestryID,
+            FireStoreImagesField.IMAGE_THUMBNAIL_REFERENCE.tag to thumbnailRef,
+            FireStoreImagesField.IMAGE_THUMBNAIL_URL.tag to thumbnailUrl,
+            FireStoreImagesField.WOOD_TYPE.tag to measurementResult?.woodType
         )
 
-        fireStoreDB?.db?.collection("images")
+        fireStoreDB?.db?.collection(FireStoreCollection.IMAGES.tag)
             ?.add(imageDocument)
             ?.addOnSuccessListener { imageStored ->
-                fireStoreDB?.db?.collection("images")?.document(imageStored.id)?.get()
+                fireStoreDB?.db?.collection(FireStoreCollection.IMAGES.tag)?.document(imageStored.id)?.get()
                     ?.addOnSuccessListener {
                         screen?.hideLoading()
                         screen?.showToast("Upload finished")
                         screen?.updateView(fragment)
-                        saveUploadedImageItem(measurementResult, path, fragment, it["url"] as String, imageStored.id)
+                        saveUploadedImageItem(measurementResult, path, fragment, it[FireStoreImagesField.IMAGE_URL.tag] as String, imageStored.id)
                         Log.d(TAG, "DocumentSnapshot successfully written!")
                     }
                     ?.addOnFailureListener { e ->

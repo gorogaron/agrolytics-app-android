@@ -8,10 +8,10 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
-import com.agrolytics.agrolytics_android.database.firebase.FireStoreDB
-import com.agrolytics.agrolytics_android.database.tables.RoomModule
+import com.agrolytics.agrolytics_android.database.firestore.FireStoreDB
+import com.agrolytics.agrolytics_android.database.local.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
-import com.agrolytics.agrolytics_android.networking.model.ImageItem
+import com.agrolytics.agrolytics_android.database.local.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.measurement.activity.ApproveMeasurementActivity
 import com.agrolytics.agrolytics_android.ui.images.adapter.ImagesAdapter

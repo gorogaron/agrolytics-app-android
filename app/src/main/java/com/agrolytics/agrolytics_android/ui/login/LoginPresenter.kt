@@ -2,6 +2,8 @@ package com.agrolytics.agrolytics_android.ui.login
 
 import android.content.Context
 import android.util.Log
+import com.agrolytics.agrolytics_android.database.firestore.FireStoreCollection
+import com.agrolytics.agrolytics_android.database.firestore.FireStoreUserField
 import com.agrolytics.agrolytics_android.ui.base.BasePresenter
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.Util
@@ -16,6 +18,7 @@ import java.time.Period
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+
 
 class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
 
@@ -76,16 +79,16 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
 
     suspend fun saveCurrentUser() {
         // TODO: felhasználók egybezárása
-        val roleDocumentSnapshot = getRoleDocument(userDocument["role"] as DocumentReference)
-        sessionManager?.userRole = (roleDocumentSnapshot["role"] as String?)!!
+        val roleDocumentSnapshot = getRoleDocument(userDocument[FireStoreUserField.ROLE.tag] as DocumentReference)
+        sessionManager?.userRole = (roleDocumentSnapshot[FireStoreUserField.ROLE.tag] as String?)!!
         sessionManager?.userID = userDocument.id
-        sessionManager?.userEmail = (userDocument["email"] as String?)!!
-        sessionManager?.forestryID = (userDocument["forestry"] as String?)!!
-        sessionManager?.firstLogin = (userDocument["first_login"] as String?)!!
+        sessionManager?.userEmail = (userDocument[FireStoreUserField.EMAIL.tag] as String?)!!
+        sessionManager?.forestryID = (userDocument[FireStoreUserField.FORESTRY_ID.tag] as String?)!!
+        sessionManager?.firstLogin = (userDocument[FireStoreUserField.FIRST_LOGIN.tag] as String?)!!
 
         //Admins don't have leaderID
-        if ((userDocument["leaderID"] as String?) != null){
-            sessionManager?.leaderID = userDocument["leaderID"] as String
+        if ((userDocument[FireStoreUserField.LEADER_ID.tag] as String?) != null){
+            sessionManager?.leaderID = userDocument[FireStoreUserField.LEADER_ID.tag] as String
         }
 
         //Update user token. TODO: Move token to shared preferences
@@ -113,7 +116,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
 
     private suspend fun getUserDocument(user: FirebaseUser?) : DocumentSnapshot = suspendCoroutine { cont->
         if (user != null){
-            val userDocumentReference = fireStoreDB?.db?.collection("user")?.document(user.uid)
+            val userDocumentReference = fireStoreDB?.db?.collection(FireStoreCollection.USER.tag)?.document(user.uid)
             userDocumentReference?.get()
                 ?.addOnSuccessListener { cont.resume(it) }
                 ?.addOnFailureListener { cont.resumeWithException(it) }
@@ -129,7 +132,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
     }
 
     private fun getFirstLogin() : String {
-        return userDocument["first_login"] as String
+        return userDocument[FireStoreUserField.FIRST_LOGIN.tag] as String
     }
 
     private fun clearSession() {

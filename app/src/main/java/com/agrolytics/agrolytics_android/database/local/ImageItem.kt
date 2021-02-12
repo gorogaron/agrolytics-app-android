@@ -1,4 +1,4 @@
-package com.agrolytics.agrolytics_android.networking.model
+package com.agrolytics.agrolytics_android.database.local
 
 import android.os.Parcel
 import android.os.Parcelable
@@ -6,11 +6,15 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+
 @Entity(tableName = "Images")
 data class ImageItem(
 
     @PrimaryKey
-    var id: String = "",
+    var id: String,
+
+    @ColumnInfo(name = "session_id")
+    var session_id: String,
 
     @ColumnInfo(name = "local_path")
     var localPath: String? = null,
@@ -51,9 +55,6 @@ data class ImageItem(
     @ColumnInfo(name = "firestore_id")
     var firestoreId: String? = null,
 
-    @ColumnInfo(name = "selection_mode")
-    var selectionMode: String? = null,
-
     @ColumnInfo(name = "rod_length")
     var rodLength: Double? = null,
 
@@ -77,14 +78,14 @@ data class ImageItem(
     var isChecked = false
 
     constructor(parcel: Parcel) : this(
-        parcel.readString(),
+        parcel.readString()!!,
+        parcel.readString()!!,
         parcel.readString(),
         parcel.readByte() != 0.toByte(),
         parcel.readValue(Double::class.java.classLoader) as? Double,
         parcel.readValue(Double::class.java.classLoader) as? Double,
         parcel.readValue(Double::class.java.classLoader) as? Double,
         parcel.readValue(Double::class.java.classLoader) as? Double,
-        parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
@@ -103,6 +104,7 @@ data class ImageItem(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(id)
+        parcel.writeString(id)
         parcel.writeString(localPath)
         parcel.writeByte(if (isPushedToServer) 1 else 0)
         parcel.writeValue(latitude)
@@ -116,7 +118,6 @@ data class ImageItem(
         parcel.writeString(leaderID)
         parcel.writeString(forestryID)
         parcel.writeString(firestoreId)
-        parcel.writeString(selectionMode)
         parcel.writeValue(rodLength)
         parcel.writeValue(rodLengthPixel)
         parcel.writeByte(if (isChecked) 1 else 0)
@@ -138,13 +139,4 @@ data class ImageItem(
             return arrayOfNulls(size)
         }
     }
-
-    fun copy(imageItem: ImageItem): ImageItem {
-        val newItem = ImageItem(
-            id= imageItem.id,
-            time= imageItem.time
-        )
-        return newItem
-    }
-
 }

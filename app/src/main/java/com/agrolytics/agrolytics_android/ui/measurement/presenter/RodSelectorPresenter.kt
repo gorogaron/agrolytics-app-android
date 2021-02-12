@@ -5,7 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import com.agrolytics.agrolytics_android.ui.base.BasePresenter
-import com.agrolytics.agrolytics_android.networking.model.ImageItem
+import com.agrolytics.agrolytics_android.database.local.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.measurement.activity.RodSelectorActivity
@@ -75,8 +75,9 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
 
     fun saveLocalImageItem(rodLength: Double, rodLengthPixels: Int) {
         val imageItem = ImageItem(
-            //TODO: create unique ID generation
+            //TODO: create unique ID generation and sessionID
             id = (0..10000).random().toString(),
+            session_id = "",
             localPath = path ?: "",
             isPushedToServer = false,
             latitude = Util.lat ?: 0.0,
@@ -84,7 +85,6 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
             length = sessionManager?.woodLength?.toDouble() ?: 0.0,
             volume = 0.0,
             time = Util.getCurrentDateString(),
-            selectionMode = "rod",
             rodLength = rodLength,
             rodLengthPixel = rodLengthPixels,
             woodType = sessionManager?.woodType

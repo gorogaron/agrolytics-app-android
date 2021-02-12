@@ -1,7 +1,7 @@
 package com.agrolytics.agrolytics_android.ui.base
 
-import com.agrolytics.agrolytics_android.database.firebase.FireStoreDB
-import com.agrolytics.agrolytics_android.database.tables.RoomModule
+import com.agrolytics.agrolytics_android.database.firestore.FireStoreDB
+import com.agrolytics.agrolytics_android.database.local.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.google.firebase.auth.FirebaseAuth

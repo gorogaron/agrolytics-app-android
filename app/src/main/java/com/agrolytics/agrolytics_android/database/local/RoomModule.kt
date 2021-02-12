@@ -1,8 +1,7 @@
-package com.agrolytics.agrolytics_android.database.tables
+package com.agrolytics.agrolytics_android.database.local
 
 import android.content.Context
 import androidx.room.Room
-import com.agrolytics.agrolytics_android.database.database.ImageDatabase
 
 class RoomModule(var context: Context) {
 
