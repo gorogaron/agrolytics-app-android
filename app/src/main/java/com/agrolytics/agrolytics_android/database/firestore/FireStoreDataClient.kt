@@ -16,6 +16,8 @@ class FireStoreDataClient {
         storage = FirebaseStorage.getInstance(url)
     }
 
-    fun upload() {}
+    fun uploadToFireStore(fireStoreItem: FireStoreItem) {}
+    fun uploadToFireStorage() {}
     fun download() {}
+
 }

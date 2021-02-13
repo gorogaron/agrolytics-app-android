@@ -67,9 +67,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
     suspend fun signInFirebaseUser(email: String, password: String) : ConfigInfo.LOGIN = suspendCoroutine{ cont ->
         auth?.signInWithEmailAndPassword(email, password)?.addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                GlobalScope.launch {
                     cont.resume(ConfigInfo.LOGIN.SUCCESS)
-                }
             }
             else {
                 cont.resume(ConfigInfo.LOGIN.AUTH_FAILED)
@@ -84,6 +82,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
         sessionManager?.userID = userDocument.id
         sessionManager?.userEmail = (userDocument[FireStoreUserField.EMAIL.tag] as String?)!!
         sessionManager?.forestryID = (userDocument[FireStoreUserField.FORESTRY_ID.tag] as String?)!!
+        sessionManager?.forestryName = (userDocument[FireStoreUserField.FORESTRY_ID.tag] as String?)!!
         sessionManager?.firstLogin = (userDocument[FireStoreUserField.FIRST_LOGIN.tag] as String?)!!
 
         //Admins don't have leaderID
