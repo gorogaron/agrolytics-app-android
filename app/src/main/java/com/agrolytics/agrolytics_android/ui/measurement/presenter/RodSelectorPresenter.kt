@@ -8,12 +8,16 @@ import com.agrolytics.agrolytics_android.ui.base.BasePresenter
 import com.agrolytics.agrolytics_android.database.local.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
+import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.activity.RodSelectorActivity
 import com.agrolytics.agrolytics_android.utils.ImageUtils
 import com.agrolytics.agrolytics_android.ui.measurement.utils.Detector
 import com.agrolytics.agrolytics_android.utils.Util
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.net.SocketTimeoutException
@@ -33,43 +37,17 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
             handleNoInternet(bitmap!!, rodLength, rodLengthPixels)
         } else {
             screen?.showLoading()
-            val imageUploadRequest = createImageUploadRequest(bitmap, rodLength, rodLengthPixels)
-            //TODO: TIMEOUT IS NOT HANDLE CORRECTLY! TRY OUT WHILE BACKEND DNS IS DOWN
-            val upload = appServer?.uploadImage(imageUploadRequest)
-                ?.subscribeOn(Schedulers.io())
-                ?.observeOn(AndroidSchedulers.mainThread())
-                ?.subscribe({ response ->
-                    if (response.isSuccessful) {
-                        response.body()?.let {
-                            //TODO: Handle if GPS in not available
-                            if (Util.lat == null || Util.long == null){
-                                Util.lat = 0.0
-                                Util.long = 0.0
-                            }
-                            val measurementResult = MeasurementResult(it.mask!!, bitmap!!, rodLength, rodLengthPixels, sessionManager!!.woodLength, Util.getCurrentDateString(), sessionManager!!.woodType, Util.lat!!, Util.long!!)
-                            screen?.successfulUpload(measurementResult, path, "online")
-                        }
-                    } else {
-                        screen?.showToast(response.message()) //Internal server error (i.e. HTTP500)
-                    }
-                    screen?.hideLoading()
-                }, { error ->
-                    Log.d("Sending", "Could not send image: ${error}")
-                    screen?.hideLoading()
-                    error.printStackTrace()
-                    if (error is SocketTimeoutException) {
-                        activity?.let {
-                            screen?.showAlertDialog(
-                                "Nincs internet kapcsolat",
-                                "A kapcsolat időtúllépés miatt megszakadt. Szeretnéd elmenteni a képet?",
-                                it, true, "Mentés"
-                            )
-                        }
-                    } else {
-                        screen?.showToast("Hiba történt. Kérlek próbáld meg mégegyszer és ellenőrizd az internet kapcsolatot.")
-                    }
-                })
-            upload?.let { subscriptions?.add(it) }
+            GlobalScope.launch(Dispatchers.Main) {
+                screen?.showLoading()
+                val maskBase64 = MeasurementManager.startOnlineMeasurement(bitmap!!)
+                if (Util.lat == null || Util.long == null){
+                    Util.lat = 0.0
+                    Util.long = 0.0
+                }
+                val measurementResult = MeasurementResult(maskBase64, bitmap!!, rodLength, rodLengthPixels, sessionManager!!.woodLength, Util.getCurrentDateString(), sessionManager!!.woodType, Util.lat!!, Util.long!!)
+                screen?.successfulUpload(measurementResult, path, "online")
+                screen?.hideLoading()
+            }
         }
     }
 

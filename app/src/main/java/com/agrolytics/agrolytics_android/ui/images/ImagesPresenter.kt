@@ -256,7 +256,7 @@ class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
                 )
             }
         } else {
-            imageList?.let {
+            /*imageList?.let {
                 screen?.showLoading()
                 val calls = arrayListOf<Observable<*>?>()
 
@@ -310,7 +310,7 @@ class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
                         }
                     })
                 upload?.let { subscriptions?.add(it) }
-            }
+            }*/
         }
     }
 
