@@ -14,9 +14,11 @@ import com.agrolytics.agrolytics_android.utils.SessionManager
 import kotlinx.android.synthetic.main.activity_upload_finished.*
 import org.koin.android.ext.android.inject
 import android.content.Intent
+import com.agrolytics.agrolytics_android.database.DataClient
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.measurement.presenter.ApproveMeasurementPresenter
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
+import kotlinx.coroutines.*
 
 
 class ApproveMeasurementActivity : BaseActivity() {
@@ -25,6 +27,7 @@ class ApproveMeasurementActivity : BaseActivity() {
 	private val roomModule: RoomModule by inject()
 	private val presenter: ApproveMeasurementPresenter by inject()
 	private val fireStoreDB: FireStoreDB by inject()
+	private val dataClient: DataClient by inject()
 
 	private var pagerAdapter: ImagePagerAdapter? = null
 	private val fragmentList = arrayListOf<UploadFinishedFragment>()
@@ -102,7 +105,7 @@ class ApproveMeasurementActivity : BaseActivity() {
 		tv_done.setOnClickListener { onBackPressed() }
 
 		presenter.addView(this)
-		presenter.addInjections(arrayListOf(sessionManager, roomModule, fireStoreDB))
+		presenter.addInjections(arrayListOf(sessionManager, roomModule, fireStoreDB, dataClient))
 	}
 
 	override fun onResume() {
@@ -142,11 +145,16 @@ class ApproveMeasurementActivity : BaseActivity() {
 	}
 
 	fun onAcceptClicked(measurementResult: MeasurementResult, path: String?,
-								 fragment: UploadFinishedFragment, id: String?) {
-
+								fragment: UploadFinishedFragment, id: String?) {
+		showLoading()
 		val processMethod = intent.extras.getString(ConfigInfo.METHOD)
-		presenter.uploadImageToStorage(measurementResult, path, fragment, processMethod)
-		presenter.deleteImageFromLocalDatabase(id)
+		GlobalScope.launch {
+			withContext(Dispatchers.IO) {
+				presenter.uploadImageToStorage(measurementResult, path, fragment, processMethod)
+				presenter.deleteImageFromLocalDatabase(id)
+				hideLoading()
+			}
+		}
 	}
 
 	companion object {

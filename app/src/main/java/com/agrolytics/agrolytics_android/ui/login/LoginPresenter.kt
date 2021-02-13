@@ -3,6 +3,7 @@ package com.agrolytics.agrolytics_android.ui.login
 import android.content.Context
 import android.util.Log
 import com.agrolytics.agrolytics_android.database.firestore.FireStoreCollection
+import com.agrolytics.agrolytics_android.database.firestore.FireStoreForestryField
 import com.agrolytics.agrolytics_android.database.firestore.FireStoreUserField
 import com.agrolytics.agrolytics_android.ui.base.BasePresenter
 import com.agrolytics.agrolytics_android.types.ConfigInfo
@@ -82,9 +83,13 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
         sessionManager?.userID = userDocument.id
         sessionManager?.userEmail = (userDocument[FireStoreUserField.EMAIL.tag] as String?)!!
         sessionManager?.forestryID = (userDocument[FireStoreUserField.FORESTRY_ID.tag] as String?)!!
-        sessionManager?.forestryName = (userDocument[FireStoreUserField.FORESTRY_ID.tag] as String?)!!
         sessionManager?.firstLogin = (userDocument[FireStoreUserField.FIRST_LOGIN.tag] as String?)!!
 
+        fireStoreDB?.db?.collection(FireStoreCollection.FORESTRY.tag)?.document(sessionManager?.forestryID!!)
+            ?.get()
+            ?.addOnSuccessListener {
+                sessionManager?.forestryName = it[FireStoreForestryField.NAME.tag] as String
+            }
         //Admins don't have leaderID
         if ((userDocument[FireStoreUserField.LEADER_ID.tag] as String?) != null){
             sessionManager?.leaderID = userDocument[FireStoreUserField.LEADER_ID.tag] as String

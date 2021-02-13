@@ -1,5 +1,6 @@
 package com.agrolytics.agrolytics_android.ui.base
 
+import com.agrolytics.agrolytics_android.database.DataClient
 import com.agrolytics.agrolytics_android.database.firestore.FireStoreDB
 import com.agrolytics.agrolytics_android.database.local.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
@@ -17,6 +18,7 @@ abstract class BasePresenter<T> {
     var roomModule: RoomModule? = null
     var fireStoreDB: FireStoreDB? = null
     var auth: FirebaseAuth? = null
+    var dataClient: DataClient? = null
 
     init { subscriptions = CompositeDisposable() }
 
@@ -28,6 +30,7 @@ abstract class BasePresenter<T> {
                is RoomModule -> roomModule = item
                is FireStoreDB -> fireStoreDB = item
                is FirebaseAuth -> auth = item
+               is DataClient -> dataClient = item
            }
         }
     }
