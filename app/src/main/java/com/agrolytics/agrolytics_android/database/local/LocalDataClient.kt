@@ -21,62 +21,42 @@ class LocalDataClient(context: Context) {
     }
 
     fun getImageById(id: String) {
-        doAsync{
-            database?.imageItemDao()?.getImageById(id)
-        }
+        database?.imageItemDao()?.getImageById(id)
     }
 
     fun getImagesBySessionId(sessionId: String) {
-        doAsync {
-            database?.imageItemDao()?.getImagesBySessionId(sessionId)
-        }
+        database?.imageItemDao()?.getImagesBySessionId(sessionId)
     }
 
     fun getAllImages() {
-        doAsync {
-            database?.imageItemDao()?.getAllImage()
-        }
+        database?.imageItemDao()?.getAllImage()
     }
 
     fun getSessionIdForImageId(id: String) {
-        doAsync {
-            database?.imageItemDao()?.getSessionIdForImageId(id)
-        }
+        database?.imageItemDao()?.getSessionIdForImageId(id)
     }
 
     fun addImage(imageItem: ImageItem) {
-        doAsync {
-            database?.imageItemDao()?.addImage(imageItem)
-        }
+        database?.imageItemDao()?.addImage(imageItem)
     }
 
     fun deleteImage(imageItem: ImageItem) {
-        doAsync {
-            database?.imageItemDao()?.deleteImage(imageItem)
-        }
+        database?.imageItemDao()?.deleteImage(imageItem)
     }
 
     fun deleteImageById(id: String) {
-        doAsync {
-            database?.imageItemDao()?.deleteImageById(id)
-        }
+        database?.imageItemDao()?.deleteImageById(id)
     }
 
     fun deleteImagesBySessionId(sessionId: String) {
-        doAsync {
-            database?.imageItemDao()?.deleteImagesBySessionId(sessionId)
-        }
+        database?.imageItemDao()?.deleteImagesBySessionId(sessionId)
     }
 
     fun deleteAllImage() {
-        doAsync {
-            database?.imageItemDao()?.deleteAllImage()
-        }
+        database?.imageItemDao()?.deleteAllImage()
     }
 
     fun clearDatabase() {
-        doAsync {
-            database?.clearAllTables()
-        }
+        database?.clearAllTables()
     }
 }

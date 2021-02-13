@@ -10,6 +10,7 @@ class SessionManager(var context: Context) {
 	private val USER_ROLE = "user.role"
 	private val USER_EMAIL = "user.email"
 	private val USER_FORESTRY_ID = "user.forestry.id"
+	private val USER_FORESTRY_NAME = "user.forestry.name"
 	private val USER_FIRST_LOGIN = "user.first_login"
 	private val WOOD_LENGTH = "wood.length"
 	private val WOOD_TYPE = "wood.type"
@@ -51,6 +52,10 @@ class SessionManager(var context: Context) {
 		get() = sharedPreferences.getString(USER_FORESTRY_ID, "")!!
 		set(forestryID) = sharedPreferences.edit().putString(USER_FORESTRY_ID, forestryID).apply()
 
+	var forestryName: String
+		get() = sharedPreferences.getString(USER_FORESTRY_NAME, "")!!
+		set(forestryID) = sharedPreferences.edit().putString(USER_FORESTRY_NAME, forestryID).apply()
+
 	var firstLogin: String
 		get() = sharedPreferences.getString(USER_FIRST_LOGIN, "")!!
 		set(firstLogin) = sharedPreferences.edit().putString(USER_FIRST_LOGIN, firstLogin).apply()
@@ -64,6 +69,7 @@ class SessionManager(var context: Context) {
 			.remove(USER_LEADER_ID)
 			.remove(USER_EMAIL)
 			.remove(USER_FORESTRY_ID)
+			.remove(USER_FORESTRY_NAME)
 			.remove(WOOD_ROD_LENGTH)
 			.apply()
 	}
