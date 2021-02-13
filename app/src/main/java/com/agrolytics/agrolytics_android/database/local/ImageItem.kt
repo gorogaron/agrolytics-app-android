@@ -37,11 +37,11 @@ data class ImageItem(
     @ColumnInfo(name = "time")
     var time: String? = null,
 
-    @ColumnInfo(name = "server_image")
-    var serverImage: String? = null,
+    @ColumnInfo(name = "image_url")
+    var imageUrl: String? = null,
 
-    @ColumnInfo(name = "server_path")
-    var serverPath: String? = null,
+    @ColumnInfo(name = "image_ref")
+    var imageRef: String? = null,
 
     @ColumnInfo(name = "user_id")
     var userID: String? = null,
@@ -61,8 +61,8 @@ data class ImageItem(
     @ColumnInfo(name = "rod_length_pixel")
     var rodLengthPixel: Int? = null,
 
-    @ColumnInfo(name = "thumbnail_path")
-    var thumbnailPath: String? = null,
+    @ColumnInfo(name = "thumbnail_ref")
+    var thumbnailRef: String? = null,
 
     @ColumnInfo(name = "thumbnail_url")
     var thumbnailUrl: String? = null,
@@ -112,8 +112,8 @@ data class ImageItem(
         parcel.writeValue(length)
         parcel.writeValue(volume)
         parcel.writeString(time)
-        parcel.writeString(serverImage)
-        parcel.writeString(serverPath)
+        parcel.writeString(imageUrl)
+        parcel.writeString(imageRef)
         parcel.writeString(userID)
         parcel.writeString(leaderID)
         parcel.writeString(forestryID)
@@ -121,7 +121,7 @@ data class ImageItem(
         parcel.writeValue(rodLength)
         parcel.writeValue(rodLengthPixel)
         parcel.writeByte(if (isChecked) 1 else 0)
-        parcel.writeString(thumbnailPath)
+        parcel.writeString(thumbnailRef)
         parcel.writeString(thumbnailUrl)
         parcel.writeString(woodType)
     }

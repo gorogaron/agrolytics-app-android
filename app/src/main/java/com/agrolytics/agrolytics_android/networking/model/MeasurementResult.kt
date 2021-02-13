@@ -24,6 +24,8 @@ class MeasurementResult(mask_b64 : String?,
     private var volume = 0.toDouble()
     private var numOfWoodPixels = 0
     private var wood_length = wood_length
+    var rod_length = rod_length
+    var rod_length_pixel = rod_length_pixel
     var date : String = date
     var woodType : String = type
     var lat : Double = lat

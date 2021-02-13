@@ -5,8 +5,6 @@ import android.view.View
 import androidx.viewpager.widget.ViewPager
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
-import com.agrolytics.agrolytics_android.database.firestore.FireStoreDB
-import com.agrolytics.agrolytics_android.database.local.RoomModule
 import com.agrolytics.agrolytics_android.ui.imageFinished.adapter.ImagePagerAdapter
 import com.agrolytics.agrolytics_android.ui.imageFinished.fragment.UploadFinishedFragment
 import com.agrolytics.agrolytics_android.types.ConfigInfo
@@ -24,9 +22,7 @@ import kotlinx.coroutines.*
 class ApproveMeasurementActivity : BaseActivity() {
 
 	private val sessionManager: SessionManager by inject()
-	private val roomModule: RoomModule by inject()
 	private val presenter: ApproveMeasurementPresenter by inject()
-	private val fireStoreDB: FireStoreDB by inject()
 	private val dataClient: DataClient by inject()
 
 	private var pagerAdapter: ImagePagerAdapter? = null
@@ -105,7 +101,7 @@ class ApproveMeasurementActivity : BaseActivity() {
 		tv_done.setOnClickListener { onBackPressed() }
 
 		presenter.addView(this)
-		presenter.addInjections(arrayListOf(sessionManager, roomModule, fireStoreDB, dataClient))
+		presenter.addInjections(arrayListOf(sessionManager, dataClient))
 	}
 
 	override fun onResume() {

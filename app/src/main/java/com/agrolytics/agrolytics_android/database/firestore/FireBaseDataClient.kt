@@ -25,10 +25,12 @@ class FireBaseDataClient {
         storage = FirebaseStorage.getInstance(url)
     }
 
-    suspend fun uploadToFireStore(fireStoreItem: FireStoreItem) : Boolean = suspendCoroutine { cont ->
+    suspend fun uploadToFireStore(
+        fireStoreItem: FireStoreItem
+    ) : String = suspendCoroutine { cont ->
         firestore?.collection(FireStoreCollection.IMAGES.tag)?.add(fireStoreItem.toHashMap())
             ?.addOnSuccessListener {
-                cont.resume(true)
+                cont.resume(it.id)
             }
             ?.addOnFailureListener{
                 cont.resumeWithException(it)

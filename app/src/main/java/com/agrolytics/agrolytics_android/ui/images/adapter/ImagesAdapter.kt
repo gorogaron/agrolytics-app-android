@@ -80,14 +80,14 @@ class ImagesAdapter(private val listener: OnImageListener,
 			itemView.tv_woodtype_adapter.text = item.woodType
 			//itemView.tv_adapter_id.text = item.id
 			itemView.tv_adapter_id.visibility = View.GONE
-			item.serverImage?.let {
+			item.imageUrl?.let {
 				if (it.isEmpty()) {
 					Glide.with(context).load(item.localPath).into(itemView.iv_image)
 				} else {
 					if (it.startsWith("https",true)) {
 						Glide.with(context).load(it).into(itemView.iv_image)
 					} else {
-						Glide.with(context).load(ImageUtils.getImage(item.serverImage)).into(itemView.iv_image)
+						Glide.with(context).load(ImageUtils.getImage(item.imageUrl)).into(itemView.iv_image)
 					}
 				}
 			} ?: run {

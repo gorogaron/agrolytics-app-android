@@ -146,23 +146,21 @@ class MapPresenter: BasePresenter<MapScreen>() {
 			length = length as Double?,
 			volume = document[FireStoreImagesField.WOOD_VOLUME.tag] as Double?,
 			time = document[FireStoreImagesField.TIME.tag] as String?,
-			serverImage = document[FireStoreImagesField.IMAGE_URL.tag] as String?,
-			serverPath = document[FireStoreImagesField.IMAGE_REFERENCE.tag] as String?,
+			imageUrl = document[FireStoreImagesField.IMAGE_URL.tag] as String?,
+			imageRef = document[FireStoreImagesField.IMAGE_REFERENCE.tag] as String?,
 			userID = document[FireStoreImagesField.USER_ID.tag] as String?,
 			leaderID = document[FireStoreImagesField.LEADER_ID.tag] as String?,
 			forestryID = document[FireStoreImagesField.FORESTRY_ID.tag] as String?,
-			thumbnailPath = document[FireStoreImagesField.IMAGE_THUMBNAIL_REFERENCE.tag] as String?,
+			thumbnailRef = document[FireStoreImagesField.IMAGE_THUMBNAIL_REFERENCE.tag] as String?,
 			thumbnailUrl = document[FireStoreImagesField.IMAGE_THUMBNAIL_URL.tag] as String?,
 			woodType = woodType)
 	}
 
 	fun getAllLocalImage() {
-		var images: List<ImageItem>
 		doAsync {
-			roomModule?.database?.imageItemDao()?.getAllImage(false)?.let {
-				images = it
+			dataClient?.local?.getAllPushedImages(false).let { images ->
 				uiThread {
-					fireBaseList.addAll(images)
+					images?.let { it1 -> fireBaseList.addAll(it1) }
 					screen?.loadImages(ArrayList(images), false)
 				}
 			} ?: run {

@@ -7,9 +7,8 @@ import android.view.View
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.agrolytics.agrolytics_android.R
+import com.agrolytics.agrolytics_android.database.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
-import com.agrolytics.agrolytics_android.database.firestore.FireStoreDB
-import com.agrolytics.agrolytics_android.database.local.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.database.local.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
@@ -46,9 +45,8 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 
 	private val presenter: ImagesPresenter by inject()
 	private val sessionManager: SessionManager by inject()
-	private val roomModule: RoomModule by inject()
+	private val dataClient: DataClient by inject()
 	private val appServer: AppServer by inject()
-	private val fireStoreDB: FireStoreDB by inject()
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -59,7 +57,7 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 		list_images.adapter = adapter
 
 		presenter.addView(this)
-		presenter.addInjections(arrayListOf(sessionManager, roomModule, appServer, fireStoreDB))
+		presenter.addInjections(arrayListOf(sessionManager, appServer, dataClient))
 		presenter.setActivity(this)
 
 		btn_back.setOnClickListener(this)
@@ -312,9 +310,9 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 	}
 
 	override fun showImage(imageItem: ImageItem) {
-		imageItem.serverImage?.let {
+		imageItem.imageUrl?.let {
 			if (it.isNotEmpty()) {
-				GalleryDialog.getInstance(arrayListOf(imageItem.serverImage), null,0,true).show(this.supportFragmentManager, "gallery")
+				GalleryDialog.getInstance(arrayListOf(imageItem.imageUrl), null,0,true).show(this.supportFragmentManager, "gallery")
 			} else {
 				GalleryDialog.getInstance(null, arrayListOf(BitmapFactory.decodeFile(imageItem.localPath)),0,true).show(this.supportFragmentManager, "gallery")
 			}

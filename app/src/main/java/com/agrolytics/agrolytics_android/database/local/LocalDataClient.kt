@@ -2,8 +2,6 @@ package com.agrolytics.agrolytics_android.database.local
 
 import android.content.Context
 import androidx.room.Room
-import org.jetbrains.anko.doAsync
-
 
 class LocalDataClient(context: Context) {
 
@@ -20,20 +18,24 @@ class LocalDataClient(context: Context) {
             .build()
     }
 
-    fun getImageById(id: String) {
-        database?.imageItemDao()?.getImageById(id)
+    fun getImageById(id: String) : ImageItem? {
+        return database?.imageItemDao()?.getImageById(id)
     }
 
-    fun getImagesBySessionId(sessionId: String) {
-        database?.imageItemDao()?.getImagesBySessionId(sessionId)
+    fun getImagesBySessionId(sessionId: String) : List<ImageItem>? {
+        return database?.imageItemDao()?.getImagesBySessionId(sessionId)
     }
 
-    fun getAllImages() {
-        database?.imageItemDao()?.getAllImage()
+    fun getAllImages() : List<ImageItem>? {
+        return database?.imageItemDao()?.getAllImage()
     }
 
-    fun getSessionIdForImageId(id: String) {
-        database?.imageItemDao()?.getSessionIdForImageId(id)
+    fun getAllPushedImages(pushed: Boolean) : List<ImageItem> {
+        return database?.imageItemDao()?.getAllImage(pushed)
+    }
+
+    fun getSessionIdForImageId(id: String) : String? {
+        return database?.imageItemDao()?.getSessionIdForImageId(id)
     }
 
     fun addImage(imageItem: ImageItem) {

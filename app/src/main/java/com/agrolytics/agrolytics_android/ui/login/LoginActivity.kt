@@ -4,9 +4,8 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import com.agrolytics.agrolytics_android.R
+import com.agrolytics.agrolytics_android.database.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
-import com.agrolytics.agrolytics_android.database.firestore.FireStoreDB
-import com.agrolytics.agrolytics_android.database.local.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
 import com.agrolytics.agrolytics_android.types.ConfigInfo
@@ -22,8 +21,7 @@ class LoginActivity: BaseActivity(), LoginScreen {
 
     private val presenter: LoginPresenter by inject()
     private val sessionManager: SessionManager by inject()
-    private val fireStoreDB: FireStoreDB by inject()
-    private val roomModule: RoomModule by inject()
+    private val dataClient: DataClient by inject()
     private val appServer: AppServer by inject()
 
     private lateinit var auth: FirebaseAuth
@@ -34,7 +32,7 @@ class LoginActivity: BaseActivity(), LoginScreen {
         auth = FirebaseAuth.getInstance()
 
         presenter.addView(this)
-        presenter.addInjections(arrayListOf(sessionManager, fireStoreDB, auth, roomModule, appServer))
+        presenter.addInjections(arrayListOf(sessionManager, dataClient, auth, appServer))
         
         // TODO: Blocking LoginActivity until checkUserLoggedInState() finished
         checkUserLoggedInState()

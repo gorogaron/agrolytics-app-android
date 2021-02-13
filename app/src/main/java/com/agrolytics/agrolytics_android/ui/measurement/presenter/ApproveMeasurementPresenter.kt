@@ -1,23 +1,16 @@
 package com.agrolytics.agrolytics_android.ui.measurement.presenter
 
 import android.graphics.Bitmap
-import android.util.Log
 import com.agrolytics.agrolytics_android.database.firestore.*
 import com.agrolytics.agrolytics_android.ui.base.BasePresenter
 import com.agrolytics.agrolytics_android.database.local.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.imageFinished.fragment.UploadFinishedFragment
 import com.agrolytics.agrolytics_android.ui.measurement.activity.ApproveMeasurementActivity
-import com.agrolytics.agrolytics_android.utils.ImageUtils
 import com.agrolytics.agrolytics_android.utils.Util
-import com.google.firebase.storage.StorageMetadata
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import java.io.File
-import java.sql.Timestamp
-import java.time.Instant.now
 import java.time.LocalDate
-import java.time.LocalDateTime.now
 
 class ApproveMeasurementPresenter : BasePresenter<ApproveMeasurementActivity>() {
 
@@ -40,7 +33,7 @@ class ApproveMeasurementPresenter : BasePresenter<ApproveMeasurementActivity>() 
             length = sessionManager?.woodLength?.toDouble() ?: 0.0,
             volume = measurementResult?.getVolume(),
             time = Util.getCurrentDateString(),
-            serverImage = serverImage
+            imageUrl = serverImage
         )
         doAsync {
             roomModule?.database?.imageItemDao()?.addImage(imageItem)
@@ -52,7 +45,9 @@ class ApproveMeasurementPresenter : BasePresenter<ApproveMeasurementActivity>() 
         measurementResult: MeasurementResult,
         path: String?,
         fragment: UploadFinishedFragment,
-        processMethod: String) {
+        processMethod: String
+    )
+    {
 
         if (processMethod == "online") { //Only uploade image to firebase in case of online processing
 
@@ -83,7 +78,35 @@ class ApproveMeasurementPresenter : BasePresenter<ApproveMeasurementActivity>() 
                 timestamp = LocalDate.now().toString()
             )
 
-            dataClient?.fireStore?.uploadToFireStore(fireStoreItem)
+            val firestoreId = dataClient?.fireStore?.uploadToFireStore(fireStoreItem)
+
+            val imageItem = ImageItem(
+                id = (0..10000).random().toString(),
+                session_id = (0..10000).random().toString(),
+                localPath = path,
+                isPushedToServer = true,
+                latitude = fireStoreItem.locLat,
+                longitude = fireStoreItem.locLon,
+                length = fireStoreItem.woodLength,
+                volume = fireStoreItem.woodVolume,
+                time = fireStoreItem.timestamp,
+                imageUrl = fireStoreItem.imageUrl,
+                imageRef = fireStoreItem.imageRef,
+                firestoreId = firestoreId,
+                userID = fireStoreItem.userId,
+                leaderID = fireStoreItem.leaderId,
+                forestryID = fireStoreItem.forestryId,
+                rodLength = measurementResult.rod_length,
+                rodLengthPixel = measurementResult.rod_length_pixel,
+                thumbnailRef = fireStoreItem.thumbnailRef,
+                thumbnailUrl = fireStoreItem.thumbnailUrl,
+                woodType = fireStoreItem.woodType
+            )
+            doAsync {
+                val a = 2
+                dataClient?.local?.addImage(imageItem)
+                val b = 2
+            }
         }
         else {
             screen?.updateView(fragment)

@@ -236,12 +236,12 @@ class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
             length = length as Double?,
             volume = document["volume"] as Double?,
             time = document["time"] as String?,
-            serverImage = document["url"] as String?,
-            serverPath = document["imageRef"] as String?,
+            imageUrl = document["url"] as String?,
+            imageRef = document["imageRef"] as String?,
             userID = document["userID"] as String?,
             leaderID = document["leaderID"] as String?,
             forestryID = document["forestryID"] as String?,
-            thumbnailPath = document["thumbnailRef"] as String?,
+            thumbnailRef = document["thumbnailRef"] as String?,
             thumbnailUrl = document["thumbnailUrl"] as String?,
             woodType = woodType
         )
@@ -353,10 +353,10 @@ class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
             fireStoreDB?.db?.collection("images")?.document(item.id)
                 ?.delete()
                 ?.addOnSuccessListener {
-                    item.serverPath?.let {
+                    item.imageRef?.let {
                         deleteFromStorage(it, imageList.last() == item, item)
                     }
-                    item.thumbnailPath?.let {
+                    item.thumbnailRef?.let {
                         deleteFromStorage(it, imageList.last() == item, item)
                     }
                 }

@@ -18,6 +18,7 @@ import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import com.agrolytics.agrolytics_android.R
+import com.agrolytics.agrolytics_android.database.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.database.local.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
@@ -51,7 +52,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
     private val presenter: MainPresenter by inject()
     private val appServer: AppServer by inject()
     private val sessionManager: SessionManager by inject()
-    private val roomModule: RoomModule by inject()
+    private val dataClient: DataClient by inject()
 
     private var locationManager: LocationManager? = null
     private var locationListener: AgroLocationListener? = null
@@ -81,7 +82,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         presenter.addView(this)
-        presenter.addInjections(arrayListOf(appServer, roomModule, sessionManager))
+        presenter.addInjections(arrayListOf(appServer, dataClient, sessionManager))
         presenter.setActivity(this)
 
         Detector.init(assets)
@@ -213,7 +214,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         FirebaseAuth.getInstance().signOut()
         sessionManager.clearSession()
         doAsync {
-            roomModule.database?.clearAllTables()
+            dataClient.local.clearDatabase()
             uiThread {
                 startActivity(LoginActivity::class.java, Bundle(), false)
             }

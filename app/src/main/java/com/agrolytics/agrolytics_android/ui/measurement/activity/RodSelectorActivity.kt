@@ -5,8 +5,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import com.agrolytics.agrolytics_android.R
+import com.agrolytics.agrolytics_android.database.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
-import com.agrolytics.agrolytics_android.database.local.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.measurement.presenter.RodSelectorPresenter
@@ -20,7 +20,7 @@ class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 
 	private val presenter: RodSelectorPresenter by inject()
 	private val appServer: AppServer by inject()
-	private val roomModule: RoomModule by inject()
+	private val dataClient: DataClient by inject()
 	private val sessionManager: SessionManager by inject()
 
 	var path: String? = null
@@ -31,7 +31,7 @@ class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 		setContentView(R.layout.activity_rod_selector)
 
 		presenter.addView(this)
-		presenter.addInjections(arrayListOf(appServer, roomModule, sessionManager))
+		presenter.addInjections(arrayListOf(appServer, dataClient, sessionManager))
 		presenter.setActivity(this)
 
 		intent.getStringExtra(ConfigInfo.CROPPED_RESIZED_IMG_PATH)?.let {
@@ -68,9 +68,7 @@ class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 
 	override fun positiveButtonClicked() {
 		val rodHeight = rod_selector_canvas.getRodLengthPixels_640_480()
-		if (rodHeight != null) {
-			presenter.saveLocalImageItem(rodLength, rodHeight)
-		}
+		presenter.saveLocalImageItem(rodLength, rodHeight)
 	}
 
 	fun back() {

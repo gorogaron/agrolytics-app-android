@@ -34,7 +34,7 @@ class MarkerInfoBottomSheetDialog : MainBottomSheetDialog() {
     }
 
     private fun initView(data: ImageItem) {
-	    data.serverImage?.let {
+	    data.imageUrl?.let {
 		    if (it.isNotEmpty()) {
 			    Glide.with(viewOfLayout).load(it).into(viewOfLayout.iv_image)
 		    } else {

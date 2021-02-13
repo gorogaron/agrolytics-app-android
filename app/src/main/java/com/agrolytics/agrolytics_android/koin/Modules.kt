@@ -1,8 +1,6 @@
 package com.agrolytics.agrolytics_android.koin
 
 import com.agrolytics.agrolytics_android.database.DataClient
-import com.agrolytics.agrolytics_android.database.firestore.FireStoreDB
-import com.agrolytics.agrolytics_android.database.local.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.ui.measurement.activity.ApproveMeasurementActivity
 import com.agrolytics.agrolytics_android.ui.measurement.presenter.ApproveMeasurementPresenter
@@ -20,8 +18,6 @@ val appModule = module {
     // Common
     single { AppServer() }
     single { SessionManager(androidContext()) }
-    single { RoomModule(androidContext()) }
-    single { FireStoreDB() }
     single { DataClient(androidContext()) }
 
     // Views
