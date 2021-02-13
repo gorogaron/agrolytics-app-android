@@ -1,7 +1,9 @@
 package com.agrolytics.agrolytics_android.ui.measurement.utils
 
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Intent
+import android.net.Uri
 import android.provider.MediaStore
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.permissions.*
@@ -13,6 +15,7 @@ import com.agrolytics.agrolytics_android.utils.permissions.*
 object ImageObtainer {
 
     lateinit var callingActivity : Activity
+    lateinit var cameraImageUri : Uri
 
     fun setActivity(activity: Activity) {
         callingActivity = activity
@@ -43,7 +46,11 @@ object ImageObtainer {
     }
 
     private fun startCameraActivity() {
+        val values = ContentValues()
+        values.put(MediaStore.Images.Media.TITLE, "CameraImage")
+        cameraImageUri = callingActivity.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)!!
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraImageUri)
         callingActivity.startActivityForResult(intent, ConfigInfo.IMAGE_CAPTURE)
     }
 }

@@ -22,7 +22,7 @@ import org.koin.core.component.inject
 import java.net.SocketTimeoutException
 
 
-@KoinApiExtension
+
 object MeasurementManager : KoinComponent{
 
     private val appServer: AppServer by inject()

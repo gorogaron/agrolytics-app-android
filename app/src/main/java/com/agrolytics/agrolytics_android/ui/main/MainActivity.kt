@@ -3,6 +3,7 @@ package com.agrolytics.agrolytics_android.ui.main
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -20,6 +21,7 @@ import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.database.local.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
+import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.types.MenuItem
 import com.agrolytics.agrolytics_android.ui.guide.GuideActivity
 import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
@@ -28,6 +30,7 @@ import com.agrolytics.agrolytics_android.ui.login.LoginActivity
 import com.agrolytics.agrolytics_android.ui.map.MapActivity
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.utils.Detector
+import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
 import com.agrolytics.agrolytics_android.utils.*
 import com.agrolytics.agrolytics_android.utils.Util.Companion.showParameterSettingsWindow
 import com.agrolytics.agrolytics_android.utils.permissions.locationPermGiven
@@ -39,6 +42,7 @@ import kotlinx.android.synthetic.main.nav_bar.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
+import org.koin.core.component.KoinApiExtension
 import kotlin.system.exitProcess
 
 
@@ -279,11 +283,22 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         locationManager?.removeUpdates(locationListener)
     }
 
+
+    @KoinApiExtension
     public override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)
         //Can only return from camera or browser activity
-        if (intent?.data != null) {
-            MeasurementManager.startCropperActivity(this, intent.data!!)
+        if (resultCode == Activity.RESULT_OK ){
+            when (requestCode) {
+                ConfigInfo.IMAGE_CAPTURE -> {
+                    MeasurementManager.startCropperActivity(this, ImageObtainer.cameraImageUri)
+                }
+                ConfigInfo.IMAGE_BROWSE -> {
+                    if (intent?.data != null){
+                        MeasurementManager.startCropperActivity(this, intent.data!!)
+                    }
+                }
+            }
         }
      }
 
