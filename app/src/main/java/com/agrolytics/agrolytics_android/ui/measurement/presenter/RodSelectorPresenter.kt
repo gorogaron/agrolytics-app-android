@@ -20,6 +20,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import java.lang.Exception
 import java.net.SocketTimeoutException
 
 class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActivity>() {
@@ -36,17 +37,59 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
         if (!Util.isNetworkAvailable()) {
             handleNoInternet(bitmap!!, rodLength, rodLengthPixels)
         } else {
-            screen?.showLoading()
+            activity?.showLoading()
             GlobalScope.launch(Dispatchers.Main) {
-                screen?.showLoading()
-                val maskBase64 = MeasurementManager.startOnlineMeasurement(bitmap!!)
-                if (Util.lat == null || Util.long == null){
-                    Util.lat = 0.0
-                    Util.long = 0.0
+                activity?.showLoading()
+                try{
+                    val response = MeasurementManager.startOnlineMeasurement(bitmap!!)
+                    if (response.isSuccessful) {
+                        if (Util.lat == null || Util.long == null) {
+                            Util.lat = 0.0
+                            Util.long = 0.0
+                        }
+                        val measurementResult = MeasurementResult(
+                            response.body()?.mask,
+                            bitmap!!,
+                            rodLength,
+                            rodLengthPixels,
+                            sessionManager!!.woodLength,
+                            Util.getCurrentDateString(),
+                            sessionManager!!.woodType,
+                            Util.lat!!,
+                            Util.long!!
+                        )
+                        activity?.successfulUpload(measurementResult, path, "online")
+                    } else {
+                        activity?.let {
+                            activity?.showAlertDialog(
+                                "Hiba",
+                                "Gond van a szerverünkkel. Próbáld újra, vagy jelezd felénk a hibát.",
+                                it, true, "Mentés"
+                            )
+                        }
+                    }
                 }
-                val measurementResult = MeasurementResult(maskBase64, bitmap!!, rodLength, rodLengthPixels, sessionManager!!.woodLength, Util.getCurrentDateString(), sessionManager!!.woodType, Util.lat!!, Util.long!!)
-                screen?.successfulUpload(measurementResult, path, "online")
-                screen?.hideLoading()
+                catch (e : Exception){
+                    if (e is SocketTimeoutException) {
+                        activity?.let {
+                            activity?.showAlertDialog(
+                                "Nincs internet kapcsolat",
+                                "A kapcsolat időtúllépés miatt megszakadt. Szeretnéd elmenteni a képet?",
+                                it, true, "Mentés"
+                            )
+                        }
+                    }
+                    else{
+                        activity?.let {
+                            activity?.showAlertDialog(
+                                "Hiba",
+                                "Váratlan hiba történt. Mentsd le a képet későbbre, vagy próbáld újra.",
+                                it, true, "Mentés"
+                            )
+                        }
+                    }
+                }
+                activity?.hideLoading()
             }
         }
     }
@@ -69,7 +112,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
         )
         doAsync {
             roomModule?.database?.imageItemDao()?.addImage(imageItem)
-            screen?.back()
+            activity?.back()
         }
     }
 
@@ -96,7 +139,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
     }
 
     private fun startOfflineDetection(bitmap: Bitmap, rodLength: Double, rodLengthPixels: Int){
-        screen?.showLoading()
+        activity?.showLoading()
         doAsync {
             var seg = Detector.segmentOffline(bitmap!!)
             uiThread {
@@ -106,8 +149,8 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
                 //TODO: Refactor MeasurementResult class
                 var measurementResult = MeasurementResult(ImageUtils.bitmapToBase64(
                     Detector.Result.mask!!)!!,bitmap, rodLength, rodLengthPixels, sessionManager!!.woodLength, Util.getCurrentDateString(), "NoType", Util.lat!!, Util.long!!)
-                screen?.successfulUpload(measurementResult, path, "offline")
-                screen?.hideLoading()
+                activity?.successfulUpload(measurementResult, path, "offline")
+                activity?.hideLoading()
             }
         }
     }

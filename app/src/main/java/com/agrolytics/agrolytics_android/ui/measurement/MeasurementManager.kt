@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
+import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
 import com.agrolytics.agrolytics_android.ui.measurement.activity.CropperActivity
 import com.agrolytics.agrolytics_android.ui.measurement.activity.RodSelectorActivity
 import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
@@ -13,6 +14,7 @@ import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.ImageUtils
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import retrofit2.Response
 
 object MeasurementManager : KoinComponent{
 
@@ -47,21 +49,9 @@ object MeasurementManager : KoinComponent{
         callingActivity.startActivity(intent)
     }
 
-    suspend fun startOnlineMeasurement(bitmap: Bitmap) : String?{
+    suspend fun startOnlineMeasurement(bitmap: Bitmap) : Response<ImageUploadResponse>{
         val request = createImageUploadRequest(bitmap)
-        try {
-            val response = appServer.uploadImage(request)
-            if (response.isSuccessful){
-                return response.body()?.mask
-            } else {
-                //TODO: HANDLE
-                return null
-            }
-        }
-        catch (e: Exception) {
-            //TODO: HANDLE
-            return null
-        }
+        return appServer.uploadImage(request)
     }
 
     private fun createImageUploadRequest(bitmap: Bitmap?): ImageUploadRequest {

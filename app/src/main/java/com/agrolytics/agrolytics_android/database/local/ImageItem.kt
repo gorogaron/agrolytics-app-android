@@ -104,7 +104,7 @@ data class ImageItem(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(id)
-        parcel.writeString(id)
+        parcel.writeString(session_id)
         parcel.writeString(localPath)
         parcel.writeByte(if (isPushedToServer) 1 else 0)
         parcel.writeValue(latitude)

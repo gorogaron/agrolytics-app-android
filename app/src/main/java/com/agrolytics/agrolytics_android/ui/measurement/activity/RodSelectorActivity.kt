@@ -30,7 +30,6 @@ class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_rod_selector)
 
-		presenter.addView(this)
 		presenter.addInjections(arrayListOf(appServer, dataClient, sessionManager))
 		presenter.setActivity(this)
 
