@@ -36,8 +36,10 @@ class ApproveMeasurementPresenter : BasePresenter<ApproveMeasurementActivity>() 
             imageUrl = serverImage
         )
         doAsync {
-            roomModule?.database?.imageItemDao()?.addImage(imageItem)
-            uiThread { screen?.updateView(fragment) }
+            dataClient?.local?.addImage(imageItem)
+            uiThread {
+                screen?.updateView(fragment)
+            }
         }
     }
 
@@ -103,9 +105,7 @@ class ApproveMeasurementPresenter : BasePresenter<ApproveMeasurementActivity>() 
                 woodType = fireStoreItem.woodType
             )
             doAsync {
-                val a = 2
                 dataClient?.local?.addImage(imageItem)
-                val b = 2
             }
         }
         else {
@@ -116,8 +116,10 @@ class ApproveMeasurementPresenter : BasePresenter<ApproveMeasurementActivity>() 
     fun deleteImageFromLocalDatabase(id: String?) {
         id?.let {
             doAsync {
-                val imageItem = roomModule?.database?.imageItemDao()?.getImageById(id)
-                imageItem?.let { roomModule?.database?.imageItemDao()?.deleteImage(imageItem) }
+                val imageItem = dataClient?.local?.getImageById(id)
+                imageItem?.let {
+                    dataClient?.local?.deleteImage(imageItem)
+                }
             }
         }
     }

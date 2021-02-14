@@ -30,7 +30,7 @@ class LocalDataClient(context: Context) {
         return database?.imageItemDao()?.getAllImage()
     }
 
-    fun getAllPushedImages(pushed: Boolean) : List<ImageItem> {
+    fun getAllPushedImages(pushed: Boolean) : List<ImageItem>? {
         return database?.imageItemDao()?.getAllImage(pushed)
     }
 

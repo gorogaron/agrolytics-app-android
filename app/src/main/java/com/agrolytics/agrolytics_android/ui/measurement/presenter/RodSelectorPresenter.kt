@@ -111,7 +111,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
             woodType = sessionManager?.woodType
         )
         doAsync {
-            roomModule?.database?.imageItemDao()?.addImage(imageItem)
+            dataClient?.local?.addImage(imageItem)
             activity?.back()
         }
     }

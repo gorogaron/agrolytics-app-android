@@ -85,7 +85,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
         sessionManager?.forestryID = (userDocument[FireStoreUserField.FORESTRY_ID.tag] as String?)!!
         sessionManager?.firstLogin = (userDocument[FireStoreUserField.FIRST_LOGIN.tag] as String?)!!
 
-        fireStoreDB?.db?.collection(FireStoreCollection.FORESTRY.tag)?.document(sessionManager?.forestryID!!)
+        dataClient?.fireStore?.firestore?.collection(FireStoreCollection.FORESTRY.tag)?.document(sessionManager?.forestryID!!)
             ?.get()
             ?.addOnSuccessListener {
                 sessionManager?.forestryName = it[FireStoreForestryField.NAME.tag] as String
@@ -120,7 +120,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
 
     private suspend fun getUserDocument(user: FirebaseUser?) : DocumentSnapshot = suspendCoroutine { cont->
         if (user != null){
-            val userDocumentReference = fireStoreDB?.db?.collection(FireStoreCollection.USER.tag)?.document(user.uid)
+            val userDocumentReference = dataClient?.fireStore?.firestore?.collection(FireStoreCollection.USER.tag)?.document(user.uid)
             userDocumentReference?.get()
                 ?.addOnSuccessListener { cont.resume(it) }
                 ?.addOnFailureListener { cont.resumeWithException(it) }
@@ -142,7 +142,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
     private fun clearSession() {
         auth?.signOut()
         doAsync {
-            roomModule?.database?.clearAllTables()
+            dataClient?.local?.clearDatabase()
             sessionManager?.clearSession()
         }
     }

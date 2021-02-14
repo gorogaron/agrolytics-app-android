@@ -20,7 +20,6 @@ import androidx.core.view.GravityCompat
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.database.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
-import com.agrolytics.agrolytics_android.database.local.RoomModule
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.types.MenuItem

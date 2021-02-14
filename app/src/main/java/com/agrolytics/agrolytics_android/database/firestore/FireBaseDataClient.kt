@@ -17,8 +17,8 @@ class FireBaseDataClient {
 
     private val url: String = "gs://webhost-7bf8f.appspot.com"
 
-    private var firestore: FirebaseFirestore? = null
-    private var storage: FirebaseStorage? = null
+    var firestore: FirebaseFirestore? = null
+    var storage: FirebaseStorage? = null
 
     init {
         firestore = FirebaseFirestore.getInstance()

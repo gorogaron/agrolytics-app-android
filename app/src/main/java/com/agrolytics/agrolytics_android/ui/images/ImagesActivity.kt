@@ -77,11 +77,11 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 	override fun onResume() {
 		super.onResume()
 		//presenter.fireBaseList.clear()
-		if (selectedTab == 0) {
-			presenter.subscribeForImageEvents()
-		} else {
-			presenter.getImages(false)
-		}
+//		if (selectedTab == 0) {
+//			presenter.subscribeForImageEvents()
+//		} else {
+//			presenter.getImages(false)
+//		}
 	}
 
 	override fun onClick(v: View?) {
@@ -242,7 +242,7 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 	}
 
 	private fun sendImage() {
-		presenter.sendImages(adapter?.getAllSelected())
+//		presenter.sendImages(adapter?.getAllSelected())
 	}
 
 	private fun showBottomToolbar() {
@@ -281,18 +281,18 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 
 	override fun positiveButtonClicked() {
 		adapter?.getAllSelected()?.let {
-			presenter.deleteImages(it)
+//			presenter.deleteImages(it)
 			closeBottomToolbar()
 		}
 	}
 
 	override fun deleted() {
-		if (tab_layout.selectedTabPosition == 0) {
-			presenter.fireBaseList.clear()
-			presenter.subscribeForImageEvents()
-		} else {
-			presenter.getImages(false)
-		}
+//		if (tab_layout.selectedTabPosition == 0) {
+//			presenter.fireBaseList.clear()
+//			presenter.subscribeForImageEvents()
+//		} else {
+//			presenter.getImages(false)
+//		}
 		showToast(getString(R.string.deleted))
 	}
 
@@ -325,7 +325,7 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 		custom_toolbar.btn_send.fadeIn(300).subscribe()
 		custom_toolbar.btn_send.isClickable = true
 		custom_toolbar.btn_send.isEnabled = true
-		presenter.getImages(false)
+//		presenter.getImages(false)
 		presenter.isProcessed = false
 	}
 
@@ -333,7 +333,7 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 		custom_toolbar.btn_send.fadeOut(300).subscribe()
 		custom_toolbar.btn_send.isClickable = false
 		custom_toolbar.btn_send.isEnabled = false
-		presenter.loadImagesFromFireBase()
+//		presenter.loadImagesFromFireBase()
 		presenter.isProcessed = true
 	}
 }

@@ -24,7 +24,7 @@ class MapPresenter: BasePresenter<MapScreen>() {
 
 	private fun subscribeAdminImages() {
 		screen?.showLoading()
-		fireStoreDB?.db?.collection(FireStoreCollection.IMAGES.tag)
+		dataClient?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
 			?.whereEqualTo(FireStoreImagesField.FORESTRY_ID.tag, sessionManager?.forestryID)
 			?.addSnapshotListener { value, e ->
 				if (e != null) {
@@ -53,7 +53,7 @@ class MapPresenter: BasePresenter<MapScreen>() {
 	private fun subscribeLeaderImages() {
 		screen?.showLoading()
 		getLeaderImages()
-		fireStoreDB?.db?.collection(FireStoreCollection.IMAGES.tag)
+		dataClient?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
 			?.whereEqualTo(FireStoreImagesField.LEADER_ID.tag, sessionManager?.userID)
 			?.addSnapshotListener { value, e ->
 				if (e != null) {
@@ -74,7 +74,7 @@ class MapPresenter: BasePresenter<MapScreen>() {
 
 	private fun subscribeWorkerImages() {
 		screen?.showLoading()
-		fireStoreDB?.db?.collection(FireStoreCollection.IMAGES.tag)
+		dataClient?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
 			?.whereEqualTo(FireStoreImagesField.USER_ID.tag, sessionManager?.userID)
 			?.addSnapshotListener { value, e ->
 				if (e != null) {
@@ -103,14 +103,14 @@ class MapPresenter: BasePresenter<MapScreen>() {
 	}
 
 	private fun getLeaderImages() {
-		fireStoreDB?.db?.collection(FireStoreCollection.IMAGES.tag)
+		dataClient?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
 			?.whereEqualTo(FireStoreImagesField.LEADER_ID.tag, sessionManager?.userID)
 			?.get()?.addOnSuccessListener { it ->
 				for (document in it) {
 					val imageItem = createImageItem(document)
 					addItemToList(imageItem)
 				}
-				fireStoreDB?.db?.collection(FireStoreCollection.IMAGES.tag)
+				dataClient?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
 					?.whereEqualTo(FireStoreImagesField.USER_ID.tag, sessionManager?.userID)
 					?.get()?.addOnSuccessListener {
 						for (document in it) {
