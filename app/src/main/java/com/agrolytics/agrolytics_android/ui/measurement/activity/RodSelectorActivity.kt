@@ -1,9 +1,15 @@
 package com.agrolytics.agrolytics_android.ui.measurement.activity
 
+import android.app.Activity
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.database.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
@@ -46,7 +52,8 @@ class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 		btn_back.setOnClickListener{onBackPressed()}
 		rod_selector_canvas.setImage(bitmap!!)
 
-		Util.showParameterSettingsWindow(this, sessionManager)
+		//Util.showParameterSettingsWindow(this, sessionManager)
+		showOnlineMeasurementErrorDialog()
 	}
 
 	//TODO: Not a good function name...
@@ -61,6 +68,24 @@ class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 			intent.putExtra(ConfigInfo.METHOD, method)
 			startActivity(intent)
 			finish()
+	}
+
+	fun showOnlineMeasurementErrorDialog(){
+		val builder = AlertDialog.Builder(this)
+		builder.setTitle("Hiba")
+		val view = LayoutInflater.from(this).inflate(R.layout.online_measurement_error_dialog, null, false)
+
+		/**Set text for included layout elements (buttons)*/
+		view.findViewById<ConstraintLayout>(R.id.button_1).findViewById<TextView>(R.id.buttonText).text = "gaga"
+
+		builder.setView(view)
+		builder.setCancelable(true)
+
+
+		val dialog = builder.create()
+		dialog.window!!.setBackgroundDrawableResource(R.drawable.bg_dialog)
+		dialog.show()
+
 	}
 
 	override fun negativeButtonClicked() { }
