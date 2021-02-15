@@ -4,12 +4,11 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.base.BaseActivity
-import com.agrolytics.agrolytics_android.database.firebase.FireStoreDB
-import com.agrolytics.agrolytics_android.database.tables.RoomModule
+import com.agrolytics.agrolytics_android.database.DataClient
+import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
-import com.agrolytics.agrolytics_android.utils.ConfigInfo
+import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
@@ -22,8 +21,7 @@ class LoginActivity: BaseActivity(), LoginScreen {
 
     private val presenter: LoginPresenter by inject()
     private val sessionManager: SessionManager by inject()
-    private val fireStoreDB: FireStoreDB by inject()
-    private val roomModule: RoomModule by inject()
+    private val dataClient: DataClient by inject()
     private val appServer: AppServer by inject()
 
     private lateinit var auth: FirebaseAuth
@@ -34,7 +32,7 @@ class LoginActivity: BaseActivity(), LoginScreen {
         auth = FirebaseAuth.getInstance()
 
         presenter.addView(this)
-        presenter.addInjections(arrayListOf(sessionManager, fireStoreDB, auth, roomModule, appServer))
+        presenter.addInjections(arrayListOf(sessionManager, dataClient, auth, appServer))
         
         // TODO: Blocking LoginActivity until checkUserLoggedInState() finished
         checkUserLoggedInState()
@@ -49,20 +47,20 @@ class LoginActivity: BaseActivity(), LoginScreen {
 
     private fun loginUser() {
         GlobalScope.launch(Dispatchers.Main) {
-            var loginResult: Int
+            var loginResultCode: ConfigInfo.LOGIN
             val email = et_email.text.toString()
             val password = et_password.text.toString()
             if (email.isNotBlank() && password.isNotEmpty()) {
                 showLoading()
                 withContext(Dispatchers.IO) {
-                    loginResult = presenter.login(email, password)
+                    loginResultCode = presenter.login(email, password)
                 }
                 hideLoading()
             }
             else {
-                loginResult = ConfigInfo.LOGIN.WRONG_INPUT
+                loginResultCode = ConfigInfo.LOGIN.WRONG_INPUT
             }
-            when (loginResult) {
+            when (loginResultCode) {
                 ConfigInfo.LOGIN.NO_INTERNET -> showToast("Nincs internetkapcsolat")
                 ConfigInfo.LOGIN.AUTH_FAILED -> showToast("Hibás email cím vagy jelszó")
                 ConfigInfo.LOGIN.USER_EXPIRED -> showToast("A felhasználóhoz tartozó licensz lejárt, kérjük vegye fel velünk a kapcsolatot")
@@ -82,6 +80,7 @@ class LoginActivity: BaseActivity(), LoginScreen {
             GlobalScope.launch(Dispatchers.IO) {
                 when (presenter.hasLoggedInUserExpired()) {
                     ConfigInfo.LOGIN.SUCCESS -> loginSuccess()
+                    else -> {}
                 }
             }
         }

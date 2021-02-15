@@ -7,20 +7,18 @@ import android.view.View
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.base.BaseActivity
-import com.agrolytics.agrolytics_android.database.firebase.FireStoreDB
-import com.agrolytics.agrolytics_android.database.tables.RoomModule
+import com.agrolytics.agrolytics_android.database.DataClient
+import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.networking.AppServer
-import com.agrolytics.agrolytics_android.networking.model.ImageItem
+import com.agrolytics.agrolytics_android.database.local.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
-import com.agrolytics.agrolytics_android.ui.imageFinished.UploadFinishedActivity
+import com.agrolytics.agrolytics_android.ui.measurement.activity.ApproveMeasurementActivity
 import com.agrolytics.agrolytics_android.ui.images.adapter.ImagesAdapter
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
 import com.agrolytics.agrolytics_android.ui.map.MapActivity
-import com.agrolytics.agrolytics_android.ui.setLength.LengthActivity
-import com.agrolytics.agrolytics_android.utils.ConfigInfo
-import com.agrolytics.agrolytics_android.utils.MenuItem
+import com.agrolytics.agrolytics_android.types.ConfigInfo
+import com.agrolytics.agrolytics_android.types.MenuItem
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.agrolytics.agrolytics_android.utils.extensions.animateSlide
 import com.agrolytics.agrolytics_android.utils.extensions.fadeIn
@@ -47,9 +45,8 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 
 	private val presenter: ImagesPresenter by inject()
 	private val sessionManager: SessionManager by inject()
-	private val roomModule: RoomModule by inject()
+	private val dataClient: DataClient by inject()
 	private val appServer: AppServer by inject()
-	private val fireStoreDB: FireStoreDB by inject()
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -60,7 +57,7 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 		list_images.adapter = adapter
 
 		presenter.addView(this)
-		presenter.addInjections(arrayListOf(sessionManager, roomModule, appServer, fireStoreDB))
+		presenter.addInjections(arrayListOf(sessionManager, appServer, dataClient))
 		presenter.setActivity(this)
 
 		btn_back.setOnClickListener(this)
@@ -80,11 +77,11 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 	override fun onResume() {
 		super.onResume()
 		//presenter.fireBaseList.clear()
-		if (selectedTab == 0) {
-			presenter.subscribeForImageEvents()
-		} else {
-			presenter.getImages(false)
-		}
+//		if (selectedTab == 0) {
+//			presenter.subscribeForImageEvents()
+//		} else {
+//			presenter.getImages(false)
+//		}
 	}
 
 	override fun onClick(v: View?) {
@@ -144,11 +141,6 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 
 	private fun openActivity(menuItem: MenuItem) {
 		when (menuItem) {
-			MenuItem.LENGTH -> {
-				if (MenuItem.LENGTH.tag != TAG) {
-					startActivity(LengthActivity::class.java, Bundle(), false)
-				}
-			}
 			MenuItem.MAIN -> {
 				if (MenuItem.MAIN.tag != TAG) {
 					startActivity(MainActivity::class.java, Bundle(), false)
@@ -174,7 +166,7 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 	}
 
 	override fun sendResultsToFragment(responseList: ArrayList<Pair<MeasurementResult, Pair<String, String>>>?) {
-		val intent = Intent(this, UploadFinishedActivity::class.java)
+		val intent = Intent(this, ApproveMeasurementActivity::class.java)
 		val responses = arrayListOf<MeasurementResult>()
 		val pathList = arrayListOf<String>()
 		val idList = arrayListOf<String>()
@@ -188,8 +180,8 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 					}
 				}
 				if (pathList.isNotEmpty() && idList.isNotEmpty() && responseList.isNotEmpty()) {
-					UploadFinishedActivity.responseList = responses
-					intent.putStringArrayListExtra(ConfigInfo.PATH, pathList)
+					ApproveMeasurementActivity.responseList = responses
+					intent.putStringArrayListExtra(ConfigInfo.CROPPED_RESIZED_IMG_PATH, pathList)
 					intent.putStringArrayListExtra(ConfigInfo.ID, idList)
 					intent.putExtra(ConfigInfo.METHOD, "online")
 					startActivity(intent)
@@ -250,7 +242,7 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 	}
 
 	private fun sendImage() {
-		presenter.sendImages(adapter?.getAllSelected())
+//		presenter.sendImages(adapter?.getAllSelected())
 	}
 
 	private fun showBottomToolbar() {
@@ -289,18 +281,18 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 
 	override fun positiveButtonClicked() {
 		adapter?.getAllSelected()?.let {
-			presenter.deleteImages(it)
+//			presenter.deleteImages(it)
 			closeBottomToolbar()
 		}
 	}
 
 	override fun deleted() {
-		if (tab_layout.selectedTabPosition == 0) {
-			presenter.fireBaseList.clear()
-			presenter.subscribeForImageEvents()
-		} else {
-			presenter.getImages(false)
-		}
+//		if (tab_layout.selectedTabPosition == 0) {
+//			presenter.fireBaseList.clear()
+//			presenter.subscribeForImageEvents()
+//		} else {
+//			presenter.getImages(false)
+//		}
 		showToast(getString(R.string.deleted))
 	}
 
@@ -318,9 +310,9 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 	}
 
 	override fun showImage(imageItem: ImageItem) {
-		imageItem.serverImage?.let {
+		imageItem.imageUrl?.let {
 			if (it.isNotEmpty()) {
-				GalleryDialog.getInstance(arrayListOf(imageItem.serverImage), null,0,true).show(this.supportFragmentManager, "gallery")
+				GalleryDialog.getInstance(arrayListOf(imageItem.imageUrl), null,0,true).show(this.supportFragmentManager, "gallery")
 			} else {
 				GalleryDialog.getInstance(null, arrayListOf(BitmapFactory.decodeFile(imageItem.localPath)),0,true).show(this.supportFragmentManager, "gallery")
 			}
@@ -333,7 +325,7 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 		custom_toolbar.btn_send.fadeIn(300).subscribe()
 		custom_toolbar.btn_send.isClickable = true
 		custom_toolbar.btn_send.isEnabled = true
-		presenter.getImages(false)
+//		presenter.getImages(false)
 		presenter.isProcessed = false
 	}
 
@@ -341,7 +333,7 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 		custom_toolbar.btn_send.fadeOut(300).subscribe()
 		custom_toolbar.btn_send.isClickable = false
 		custom_toolbar.btn_send.isEnabled = false
-		presenter.loadImagesFromFireBase()
+//		presenter.loadImagesFromFireBase()
 		presenter.isProcessed = true
 	}
 }

@@ -1,16 +1,13 @@
 package com.agrolytics.agrolytics_android.ui.imageFinished.fragment
 
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Base64
 import android.view.View
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.base.BaseFragment
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
+import com.agrolytics.agrolytics_android.ui.base.BaseFragment
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
-import com.agrolytics.agrolytics_android.ui.imageFinished.UploadFinishedScreen
-import com.agrolytics.agrolytics_android.utils.ConfigInfo
+import com.agrolytics.agrolytics_android.ui.measurement.activity.ApproveMeasurementActivity
+import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.fragment_upload_finished.*
@@ -18,7 +15,7 @@ import org.koin.android.ext.android.inject
 
 class UploadFinishedFragment: BaseFragment() {
 
-    private var listener: UploadFinishedScreen? = null
+    private var listener: ApproveMeasurementActivity? = null
 
     private val sessionManager: SessionManager by inject()
 
@@ -30,11 +27,15 @@ class UploadFinishedFragment: BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         arguments?.let {
-            if (it.containsKey(ConfigInfo.UPLOAD_RESPONSE) && it.containsKey(ConfigInfo.PATH)) {
+            if (it.containsKey(ConfigInfo.UPLOAD_RESPONSE) && it.containsKey(
+                    ConfigInfo.CROPPED_RESIZED_IMG_PATH)) {
                 if (it.containsKey(ConfigInfo.ID)) {
-                    setUpView(it.getParcelable(ConfigInfo.UPLOAD_RESPONSE), it.getString(ConfigInfo.PATH), it.getString(ConfigInfo.ID))
+                    setUpView(it.getParcelable(ConfigInfo.UPLOAD_RESPONSE), it.getString(
+                        ConfigInfo.CROPPED_RESIZED_IMG_PATH), it.getString(
+                        ConfigInfo.ID))
                 } else {
-                    setUpView(it.getParcelable(ConfigInfo.UPLOAD_RESPONSE), it.getString(ConfigInfo.PATH), null)
+                    setUpView(it.getParcelable(ConfigInfo.UPLOAD_RESPONSE), it.getString(
+                        ConfigInfo.CROPPED_RESIZED_IMG_PATH), null)
                 }
             }
         }
@@ -83,7 +84,7 @@ class UploadFinishedFragment: BaseFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is UploadFinishedScreen) {
+        if (context is ApproveMeasurementActivity) {
             listener = context
         } else {
             throw RuntimeException("$context must implement UploadFinishedScreen")
@@ -98,7 +99,7 @@ class UploadFinishedFragment: BaseFragment() {
     companion object {
 
         private val UPLOAD_RESPONSE = ConfigInfo.UPLOAD_RESPONSE
-        private val PATH = ConfigInfo.PATH
+        private val PATH = ConfigInfo.CROPPED_RESIZED_IMG_PATH
         private val ID = ConfigInfo.ID
 
         fun newInstance(measurementResult: MeasurementResult, path: String, id: String?): UploadFinishedFragment {

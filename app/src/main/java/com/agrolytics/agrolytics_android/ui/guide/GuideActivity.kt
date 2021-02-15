@@ -4,13 +4,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.base.BaseActivity
+import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
 import com.agrolytics.agrolytics_android.ui.map.MapActivity
-import com.agrolytics.agrolytics_android.ui.setLength.LengthActivity
-import com.agrolytics.agrolytics_android.utils.MenuItem
+import com.agrolytics.agrolytics_android.types.MenuItem
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import kotlinx.android.synthetic.main.activity_info.*
 import kotlinx.android.synthetic.main.nav_bar.*
@@ -45,11 +44,6 @@ class GuideActivity: BaseActivity(), View.OnClickListener  {
 
     private fun openActivity(menuItem: MenuItem) {
         when (menuItem) {
-            MenuItem.LENGTH -> {
-                if (MenuItem.LENGTH.tag != TAG) {
-                    startActivity(LengthActivity::class.java, Bundle(), false)
-                }
-            }
             MenuItem.MAIN -> {
                 if (MenuItem.MAIN.tag != TAG) {
                     startActivity(MainActivity::class.java, Bundle(), false)
