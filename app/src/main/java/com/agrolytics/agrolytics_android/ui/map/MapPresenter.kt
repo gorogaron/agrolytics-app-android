@@ -1,10 +1,11 @@
 package com.agrolytics.agrolytics_android.ui.map
 
-import com.agrolytics.agrolytics_android.database.firestore.FireStoreCollection
-import com.agrolytics.agrolytics_android.database.firestore.FireStoreImagesField
+import com.agrolytics.agrolytics_android.data.firestore.FireStoreCollection
+import com.agrolytics.agrolytics_android.data.firestore.FireStoreImagesField
 import com.agrolytics.agrolytics_android.ui.base.BasePresenter
-import com.agrolytics.agrolytics_android.database.local.ImageItem
+import com.agrolytics.agrolytics_android.data.database.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.types.UserRole
+import com.agrolytics.agrolytics_android.utils.MeasurementUtils
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -12,7 +13,7 @@ import org.jetbrains.anko.uiThread
 
 class MapPresenter: BasePresenter<MapScreen>() {
 
-	var fireBaseList = arrayListOf<ImageItem>()
+	var fireBaseList = arrayListOf<CachedImageItem>()
 
 	fun getAllUploadedImage() {
 		when (sessionManager?.userRole) {
@@ -25,7 +26,7 @@ class MapPresenter: BasePresenter<MapScreen>() {
 	private fun subscribeAdminImages() {
 		screen?.showLoading()
 		dataClient?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
-			?.whereEqualTo(FireStoreImagesField.FORESTRY_ID.tag, sessionManager?.forestryID)
+			?.whereEqualTo(FireStoreImagesField.FORESTRY_ID.tag, sessionManager?.forestryId)
 			?.addSnapshotListener { value, e ->
 				if (e != null) {
 					e.printStackTrace()
@@ -35,7 +36,7 @@ class MapPresenter: BasePresenter<MapScreen>() {
 				if (fireBaseList.isEmpty()) {
 					for (document in value!!) {
 						val imageItem = createImageItem(document)
-						if (imageItem.latitude != null && imageItem.longitude != null) {
+						if (imageItem.lat != null && imageItem.lon != null) {
 							addItemToList(imageItem)
 						}
 					}
@@ -54,7 +55,7 @@ class MapPresenter: BasePresenter<MapScreen>() {
 		screen?.showLoading()
 		getLeaderImages()
 		dataClient?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
-			?.whereEqualTo(FireStoreImagesField.LEADER_ID.tag, sessionManager?.userID)
+			?.whereEqualTo(FireStoreImagesField.LEADER_ID.tag, sessionManager?.userId)
 			?.addSnapshotListener { value, e ->
 				if (e != null) {
 					e.printStackTrace()
@@ -75,7 +76,7 @@ class MapPresenter: BasePresenter<MapScreen>() {
 	private fun subscribeWorkerImages() {
 		screen?.showLoading()
 		dataClient?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
-			?.whereEqualTo(FireStoreImagesField.USER_ID.tag, sessionManager?.userID)
+			?.whereEqualTo(FireStoreImagesField.USER_ID.tag, sessionManager?.userId)
 			?.addSnapshotListener { value, e ->
 				if (e != null) {
 					e.printStackTrace()
@@ -104,14 +105,14 @@ class MapPresenter: BasePresenter<MapScreen>() {
 
 	private fun getLeaderImages() {
 		dataClient?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
-			?.whereEqualTo(FireStoreImagesField.LEADER_ID.tag, sessionManager?.userID)
+			?.whereEqualTo(FireStoreImagesField.LEADER_ID.tag, sessionManager?.userId)
 			?.get()?.addOnSuccessListener { it ->
 				for (document in it) {
 					val imageItem = createImageItem(document)
 					addItemToList(imageItem)
 				}
 				dataClient?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
-					?.whereEqualTo(FireStoreImagesField.USER_ID.tag, sessionManager?.userID)
+					?.whereEqualTo(FireStoreImagesField.USER_ID.tag, sessionManager?.userId)
 					?.get()?.addOnSuccessListener {
 						for (document in it) {
 							val imageItem = createImageItem(document)
@@ -122,43 +123,47 @@ class MapPresenter: BasePresenter<MapScreen>() {
 			}
 	}
 
-	private fun addItemToList(imageItem: ImageItem) {
-		if (imageItem.latitude != null && imageItem.longitude != null) {
+	private fun addItemToList(imageItem: CachedImageItem) {
+		if (imageItem.lat != null && imageItem.lon != null) {
 			fireBaseList.add(imageItem)
 		}
 	}
 
-	private fun createImageItem(document: QueryDocumentSnapshot): ImageItem {
+	private fun createImageItem(document: QueryDocumentSnapshot): CachedImageItem {
 		var length = document[FireStoreImagesField.WOOD_LENGTH.tag]
 
 		if (length is Long || length is Int) {
 			length = length.toString().toDouble()
 		}
 
-		val woodType = if (document[FireStoreImagesField.WOOD_TYPE.tag] == null) "" else document[FireStoreImagesField.WOOD_TYPE.tag] as String?
+		val woodType = if (document[FireStoreImagesField.WOOD_TYPE.tag] == null) "" else document[FireStoreImagesField.WOOD_TYPE.tag] as String
 
-		return ImageItem(
-			id = document.id,
-			session_id = "",
-			isPushedToServer = true,
-			latitude = document[FireStoreImagesField.LOC_LAT.tag] as Double?,
-			longitude = document[FireStoreImagesField.LOC_LON.tag] as Double?,
-			length = length as Double?,
-			volume = document[FireStoreImagesField.WOOD_VOLUME.tag] as Double?,
-			time = document[FireStoreImagesField.TIME.tag] as String?,
-			imageUrl = document[FireStoreImagesField.IMAGE_URL.tag] as String?,
-			imageRef = document[FireStoreImagesField.IMAGE_REFERENCE.tag] as String?,
-			userID = document[FireStoreImagesField.USER_ID.tag] as String?,
-			leaderID = document[FireStoreImagesField.LEADER_ID.tag] as String?,
-			forestryID = document[FireStoreImagesField.FORESTRY_ID.tag] as String?,
-			thumbnailRef = document[FireStoreImagesField.IMAGE_THUMBNAIL_REFERENCE.tag] as String?,
-			thumbnailUrl = document[FireStoreImagesField.IMAGE_THUMBNAIL_URL.tag] as String?,
-			woodType = woodType)
+		// TODO: Az id generálás nem jó, mert autogenerálásra van állítva mégis meg kell adni. LocalPath és firestoreId sem elérhető itt még.
+		//  SessionId-t sem itt kell legenerálni.
+		return CachedImageItem(
+			id = 0,
+			sessionId = MeasurementUtils.generateSessionId(),
+			lat = document[FireStoreImagesField.LOC_LAT.tag] as Double,
+			lon = document[FireStoreImagesField.LOC_LON.tag] as Double,
+			woodLength = length as Double,
+			woodVolume = document[FireStoreImagesField.WOOD_VOLUME.tag] as Double,
+			timestamp = document[FireStoreImagesField.TIME.tag] as Long,
+			imageUrl = document[FireStoreImagesField.IMAGE_URL.tag] as String,
+			imageRef = document[FireStoreImagesField.IMAGE_REFERENCE.tag] as String,
+			userId = document[FireStoreImagesField.USER_ID.tag] as String,
+			leaderId = document[FireStoreImagesField.LEADER_ID.tag] as String?,
+			userRole = sessionManager?.userRole!!,
+			forestryId = document[FireStoreImagesField.FORESTRY_ID.tag] as String,
+			thumbRef = document[FireStoreImagesField.IMAGE_THUMBNAIL_REFERENCE.tag] as String,
+			thumbUrl = document[FireStoreImagesField.IMAGE_THUMBNAIL_URL.tag] as String,
+			woodType = woodType,
+			localPath = "path",
+			firestoreId = "")
 	}
 
 	fun getAllLocalImage() {
 		doAsync {
-			dataClient?.local?.getAllPushedImages(false).let { images ->
+			dataClient?.local?.getAllImages().let { images ->
 				uiThread {
 					images?.let { it1 -> fireBaseList.addAll(it1) }
 					screen?.loadImages(ArrayList(images), false)

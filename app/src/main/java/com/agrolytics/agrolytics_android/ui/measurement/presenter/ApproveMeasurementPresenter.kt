@@ -1,9 +1,9 @@
 package com.agrolytics.agrolytics_android.ui.measurement.presenter
 
 import android.graphics.Bitmap
-import com.agrolytics.agrolytics_android.database.firestore.*
+import com.agrolytics.agrolytics_android.data.database.tables.CachedImageItem
+import com.agrolytics.agrolytics_android.data.firestore.*
 import com.agrolytics.agrolytics_android.ui.base.BasePresenter
-import com.agrolytics.agrolytics_android.database.local.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.imageFinished.fragment.UploadFinishedFragment
 import com.agrolytics.agrolytics_android.ui.measurement.activity.ApproveMeasurementActivity
@@ -23,8 +23,8 @@ class ApproveMeasurementPresenter : BasePresenter<ApproveMeasurementActivity>() 
         serverImage: String?,
         id: String?
     ) {
-        val imageItem = ImageItem(
-            id = id ?: (0..10000).random().toString(),
+        val imageItem = CachedImageItem(
+            id = Integer.parseInt(id).toLong(),
             session_id = "",
             localPath = path ?: "",
             isPushedToServer = true,
@@ -33,7 +33,7 @@ class ApproveMeasurementPresenter : BasePresenter<ApproveMeasurementActivity>() 
             length = sessionManager?.woodLength?.toDouble() ?: 0.0,
             volume = measurementResult?.getVolume(),
             time = Util.getCurrentDateString(),
-            imageUrl = serverImage
+            imageUrl = serverImage!!
         )
         doAsync {
             dataClient?.local?.addImage(imageItem)
@@ -64,9 +64,9 @@ class ApproveMeasurementPresenter : BasePresenter<ApproveMeasurementActivity>() 
             val uriPairs = dataClient?.fireStore?.uploadToFireBaseStorage(storageItem)
 
             val fireStoreItem = FireStoreItem(
-                forestryId = sessionManager?.forestryID!!,
-                leaderId = sessionManager?.leaderID!!,
-                userId = sessionManager?.userID!!,
+                forestryId = sessionManager?.forestryId!!,
+                leaderId = sessionManager?.leaderId!!,
+                userId = sessionManager?.userId!!,
                 userRole = sessionManager?.userRole!!,
                 imageUrl = uriPairs?.first?.first!!,
                 imageRef = uriPairs.first.second,

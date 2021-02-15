@@ -1,37 +1,15 @@
 package com.agrolytics.agrolytics_android.ui.images
 
 import android.content.Context
-import android.graphics.BitmapFactory
-import android.util.Base64
-import android.util.Base64OutputStream
+import com.agrolytics.agrolytics_android.data.database.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.ui.base.BasePresenter
-import com.agrolytics.agrolytics_android.database.local.ImageItem
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
-import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
-import com.agrolytics.agrolytics_android.utils.Util
-import com.google.firebase.firestore.QueryDocumentSnapshot
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
-import java.time.format.DateTimeFormatter
-import retrofit2.Response
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileInputStream
-import java.net.SocketTimeoutException
-import java.time.LocalDate
-import java.util.*
-import kotlin.collections.ArrayList
 
 
 class ImagesPresenter(val context: Context) : BasePresenter<ImagesScreen>() {
 
     var isProcessed = true
     private var activity: ImagesActivity? = null
-    var fireBaseList = arrayListOf<ImageItem>()
+    var fireBaseList = arrayListOf<CachedImageItem>()
 
     fun setActivity(activity: ImagesActivity) {
         this.activity = activity

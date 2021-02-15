@@ -1,4 +1,4 @@
-package com.agrolytics.agrolytics_android.database.firestore
+package com.agrolytics.agrolytics_android.data.firestore
 
 import android.net.Uri
 import com.agrolytics.agrolytics_android.utils.ImageUtils

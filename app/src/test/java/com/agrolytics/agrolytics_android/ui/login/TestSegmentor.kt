@@ -3,7 +3,7 @@ package com.agrolytics.agrolytics_android.ui.login
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.agrolytics.agrolytics_android.database.DataClient
+import com.agrolytics.agrolytics_android.data.DataClient
 import com.google.firebase.FirebaseApp
 import org.junit.Before
 import org.junit.Test
