@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "306263227928",
+    "firebase_url": "https://webhost-7bf8f.firebaseio.com",
+    "project_id": "webhost-7bf8f",
+    "storage_bucket": "webhost-7bf8f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:306263227928:android:3f0b781242e0da85b6cd6d",
+        "android_client_info": {
+          "package_name": "com.agrolytics.agrolytics_android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "306263227928-okq2p7q6spdpa5tgoumdt9tbpli88706.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrWe96l_Eh6aQku5HSWRUWUV97_X8yGRA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "306263227928-okq2p7q6spdpa5tgoumdt9tbpli88706.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

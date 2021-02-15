@@ -1,9 +1,7 @@
 package com.agrolytics.agrolytics_android.ui.images
 
-import android.icu.util.Measure
-import com.agrolytics.agrolytics_android.base.BaseScreen
-import com.agrolytics.agrolytics_android.networking.model.ImageItem
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
+import com.agrolytics.agrolytics_android.ui.base.BaseScreen
+import com.agrolytics.agrolytics_android.database.local.ImageItem
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 
 interface ImagesScreen: BaseScreen {

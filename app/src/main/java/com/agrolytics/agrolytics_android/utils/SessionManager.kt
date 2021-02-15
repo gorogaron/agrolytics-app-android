@@ -5,77 +5,73 @@ import android.content.SharedPreferences
 
 class SessionManager(var context: Context) {
 
-	private val KEY_WOOD_LENGHT = "KeyWoodLenght"
-	private val KEY_ROD_LENGHT = "KeyRodLenght"
-	private val KEY_WOOD_TYPE = "KeyWoodType"
-	private val KEY_ROLE = "KeyRole"
-	private val KEY_USER_REF = "KeyUserRef"
-	private val KEY_USER_ID = "KeyUserId"
-	private val KEY_LEADER_ID = "KeyLeaderId"
-	private val KEY_USER_EMAIL = "KeyUserEmail"
-	private val KEY_FORERSTRY_ID = "KeyForestryId"
-	private val KEY_FIRST_LOGIN = "KeyFirstLogin"
-	private val KEY_MODE = "KeyMode"
-	private val SESSION_PREF_NAME = "PREF_SESSION_STORAGE"
+	private val USER_ID = "user.id"
+	private val USER_LEADER_ID = "user.leader.id"
+	private val USER_ROLE = "user.role"
+	private val USER_EMAIL = "user.email"
+	private val USER_FORESTRY_ID = "user.forestry.id"
+	private val USER_FORESTRY_NAME = "user.forestry.name"
+	private val USER_FIRST_LOGIN = "user.first_login"
+	private val WOOD_LENGTH = "wood.length"
+	private val WOOD_TYPE = "wood.type"
+	private val WOOD_ROD_LENGTH = "wood.rod.length"
+	private val SESSION_FILE_NAME = "session.filename"
+
 	private val sharedPreferences: SharedPreferences =
-			context.getSharedPreferences(SESSION_PREF_NAME, Context.MODE_PRIVATE)
+		context.getSharedPreferences(SESSION_FILE_NAME, Context.MODE_PRIVATE)
 
 	var woodLength: Float
-		get() = sharedPreferences.getFloat(KEY_WOOD_LENGHT, 1.0f)
-		set(length) = sharedPreferences.edit().putFloat(KEY_WOOD_LENGHT, length).apply()
-
-	var rodLength: Float
-		get() = sharedPreferences.getFloat(KEY_ROD_LENGHT, 1.0f)
-		set(length) = sharedPreferences.edit().putFloat(KEY_ROD_LENGHT, length).apply()
+		get() = sharedPreferences.getFloat(WOOD_LENGTH, 1.0f)
+		set(length) = sharedPreferences.edit().putFloat(WOOD_LENGTH, length).apply()
 
 	var woodType: String
-		get() = sharedPreferences.getString(KEY_WOOD_TYPE, "")
-		set(type) = sharedPreferences.edit().putString(KEY_WOOD_TYPE, type).apply()
+		get() = sharedPreferences.getString(WOOD_TYPE, "")!!
+		set(type) = sharedPreferences.edit().putString(WOOD_TYPE, type).apply()
+
+	var rodLength: Float
+		get() = sharedPreferences.getFloat(WOOD_ROD_LENGTH, 1.0f)
+		set(length) = sharedPreferences.edit().putFloat(WOOD_ROD_LENGTH, length).apply()
 
 	var userRole: String
-		get() = sharedPreferences.getString(KEY_ROLE, "")
-		set(userRole) = sharedPreferences.edit().putString(KEY_ROLE, userRole).apply()
-
-	var userReference: String
-		get() = sharedPreferences.getString(KEY_USER_REF, "")
-		set(userReference) = sharedPreferences.edit().putString(KEY_USER_REF, userReference).apply()
+		get() = sharedPreferences.getString(USER_ROLE, "")!!
+		set(userRole) = sharedPreferences.edit().putString(USER_ROLE, userRole).apply()
 
 	var userID: String
-		get() = sharedPreferences.getString(KEY_USER_ID, "")
-		set(userID) = sharedPreferences.edit().putString(KEY_USER_ID, userID).apply()
+		get() = sharedPreferences.getString(USER_ID, "")!!
+		set(userID) = sharedPreferences.edit().putString(USER_ID, userID).apply()
 
 	var leaderID: String
-		get() = sharedPreferences.getString(KEY_LEADER_ID, "")
-		set(leaderID) = sharedPreferences.edit().putString(KEY_LEADER_ID, leaderID).apply()
+		get() = sharedPreferences.getString(USER_LEADER_ID, "")!!
+		set(leaderID) = sharedPreferences.edit().putString(USER_LEADER_ID, leaderID).apply()
 
 	var userEmail: String
-		get() = sharedPreferences.getString(KEY_USER_EMAIL, "")
-		set(userEmail) = sharedPreferences.edit().putString(KEY_USER_EMAIL, userEmail).apply()
+		get() = sharedPreferences.getString(USER_EMAIL, "")!!
+		set(userEmail) = sharedPreferences.edit().putString(USER_EMAIL, userEmail).apply()
 
 	var forestryID: String
-		get() = sharedPreferences.getString(KEY_FORERSTRY_ID, "")
-		set(forestryID) = sharedPreferences.edit().putString(KEY_FORERSTRY_ID, forestryID).apply()
+		get() = sharedPreferences.getString(USER_FORESTRY_ID, "")!!
+		set(forestryID) = sharedPreferences.edit().putString(USER_FORESTRY_ID, forestryID).apply()
+
+	var forestryName: String
+		get() = sharedPreferences.getString(USER_FORESTRY_NAME, "")!!
+		set(forestryID) = sharedPreferences.edit().putString(USER_FORESTRY_NAME, forestryID).apply()
 
 	var firstLogin: String
-		get() = sharedPreferences.getString(KEY_FIRST_LOGIN, "")
-		set(firstLogin) = sharedPreferences.edit().putString(KEY_FIRST_LOGIN, firstLogin).apply()
-
-	var mode: String
-		get() = sharedPreferences.getString(KEY_MODE, "rod")
-		set(mode) = sharedPreferences.edit().putString(KEY_MODE, mode).apply()
+		get() = sharedPreferences.getString(USER_FIRST_LOGIN, "")!!
+		set(firstLogin) = sharedPreferences.edit().putString(USER_FIRST_LOGIN, firstLogin).apply()
 
 	fun clearSession() {
 		sharedPreferences.edit()
-				.remove(KEY_ROLE)
-				.remove(KEY_USER_REF)
-				.remove(KEY_WOOD_LENGHT)
-				.remove(KEY_USER_ID)
-				.remove(KEY_LEADER_ID)
-				.remove(KEY_USER_EMAIL)
-				.remove(KEY_FORERSTRY_ID)
-				.remove(KEY_FIRST_LOGIN)
-				.remove(KEY_MODE)
-				.apply()
+			.remove(WOOD_LENGTH)
+			.remove(WOOD_TYPE)
+			.remove(USER_ROLE)
+			.remove(USER_ID)
+			.remove(USER_LEADER_ID)
+			.remove(USER_EMAIL)
+			.remove(USER_FORESTRY_ID)
+			.remove(USER_FORESTRY_NAME)
+			.remove(WOOD_ROD_LENGTH)
+			.apply()
 	}
 
 }

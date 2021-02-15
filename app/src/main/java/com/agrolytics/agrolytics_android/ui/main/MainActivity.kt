@@ -1,20 +1,16 @@
 package com.agrolytics.agrolytics_android.ui.main
 
-import android.Manifest
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.content.ContentValues
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.location.Location
 import android.location.LocationManager
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.provider.MediaStore
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -22,50 +18,43 @@ import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.base.BaseActivity
-import com.agrolytics.agrolytics_android.database.tables.RoomModule
+import com.agrolytics.agrolytics_android.database.DataClient
+import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.networking.AppServer
-import com.agrolytics.agrolytics_android.ui.cropper.CropperActivity
+import com.agrolytics.agrolytics_android.types.ConfigInfo
+import com.agrolytics.agrolytics_android.types.MenuItem
 import com.agrolytics.agrolytics_android.ui.guide.GuideActivity
 import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.login.LoginActivity
 import com.agrolytics.agrolytics_android.ui.map.MapActivity
+import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
+import com.agrolytics.agrolytics_android.ui.measurement.utils.Detector
+import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
 import com.agrolytics.agrolytics_android.utils.*
-import com.agrolytics.agrolytics_android.utils.ConfigInfo.IMAGE_CAPTURE
-import com.agrolytics.agrolytics_android.utils.ConfigInfo.IMAGE_BROWSE
 import com.agrolytics.agrolytics_android.utils.Util.Companion.showParameterSettingsWindow
-import com.agrolytics.agrolytics_android.utils.extensions.cameraPermGiven
-import com.agrolytics.agrolytics_android.utils.extensions.locationPermGiven
-import com.agrolytics.agrolytics_android.utils.extensions.storagePermGiven
+import com.agrolytics.agrolytics_android.utils.permissions.locationPermGiven
+import com.agrolytics.agrolytics_android.utils.permissions.requestForAllPermissions
 import com.google.firebase.auth.FirebaseAuth
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import jp.wasabeef.blurry.Blurry
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_bar.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
+import org.koin.core.component.KoinApiExtension
 import kotlin.system.exitProcess
 
 
 class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActivity.OnDialogActions {
 
-    private val TAG = "MainActivity"
-
     private val presenter: MainPresenter by inject()
     private val appServer: AppServer by inject()
     private val sessionManager: SessionManager by inject()
-    private val roomModule: RoomModule by inject()
+    private val dataClient: DataClient by inject()
 
     private var locationManager: LocationManager? = null
     private var locationListener: AgroLocationListener? = null
-
-    private lateinit var imageUri: Uri
 
     /** FAB and animations*/
     private var fabClicked = false
@@ -92,7 +81,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         presenter.addView(this)
-        presenter.addInjections(arrayListOf(appServer, roomModule, sessionManager))
+        presenter.addInjections(arrayListOf(appServer, dataClient, sessionManager))
         presenter.setActivity(this)
 
         Detector.init(assets)
@@ -117,8 +106,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
 
         mainFab.setOnClickListener { fabHandler() }
 
-        checkPermissions(isCamera = false, isDefault = true)
-
+        requestForAllPermissions(this)
     }
 
     private fun initFabColorAnimators(){
@@ -192,8 +180,8 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.cameraFab -> openCamera()
-            R.id.browseFab -> openGallery()
+            R.id.cameraFab -> MeasurementManager.hookImage(this, MeasurementManager.ImagePickerID.ID_CAMERA)
+            R.id.browseFab -> MeasurementManager.hookImage(this, MeasurementManager.ImagePickerID.ID_BROWSER)
 
             R.id.menu_frame -> drawer_layout.openDrawer(GravityCompat.START)
             R.id.rod_frame -> openActivity(MenuItem.ROD)
@@ -219,77 +207,13 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         drawer_layout.closeDrawers()
     }
 
-    private fun openGallery() {
-        if (cameraPermGiven() && storagePermGiven() && locationPermGiven()) {
-            browseImageActivity()
-        } else {
-            checkPermissions(isCamera = false, isDefault = false)
-        }
-    }
 
-    private fun openCamera() {
-        if (cameraPermGiven() && storagePermGiven()) {
-            startCameraActivity()
-        } else {
-            checkPermissions(isCamera = true, isDefault = false)
-        }
-    }
-
-    private fun browseImageActivity() {
-        intent = Intent(Intent.ACTION_GET_CONTENT).setType("image/*")
-        startActivityForResult(intent, IMAGE_BROWSE)
-    }
-
-    private fun startCameraActivity() {
-        val values = ContentValues()
-        values.put(MediaStore.Images.Media.TITLE, "New Picture")
-        values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera")
-        imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)!!
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-        startActivityForResult(intent, IMAGE_CAPTURE)
-    }
-
-    private fun startCropperActivity(imgUri: Uri){
-        val intent = Intent(this, CropperActivity::class.java)
-        intent.putExtra("IMAGE", imgUri)
-        startActivity(intent)
-    }
-
-    private fun checkPermissions(isCamera: Boolean, isDefault: Boolean) {
-        Dexter.withActivity(this)
-            .withPermissions(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.CAMERA
-            ).withListener(object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport) {
-                    if (!isDefault) {
-                        if (isCamera) {
-                            startCameraActivity()
-                        } else {
-                            browseImageActivity()
-                        }
-                    }
-                    updateLocation()
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: List<PermissionRequest>,
-                    token: PermissionToken
-                ) {
-                    token.continuePermissionRequest()
-                }
-            }).check()
-    }
 
     private fun signOut() {
         FirebaseAuth.getInstance().signOut()
         sessionManager.clearSession()
         doAsync {
-            roomModule.database?.clearAllTables()
+            dataClient.local.clearDatabase()
             uiThread {
                 startActivity(LoginActivity::class.java, Bundle(), false)
             }
@@ -302,6 +226,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
 
             //This is needed to retrieve user token when during app startup
             //auto-login was successful, but there was not internet connection.
+            //TODO: Check when else to update
             if (appServer.getUserToken() == null){
                 val auth = FirebaseAuth.getInstance()
                 val currentUser = auth.currentUser
@@ -358,23 +283,24 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         locationManager?.removeUpdates(locationListener)
     }
 
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            IMAGE_CAPTURE -> {
-                try {
-                    val thumbnail = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
-                    val uri = presenter.getImageUri(thumbnail)
-                    Log.d("HGXQR", "MAIN ACTIVITY UNCROPPED bitmap height" + thumbnail.height)
-                    startCropperActivity(uri)
-                } catch (e: Exception) {
-                    Log.d("Camera", "Failed to get camera image Uri: $e")
-                    e.printStackTrace()
+
+    @KoinApiExtension
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
+        //Can only return from camera or browser activity
+        if (resultCode == Activity.RESULT_OK ){
+            when (requestCode) {
+                ConfigInfo.IMAGE_CAPTURE -> {
+                    MeasurementManager.startCropperActivity(this, ImageObtainer.cameraImageUri)
+                }
+                ConfigInfo.IMAGE_BROWSE -> {
+                    if (intent?.data != null){
+                        MeasurementManager.startCropperActivity(this, intent.data!!)
+                    }
                 }
             }
-            IMAGE_BROWSE -> startCropperActivity(data!!.data!!)
-            }
         }
+     }
 
     private fun blur(iRadius : Int){
         val wView = (findViewById<View>(android.R.id.content) as ViewGroup).getChildAt(0) as ViewGroup
@@ -391,7 +317,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
                 .animate(250)
                 .onto(wView)
         }
-
     }
 
     override fun positiveButtonClicked() {}
@@ -410,6 +335,9 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
 
     override fun onPause() {
         super.onPause()
-        closeFab()
+        if (fabClicked)
+        {
+            closeFab()
+        }
     }
 }

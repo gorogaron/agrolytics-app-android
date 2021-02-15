@@ -86,7 +86,7 @@
 
             />
 
-        <com.agrolytics.agrolytics_android.utils.PolyCropper
+        <com.agrolytics.agrolytics_android.ui.measurement.utils.PolyCropperCanvas
             android:id="@+id/poly_cropper_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>

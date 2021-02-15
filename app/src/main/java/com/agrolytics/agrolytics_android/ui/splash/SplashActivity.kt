@@ -2,7 +2,7 @@ package com.agrolytics.agrolytics_android.ui.splash
 
 import android.os.Bundle
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.base.BaseActivity
+import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.ui.login.LoginActivity
 
 class SplashActivity: BaseActivity() {

@@ -1,20 +1,14 @@
 package com.agrolytics.agrolytics_android.utils;
 
 import android.content.Context;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
+
 import com.agrolytics.agrolytics_android.ui.main.MainScreen;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-
-public  class AgroLocationListener implements LocationListener {
+public class AgroLocationListener implements LocationListener {
 
     private final String TAG = "LocationListener";
 

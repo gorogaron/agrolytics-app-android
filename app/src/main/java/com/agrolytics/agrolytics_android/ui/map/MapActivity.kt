@@ -2,18 +2,18 @@ package com.agrolytics.agrolytics_android.ui.map
 
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.view.View
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.base.BaseActivity
-import com.agrolytics.agrolytics_android.database.firebase.FireStoreDB
-import com.agrolytics.agrolytics_android.database.tables.RoomModule
-import com.agrolytics.agrolytics_android.networking.model.ImageItem
+import com.agrolytics.agrolytics_android.database.DataClient
+import com.agrolytics.agrolytics_android.ui.base.BaseActivity
+import com.agrolytics.agrolytics_android.database.local.ImageItem
 import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
-import com.agrolytics.agrolytics_android.utils.ConfigInfo
-import com.agrolytics.agrolytics_android.utils.MarkerInfoBottomSheetDialog
-import com.agrolytics.agrolytics_android.utils.MenuItem
+import com.agrolytics.agrolytics_android.types.ConfigInfo
+import com.agrolytics.agrolytics_android.ui.map.utils.MarkerInfoBottomSheetDialog
+import com.agrolytics.agrolytics_android.types.MenuItem
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.mapbox.mapboxsdk.Mapbox
 import com.mapbox.mapboxsdk.annotations.IconFactory
@@ -34,8 +34,7 @@ class MapActivity : BaseActivity(), MapScreen, View.OnClickListener {
 
     private val presenter: MapPresenter by inject()
     private val sessionManager: SessionManager by inject()
-    private val roomModule: RoomModule by inject()
-    private val fireStoreDB: FireStoreDB by inject()
+    private val dataClient: DataClient by inject()
 
     private lateinit var mapboxMap: MapboxMap
 
@@ -44,7 +43,7 @@ class MapActivity : BaseActivity(), MapScreen, View.OnClickListener {
         setContentView(R.layout.activity_map)
 
         presenter.addView(this)
-        presenter.addInjections(arrayListOf(sessionManager, roomModule, fireStoreDB))
+        presenter.addInjections(arrayListOf(sessionManager, dataClient))
 
         btn_back.setOnClickListener { onBackPressed() }
 

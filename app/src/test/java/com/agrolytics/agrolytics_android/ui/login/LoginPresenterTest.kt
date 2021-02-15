@@ -3,7 +3,7 @@ package com.agrolytics.agrolytics_android.ui.login
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.agrolytics.agrolytics_android.utils.ConfigInfo
+import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.google.common.truth.Truth.assertThat
 import com.google.firebase.FirebaseApp
 import io.mockk.coEvery

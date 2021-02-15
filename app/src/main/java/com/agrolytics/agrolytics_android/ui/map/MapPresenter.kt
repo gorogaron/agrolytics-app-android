@@ -1,10 +1,14 @@
 package com.agrolytics.agrolytics_android.ui.map
 
-import com.agrolytics.agrolytics_android.base.BasePresenter
-import com.agrolytics.agrolytics_android.networking.model.ImageItem
+import com.agrolytics.agrolytics_android.database.firestore.FireStoreCollection
+import com.agrolytics.agrolytics_android.database.firestore.FireStoreImagesField
+import com.agrolytics.agrolytics_android.ui.base.BasePresenter
+import com.agrolytics.agrolytics_android.database.local.ImageItem
+import com.agrolytics.agrolytics_android.types.UserRole
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+
 
 class MapPresenter: BasePresenter<MapScreen>() {
 
@@ -12,16 +16,16 @@ class MapPresenter: BasePresenter<MapScreen>() {
 
 	fun getAllUploadedImage() {
 		when (sessionManager?.userRole) {
-			"admin" -> subscribeAdminImages()
-			"leader" -> subscribeLeaderImages()
-			"worker" -> subscribeWorkerImages()
+			UserRole.ADMIN.name -> subscribeAdminImages()
+			UserRole.LEADER.name -> subscribeLeaderImages()
+			UserRole.WORKER.name -> subscribeWorkerImages()
 		}
 	}
 
 	private fun subscribeAdminImages() {
 		screen?.showLoading()
-		fireStoreDB?.db?.collection("images")
-			?.whereEqualTo("forestryID",sessionManager?.forestryID)
+		dataClient?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
+			?.whereEqualTo(FireStoreImagesField.FORESTRY_ID.tag, sessionManager?.forestryID)
 			?.addSnapshotListener { value, e ->
 				if (e != null) {
 					e.printStackTrace()
@@ -49,8 +53,8 @@ class MapPresenter: BasePresenter<MapScreen>() {
 	private fun subscribeLeaderImages() {
 		screen?.showLoading()
 		getLeaderImages()
-		fireStoreDB?.db?.collection("images")
-			?.whereEqualTo("leaderID", sessionManager?.userID)
+		dataClient?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
+			?.whereEqualTo(FireStoreImagesField.LEADER_ID.tag, sessionManager?.userID)
 			?.addSnapshotListener { value, e ->
 				if (e != null) {
 					e.printStackTrace()
@@ -70,8 +74,8 @@ class MapPresenter: BasePresenter<MapScreen>() {
 
 	private fun subscribeWorkerImages() {
 		screen?.showLoading()
-		fireStoreDB?.db?.collection("images")
-			?.whereEqualTo("userID", sessionManager?.userID)
+		dataClient?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
+			?.whereEqualTo(FireStoreImagesField.USER_ID.tag, sessionManager?.userID)
 			?.addSnapshotListener { value, e ->
 				if (e != null) {
 					e.printStackTrace()
@@ -99,15 +103,15 @@ class MapPresenter: BasePresenter<MapScreen>() {
 	}
 
 	private fun getLeaderImages() {
-		fireStoreDB?.db?.collection("images")
-			?.whereEqualTo("leaderID", sessionManager?.userID)
-			?.get()?.addOnSuccessListener {
+		dataClient?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
+			?.whereEqualTo(FireStoreImagesField.LEADER_ID.tag, sessionManager?.userID)
+			?.get()?.addOnSuccessListener { it ->
 				for (document in it) {
 					val imageItem = createImageItem(document)
 					addItemToList(imageItem)
 				}
-				fireStoreDB?.db?.collection("images")
-					?.whereEqualTo("userID", sessionManager?.userID)
+				dataClient?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
+					?.whereEqualTo(FireStoreImagesField.USER_ID.tag, sessionManager?.userID)
 					?.get()?.addOnSuccessListener {
 						for (document in it) {
 							val imageItem = createImageItem(document)
@@ -125,39 +129,38 @@ class MapPresenter: BasePresenter<MapScreen>() {
 	}
 
 	private fun createImageItem(document: QueryDocumentSnapshot): ImageItem {
-		var length = document["length"]
+		var length = document[FireStoreImagesField.WOOD_LENGTH.tag]
 
 		if (length is Long || length is Int) {
 			length = length.toString().toDouble()
 		}
 
-		var woodType = if (document["wood_type"] == null) "" else document["wood_type"] as String?
+		val woodType = if (document[FireStoreImagesField.WOOD_TYPE.tag] == null) "" else document[FireStoreImagesField.WOOD_TYPE.tag] as String?
 
 		return ImageItem(
 			id = document.id,
+			session_id = "",
 			isPushedToServer = true,
-			latitude = document["lat"] as Double?,
-			longitude = document["long"] as Double?,
+			latitude = document[FireStoreImagesField.LOC_LAT.tag] as Double?,
+			longitude = document[FireStoreImagesField.LOC_LON.tag] as Double?,
 			length = length as Double?,
-			volume = document["volume"] as Double?,
-			time = document["time"] as String?,
-			serverImage = document["url"] as String?,
-			serverPath = document["imageRef"] as String?,
-			userID = document["userID"] as String?,
-			leaderID = document["leaderID"] as String?,
-			forestryID = document["forestryID"] as String?,
-			thumbnailPath = document["thumbnailRef"] as String?,
-			thumbnailUrl = document["thumbnailUrl"] as String?,
+			volume = document[FireStoreImagesField.WOOD_VOLUME.tag] as Double?,
+			time = document[FireStoreImagesField.TIME.tag] as String?,
+			imageUrl = document[FireStoreImagesField.IMAGE_URL.tag] as String?,
+			imageRef = document[FireStoreImagesField.IMAGE_REFERENCE.tag] as String?,
+			userID = document[FireStoreImagesField.USER_ID.tag] as String?,
+			leaderID = document[FireStoreImagesField.LEADER_ID.tag] as String?,
+			forestryID = document[FireStoreImagesField.FORESTRY_ID.tag] as String?,
+			thumbnailRef = document[FireStoreImagesField.IMAGE_THUMBNAIL_REFERENCE.tag] as String?,
+			thumbnailUrl = document[FireStoreImagesField.IMAGE_THUMBNAIL_URL.tag] as String?,
 			woodType = woodType)
 	}
 
 	fun getAllLocalImage() {
-		var images: List<ImageItem>
 		doAsync {
-			roomModule?.database?.imageItemDao()?.getAllImage(false)?.let {
-				images = it
+			dataClient?.local?.getAllPushedImages(false).let { images ->
 				uiThread {
-					fireBaseList.addAll(images)
+					images?.let { it1 -> fireBaseList.addAll(it1) }
 					screen?.loadImages(ArrayList(images), false)
 				}
 			} ?: run {
@@ -170,13 +173,5 @@ class MapPresenter: BasePresenter<MapScreen>() {
 
 	fun getItemFromList(position: Int) {
 		screen?.showDetails(fireBaseList[position])
-	}
-
-	fun getItem(id: String) {
-		doAsync {
-			roomModule?.database?.imageItemDao()?.getImageById(id)?.let {
-				screen?.showDetails(it)
-			}
-		}
 	}
 }
