@@ -146,6 +146,10 @@ dependencies {
     //Blurry
     implementation 'jp.wasabeef:blurry:4.0.0'
 
+    //DigestUtils (SHA1)
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.10'
+
+
 
 }
 apply plugin: 'com.google.gms.google-services'

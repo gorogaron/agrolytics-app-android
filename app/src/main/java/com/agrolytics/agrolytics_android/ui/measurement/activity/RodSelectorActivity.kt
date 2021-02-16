@@ -76,16 +76,45 @@ class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 		val view = LayoutInflater.from(this).inflate(R.layout.online_measurement_error_dialog, null, false)
 
 		/**Set text for included layout elements (buttons)*/
-		view.findViewById<ConstraintLayout>(R.id.button_1).findViewById<TextView>(R.id.buttonText).text = "gaga"
+		view.findViewById<ConstraintLayout>(R.id.button_1).apply {
+			findViewById<TextView>(R.id.buttonText).text = "Kép mentése későbbi feldolgozásra"
+			setOnClickListener { saveForLater() }
+		}
+		view.findViewById<ConstraintLayout>(R.id.button_2).apply {
+			findViewById<TextView>(R.id.buttonText).text = "Új kép"
+			setOnClickListener { newImage() }
+		}
+		view.findViewById<ConstraintLayout>(R.id.button_3).apply {
+			findViewById<TextView>(R.id.buttonText).text = "Munkamenet áttekintése"
+			setOnClickListener { showCurrentSession() }
+		}
+		view.findViewById<ConstraintLayout>(R.id.button_4).apply {
+			findViewById<TextView>(R.id.buttonText).text = "Offline mérés"
+			setOnClickListener { measureOffline() }
+		}
 
 		builder.setView(view)
-		builder.setCancelable(true)
-
+		builder.setCancelable(false)
 
 		val dialog = builder.create()
 		dialog.window!!.setBackgroundDrawableResource(R.drawable.bg_dialog)
 		dialog.show()
+	}
 
+	fun saveForLater(){
+		showToast("saveForLater - to be implemented")
+	}
+
+	fun newImage(){
+		showToast("newImage - to be implemented")
+	}
+
+	fun showCurrentSession(){
+		showToast("showCurrentSession - to be implemented")
+	}
+
+	fun measureOffline(){
+		showToast("measureOffline - to be implemented")
 	}
 
 	override fun negativeButtonClicked() { }

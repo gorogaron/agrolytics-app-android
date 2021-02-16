@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:id="@+id/button_container"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_dialog_button_clickable"
     android:padding="10dp"
@@ -25,7 +26,11 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:text="Text"
+        android:textColor="@color/darkGrey"
+        android:fontFamily="@font/roboto"
+        android:textSize="17sp"
         android:padding="10dp"
+        android:clickable="false"
         />
 
 
