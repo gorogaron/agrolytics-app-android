@@ -1,6 +1,6 @@
 package com.agrolytics.agrolytics_android.data.firestore
 
-data class FireStoreItem(
+data class FireStoreImageItem(
     val forestryId: String,
     val leaderId: String,
     val userId: String,

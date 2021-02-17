@@ -1,7 +1,6 @@
 package com.agrolytics.agrolytics_android.ui.measurement.presenter
 
 import android.graphics.Bitmap
-import com.agrolytics.agrolytics_android.data.database.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.data.firestore.*
 import com.agrolytics.agrolytics_android.ui.base.BasePresenter
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
@@ -23,20 +22,20 @@ class ApproveMeasurementPresenter : BasePresenter<ApproveMeasurementActivity>() 
         serverImage: String?,
         id: String?
     ) {
-        val imageItem = CachedImageItem(
-            id = Integer.parseInt(id).toLong(),
-            session_id = "",
-            localPath = path ?: "",
-            isPushedToServer = true,
-            latitude = Util.lat ?: 0.0,
-            longitude = Util.long ?: 0.0,
-            length = sessionManager?.woodLength?.toDouble() ?: 0.0,
-            volume = measurementResult?.getVolume(),
-            time = Util.getCurrentDateString(),
-            imageUrl = serverImage!!
-        )
+//        val imageItem = CachedImageItem(
+//            id = Integer.parseInt(id).toLong(),
+//            session_id = "",
+//            localPath = path ?: "",
+//            isPushedToServer = true,
+//            latitude = Util.lat ?: 0.0,
+//            longitude = Util.long ?: 0.0,
+//            length = sessionManager?.woodLength?.toDouble() ?: 0.0,
+//            volume = measurementResult?.getVolume(),
+//            time = Util.getCurrentDateString(),
+//            imageUrl = serverImage!!
+//        )
         doAsync {
-            dataClient?.local?.addImage(imageItem)
+//            dataClient?.local?.addImage(imageItem)
             uiThread {
                 screen?.updateView(fragment)
             }
@@ -63,7 +62,7 @@ class ApproveMeasurementPresenter : BasePresenter<ApproveMeasurementActivity>() 
 
             val uriPairs = dataClient?.fireStore?.uploadToFireBaseStorage(storageItem)
 
-            val fireStoreItem = FireStoreItem(
+            val fireStoreItem = FireStoreImageItem(
                 forestryId = sessionManager?.forestryId!!,
                 leaderId = sessionManager?.leaderId!!,
                 userId = sessionManager?.userId!!,
@@ -82,31 +81,31 @@ class ApproveMeasurementPresenter : BasePresenter<ApproveMeasurementActivity>() 
 
             val firestoreId = dataClient?.fireStore?.uploadToFireStore(fireStoreItem)
 
-            val imageItem = ImageItem(
-                id = (0..10000).random().toString(),
-                session_id = (0..10000).random().toString(),
-                localPath = path,
-                isPushedToServer = true,
-                latitude = fireStoreItem.locLat,
-                longitude = fireStoreItem.locLon,
-                length = fireStoreItem.woodLength,
-                volume = fireStoreItem.woodVolume,
-                time = fireStoreItem.timestamp,
-                imageUrl = fireStoreItem.imageUrl,
-                imageRef = fireStoreItem.imageRef,
-                firestoreId = firestoreId,
-                userID = fireStoreItem.userId,
-                leaderID = fireStoreItem.leaderId,
-                forestryID = fireStoreItem.forestryId,
-                rodLength = measurementResult.rod_length,
-                rodLengthPixel = measurementResult.rod_length_pixel,
-                thumbnailRef = fireStoreItem.thumbnailRef,
-                thumbnailUrl = fireStoreItem.thumbnailUrl,
-                woodType = fireStoreItem.woodType
-            )
-            doAsync {
-                dataClient?.local?.addImage(imageItem)
-            }
+//            val imageItem = ImageItem(
+//                id = (0..10000).random().toString(),
+//                session_id = (0..10000).random().toString(),
+//                localPath = path,
+//                isPushedToServer = true,
+//                latitude = fireStoreItem.locLat,
+//                longitude = fireStoreItem.locLon,
+//                length = fireStoreItem.woodLength,
+//                volume = fireStoreItem.woodVolume,
+//                time = fireStoreItem.timestamp,
+//                imageUrl = fireStoreItem.imageUrl,
+//                imageRef = fireStoreItem.imageRef,
+//                firestoreId = firestoreId,
+//                userID = fireStoreItem.userId,
+//                leaderID = fireStoreItem.leaderId,
+//                forestryID = fireStoreItem.forestryId,
+//                rodLength = measurementResult.rod_length,
+//                rodLengthPixel = measurementResult.rod_length_pixel,
+//                thumbnailRef = fireStoreItem.thumbnailRef,
+//                thumbnailUrl = fireStoreItem.thumbnailUrl,
+//                woodType = fireStoreItem.woodType
+//            )
+//            doAsync {
+//                dataClient?.local?.addImage(imageItem)
+//            }
         }
         else {
             screen?.updateView(fragment)

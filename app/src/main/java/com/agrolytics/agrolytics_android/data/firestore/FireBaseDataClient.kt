@@ -26,9 +26,9 @@ class FireBaseDataClient {
     }
 
     suspend fun uploadToFireStore(
-        fireStoreItem: FireStoreItem
+        fireStoreImageItem: FireStoreImageItem
     ) : String = suspendCoroutine { cont ->
-        firestore?.collection(FireStoreCollection.IMAGES.tag)?.add(fireStoreItem.toHashMap())
+        firestore?.collection(FireStoreCollection.IMAGES.tag)?.add(fireStoreImageItem.toHashMap())
             ?.addOnSuccessListener {
                 cont.resume(it.id)
             }
@@ -73,7 +73,7 @@ class FireBaseDataClient {
         throw Exception()
     }
 
-    fun downloadFromFireStore() : FireStoreItem {
+    fun downloadFromFireStore() : FireStoreImageItem {
         throw NotImplementedError()
     }
     fun downloadFromFireBaseStorage() : FireBaseStorageItem {
