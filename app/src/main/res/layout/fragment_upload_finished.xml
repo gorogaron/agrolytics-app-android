@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/lightGrey">
 
     <ImageView
         android:id="@+id/iv_response_image"
@@ -21,40 +22,48 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/iv_response_image"
-        android:layout_marginTop="24dp">
+        android:layout_margin="24dp"
+        android:background="@drawable/bg_dialog">
 
         <TextView
+            app:fontFamily="@font/roboto"
             android:id="@+id/tv_correction"
             android:layout_width="290dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:text="@string/is_fill_correct_message"
-            android:textAlignment="center"
-            android:textColor="@color/textColor"
-            android:textSize="16sp"
-            app:fontFamily="sans-serif-medium" />
+            android:textColor="@color/darkGrey"
+            android:textSize="20sp"
+            android:padding="15dp"/>
 
-        <ImageView
+        <TextView
+            android:fontFamily="@font/roboto_bold"
             android:id="@+id/btn_accept"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:text="Igen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/tv_correction"
             android:layout_alignEnd="@+id/tv_correction"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="20dp"
             android:layout_marginEnd="24dp"
-            android:src="@drawable/ic_round_correct"
-            app:backgroundTint="@color/negativeButtonColor" />
+            android:textSize="20sp"
+            android:textColor="@color/darkGrey"
+            android:padding="15dp"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"/>
 
-        <ImageView
+        <TextView
+            android:fontFamily="@font/roboto_bold"
             android:id="@+id/btn_decline"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:text="Nem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/tv_correction"
             android:layout_alignStart="@+id/tv_correction"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="24dp"
-            android:src="@drawable/ic_round_cancel"
-            app:backgroundTint="@color/negativeButtonColor" />
+            android:layout_margin="20dp"
+            android:textSize="20sp"
+            android:textColor="@color/darkGrey"
+            android:padding="15dp"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"/>
 
     </RelativeLayout>
 
