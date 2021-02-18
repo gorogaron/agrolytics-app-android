@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import android.se.omapi.Session
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
@@ -13,8 +12,6 @@ import com.agrolytics.agrolytics_android.ui.measurement.activity.RodSelectorActi
 import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.ImageUtils
-import com.agrolytics.agrolytics_android.utils.SessionManager
-import org.apache.commons.codec.digest.DigestUtils
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import retrofit2.Response
@@ -22,30 +19,9 @@ import retrofit2.Response
 object MeasurementManager : KoinComponent{
 
     private val appServer: AppServer by inject()
-    private val sessionManager : SessionManager by inject()
-
-    object currentMeasurement {
-        var sessionId : String? = null
-        var imagePickerID : ImagePickerID? = null
-    }
 
     enum class ImagePickerID {
         ID_CAMERA, ID_BROWSER
-    }
-
-    fun closeMeasurementSession(){
-        currentMeasurement.sessionId = null
-        currentMeasurement.imagePickerID = null
-    }
-
-    fun startNewMeasurementSession(callingActivity: Activity, imagePickerID: ImagePickerID) {
-        if (currentMeasurement.sessionId != null) {
-            //TODO: Handle error. There is an ongoing measurement session, we should not get here.
-        } else {
-            currentMeasurement.sessionId = generateNewSessionId()
-            currentMeasurement.imagePickerID = imagePickerID
-            hookImage(callingActivity, imagePickerID)
-        }
     }
 
     fun hookImage(callingActivity: Activity, imagePickerID : ImagePickerID){
@@ -82,14 +58,6 @@ object MeasurementManager : KoinComponent{
         val imageUploadRequest = ImageUploadRequest()
         bitmap?.let { imageUploadRequest.image = ImageUtils.bitmapToBase64(bitmap) }
         return imageUploadRequest
-    }
-
-    private fun generateNewSessionId() : String{
-        val epochSeconds = (System.currentTimeMillis() / 1000L).toString()
-        val userId = sessionManager.userID
-        val inputString ="${userId}${epochSeconds}"
-
-        return DigestUtils.sha1Hex(inputString)
     }
 
 }

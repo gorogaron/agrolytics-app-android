@@ -76,7 +76,7 @@ class Util {
             }
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Adatok")
-            val view = LayoutInflater.from(context).inflate(R.layout.parameter_settings_dialog, null, false)
+            val view = LayoutInflater.from(context).inflate(R.layout.rod_dialog, null, false)
 
             val et_length_rod = view.findViewById<EditText>(R.id.et_length_rod)
             val et_length_wood = view.findViewById<EditText>(R.id.et_wood_length)
@@ -104,7 +104,7 @@ class Util {
 
             builder.setCancelable(false)
             val dialog = builder.create()
-            dialog.window!!.setBackgroundDrawableResource(R.drawable.bg_dialog)
+            dialog.window!!.setBackgroundDrawableResource(R.drawable.parameter_dialog_bg)
             dialog.window.setDimAmount(0.0f)
             dialog.show()
         }

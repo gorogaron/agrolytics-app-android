@@ -97,6 +97,9 @@ class ApproveMeasurementActivity : BaseActivity() {
 			}
 		})
 
+		btn_back.setOnClickListener { onBackPressed() }
+		tv_done.setOnClickListener { onBackPressed() }
+
 		presenter.addView(this)
 		presenter.addInjections(arrayListOf(sessionManager, dataClient))
 	}
@@ -107,6 +110,7 @@ class ApproveMeasurementActivity : BaseActivity() {
 		if (fragmentList.isNotEmpty()) {
 			val fragment = fragmentList[0]
 			fragment.showNextArrow(true)
+			tv_done.visibility = View.VISIBLE
 		}
 	}
 
