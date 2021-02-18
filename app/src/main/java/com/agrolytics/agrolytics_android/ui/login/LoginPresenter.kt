@@ -2,17 +2,15 @@ package com.agrolytics.agrolytics_android.ui.login
 
 import android.content.Context
 import android.util.Log
-import com.agrolytics.agrolytics_android.database.firestore.FireStoreCollection
-import com.agrolytics.agrolytics_android.database.firestore.FireStoreForestryField
-import com.agrolytics.agrolytics_android.database.firestore.FireStoreUserField
+import com.agrolytics.agrolytics_android.data.firestore.FireStoreCollection
+import com.agrolytics.agrolytics_android.data.firestore.FireStoreForestryField
+import com.agrolytics.agrolytics_android.data.firestore.FireStoreUserField
 import com.agrolytics.agrolytics_android.ui.base.BasePresenter
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.Util
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import org.jetbrains.anko.doAsync
 import java.time.LocalDate
 import java.time.Period
@@ -80,19 +78,19 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
         // TODO: felhasználók egybezárása
         val roleDocumentSnapshot = getRoleDocument(userDocument[FireStoreUserField.ROLE.tag] as DocumentReference)
         sessionManager?.userRole = (roleDocumentSnapshot[FireStoreUserField.ROLE.tag] as String?)!!
-        sessionManager?.userID = userDocument.id
+        sessionManager?.userId = userDocument.id
         sessionManager?.userEmail = (userDocument[FireStoreUserField.EMAIL.tag] as String?)!!
-        sessionManager?.forestryID = (userDocument[FireStoreUserField.FORESTRY_ID.tag] as String?)!!
-        sessionManager?.firstLogin = (userDocument[FireStoreUserField.FIRST_LOGIN.tag] as String?)!!
+        sessionManager?.forestryId = (userDocument[FireStoreUserField.FORESTRY_ID.tag] as String?)!!
+        sessionManager?.userExpireDate = (userDocument[FireStoreUserField.FIRST_LOGIN.tag] as Long?)!!
 
-        dataClient?.fireStore?.firestore?.collection(FireStoreCollection.FORESTRY.tag)?.document(sessionManager?.forestryID!!)
+        dataClient?.fireStore?.firestore?.collection(FireStoreCollection.FORESTRY.tag)?.document(sessionManager?.forestryId!!)
             ?.get()
             ?.addOnSuccessListener {
                 sessionManager?.forestryName = it[FireStoreForestryField.NAME.tag] as String
             }
         //Admins don't have leaderID
         if ((userDocument[FireStoreUserField.LEADER_ID.tag] as String?) != null){
-            sessionManager?.leaderID = userDocument[FireStoreUserField.LEADER_ID.tag] as String
+            sessionManager?.leaderId = userDocument[FireStoreUserField.LEADER_ID.tag] as String
         }
 
         //Update user token. TODO: Move token to shared preferences

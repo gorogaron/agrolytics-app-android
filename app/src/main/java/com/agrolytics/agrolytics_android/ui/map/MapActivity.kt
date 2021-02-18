@@ -2,12 +2,11 @@ package com.agrolytics.agrolytics_android.ui.map
 
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.view.View
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.database.DataClient
+import com.agrolytics.agrolytics_android.data.DataClient
+import com.agrolytics.agrolytics_android.data.database.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
-import com.agrolytics.agrolytics_android.database.local.ImageItem
 import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
@@ -77,25 +76,25 @@ class MapActivity : BaseActivity(), MapScreen, View.OnClickListener {
         }
     }
 
-    override fun showDetails(imageItem: ImageItem) {
+    override fun showDetails(imageItem: CachedImageItem) {
         val ins = MarkerInfoBottomSheetDialog.instance()
         ins.initData(imageItem)
         ins.show(supportFragmentManager, "TAG")
     }
 
-    override fun loadImages(images: ArrayList<ImageItem>, isOnline: Boolean) {
+    override fun loadImages(images: ArrayList<CachedImageItem>, isOnline: Boolean) {
         val latLngBounds = LatLngBounds.Builder()
 
         var latLng = LatLng()
         for (mMarker in images) {
-            if (mMarker.latitude != null && mMarker.longitude != null) {
-                latLng = LatLng(mMarker.latitude!!, mMarker.longitude!!)
+            if (mMarker.lat != null && mMarker.lon != null) {
+                latLng = LatLng(mMarker.lat!!, mMarker.lon!!)
             }
             latLngBounds.include(latLng)
 
             val options = MarkerOptions()
             options.position(latLng)
-            options.title = mMarker.id
+            options.title = mMarker.id.toString()
             options.marker.id = images.indexOf(mMarker).toLong()
             if (!isOnline) {
                 val iconFactory = IconFactory.getInstance(this)

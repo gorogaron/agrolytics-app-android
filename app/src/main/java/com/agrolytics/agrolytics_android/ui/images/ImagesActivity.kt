@@ -7,10 +7,10 @@ import android.view.View
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.database.DataClient
+import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.networking.AppServer
-import com.agrolytics.agrolytics_android.database.local.ImageItem
+import com.agrolytics.agrolytics_android.data.database.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.measurement.activity.ApproveMeasurementActivity
 import com.agrolytics.agrolytics_android.ui.images.adapter.ImagesAdapter
@@ -205,7 +205,7 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 		}
 	}
 
-	override fun onImageSelected(item: ImageItem?) {
+	override fun onImageSelected(item: CachedImageItem?) {
 		adapter?.getAllSelected()?.let {
 			if (it.isNotEmpty()) {
 				setTabsUnClickable()
@@ -215,7 +215,7 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 		}
 	}
 
-	override fun onLongClicked(item: ImageItem) {
+	override fun onLongClicked(item: CachedImageItem) {
 		showBottomToolbar()
 		adapter?.setImageItemSelected(item)
 		adapter?.getAllSelected()?.let {
@@ -300,7 +300,7 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 		tab_layout.selectTab(tab_layout.getTabAt(0))
 	}
 
-	override fun loadImages(images: ArrayList<ImageItem>) {
+	override fun loadImages(images: ArrayList<CachedImageItem>) {
 		if (images.isNotEmpty()) {
 			tv_no_images_saved.visibility = View.GONE
 		} else {
@@ -309,7 +309,7 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 		adapter?.setList(images)
 	}
 
-	override fun showImage(imageItem: ImageItem) {
+	override fun showImage(imageItem: CachedImageItem) {
 		imageItem.imageUrl?.let {
 			if (it.isNotEmpty()) {
 				GalleryDialog.getInstance(arrayListOf(imageItem.imageUrl), null,0,true).show(this.supportFragmentManager, "gallery")

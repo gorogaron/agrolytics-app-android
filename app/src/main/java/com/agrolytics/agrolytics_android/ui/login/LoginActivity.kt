@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.database.DataClient
+import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.ui.main.MainActivity

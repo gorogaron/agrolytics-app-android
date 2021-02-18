@@ -3,9 +3,8 @@ package com.agrolytics.agrolytics_android.ui.measurement.presenter
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
 import com.agrolytics.agrolytics_android.ui.base.BasePresenter
-import com.agrolytics.agrolytics_android.database.local.ImageItem
+import com.agrolytics.agrolytics_android.data.database.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
@@ -13,8 +12,6 @@ import com.agrolytics.agrolytics_android.ui.measurement.activity.RodSelectorActi
 import com.agrolytics.agrolytics_android.utils.ImageUtils
 import com.agrolytics.agrolytics_android.ui.measurement.utils.Detector
 import com.agrolytics.agrolytics_android.utils.Util
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -95,23 +92,20 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
     }
 
     fun saveLocalImageItem(rodLength: Double, rodLengthPixels: Int) {
-        val imageItem = ImageItem(
-            //TODO: create unique ID generation and sessionID
-            id = (0..10000).random().toString(),
-            session_id = "",
-            localPath = path ?: "",
-            isPushedToServer = false,
-            latitude = Util.lat ?: 0.0,
-            longitude = Util.long ?: 0.0,
-            length = sessionManager?.woodLength?.toDouble() ?: 0.0,
-            volume = 0.0,
-            time = Util.getCurrentDateString(),
-            rodLength = rodLength,
-            rodLengthPixel = rodLengthPixels,
-            woodType = sessionManager?.woodType
-        )
+//        val imageItem = CachedImageItem(
+//            //TODO: create unique ID generation and sessionID
+//            id = (0..10000).random().toLong(),
+//            sessionId = "",
+//            localPath = path ?: "",
+//            lat = Util.lat ?: 0.0,
+//            lon = Util.long ?: 0.0,
+//            woodLength = sessionManager?.woodLength?.toDouble()!!,
+//            woodVolume = 0.0,
+//            timestamp = Util.getCurrentDateString().toLong(),
+//            woodType = sessionManager?.woodType!!
+//        )
         doAsync {
-            dataClient?.local?.addImage(imageItem)
+//            dataClient?.local?.addImage(imageItem)
             activity?.back()
         }
     }
