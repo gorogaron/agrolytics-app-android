@@ -18,7 +18,7 @@ import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.database.DataClient
+import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.types.ConfigInfo

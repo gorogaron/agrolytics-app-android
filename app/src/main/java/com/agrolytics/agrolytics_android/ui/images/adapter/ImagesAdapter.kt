@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.database.local.ImageItem
+import com.agrolytics.agrolytics_android.data.database.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.utils.ImageUtils
 import com.agrolytics.agrolytics_android.utils.extensions.animateSlide
 import com.bumptech.glide.Glide
@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.item_images.view.*
 class ImagesAdapter(private val listener: OnImageListener,
                     private val savedLength: Float): RecyclerView.Adapter<ImagesAdapter.ImagesHolder>() {
 
-	var itemList = mutableListOf<ImageItem>()
+	var itemList = mutableListOf<CachedImageItem>()
 	var deleteShown : Boolean = false
 	lateinit var slidingNeeded : BooleanArray
 
@@ -51,9 +51,9 @@ class ImagesAdapter(private val listener: OnImageListener,
 	}
 
 	inner class ImagesHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-		var item: ImageItem? = null
+		var item: CachedImageItem? = null
 
-		fun bind(item: ImageItem, position: Int) = with(itemView) {
+		fun bind(item: CachedImageItem, position: Int) = with(itemView) {
 			this@ImagesHolder.item = item
 
 			if (position % 2 == 0) {
@@ -62,21 +62,12 @@ class ImagesAdapter(private val listener: OnImageListener,
 				itemView.images_adapter_root_layout.setBackgroundColor(ContextCompat.getColor(context, R.color.darkAdapterColor))
 			}
 
-			if (item.isPushedToServer) {
-				item.length?.let {
-					itemView.tv_volume_adapter.text =
-						context.getString(R.string.wood_volume_value, (item.volume ?: 1.0))
-				}
-			} else {
-				itemView.tv_volume_adapter.text = "-"
-			}
 
-
-			check_box.isChecked = item.isChecked
-
-			itemView.tv_time_image_created_on.text = item.time
-//			itemView.tv_length_new.text = item.length.toString()
-			itemView.tv_length_new.text = String.format("%.2f", item.length)
+//			check_box.isChecked = item.isChecked
+//
+//			itemView.tv_time_image_created_on.text = item.time
+////			itemView.tv_length_new.text = item.length.toString()
+//			itemView.tv_length_new.text = String.format("%.2f", item.length)
 			itemView.tv_woodtype_adapter.text = item.woodType
 			//itemView.tv_adapter_id.text = item.id
 			itemView.tv_adapter_id.visibility = View.GONE
@@ -106,7 +97,7 @@ class ImagesAdapter(private val listener: OnImageListener,
 			} else {
 				container_data.animateSlide(300L,0f,0f,1.0f)
 				check_box.visibility = View.GONE
-				item.isChecked = false
+//				item.isChecked = false
 				check_box.isSelected = false
 			}
 
@@ -121,42 +112,42 @@ class ImagesAdapter(private val listener: OnImageListener,
 	}
 
 	fun selectAll() {
-		for (item in itemList) {
-			item.isChecked = !isAllSelected()
-		}
+//		for (item in itemList) {
+//			item.isChecked = !isAllSelected()
+//		}
 		notifyDataSetChanged()
 	}
 
 	fun deselectAll() {
-		for (item in itemList) {
-			item.isChecked = false
-		}
+//		for (item in itemList) {
+//			item.isChecked = false
+//		}
 		notifyDataSetChanged()
 	}
 
 	private fun isAllSelected(): Boolean {
 		var allSelected = true
 		for (item in itemList) {
-			allSelected = item.isChecked
+//			allSelected = item.isChecked
 		}
 		return allSelected
 	}
 
-	fun getAllSelected(): ArrayList<ImageItem> {
-		val selectedList = arrayListOf<ImageItem>()
+	fun getAllSelected(): ArrayList<CachedImageItem> {
+		val selectedList = arrayListOf<CachedImageItem>()
 		for (item in itemList) {
-			if (item.isChecked) {
-				selectedList.add(item)
-			}
+//			if (item.isChecked) {
+//				selectedList.add(item)
+//			}
 		}
 		return selectedList
 	}
 
-	fun setImageItemSelected(imageItem: ImageItem?) {
+	fun setImageItemSelected(imageItem: CachedImageItem?) {
 		imageItem?.let {
 			for (item in itemList) {
 				if (item.id == imageItem.id) {
-					item.isChecked = !item.isChecked
+//					item.isChecked = !item.isChecked
 					notifyItemChanged(itemList.indexOf(item))
 					break
 				}
@@ -164,7 +155,7 @@ class ImagesAdapter(private val listener: OnImageListener,
 		}
 	}
 
-	fun setList(itemList: List<ImageItem>) {
+	fun setList(itemList: List<CachedImageItem>) {
 		this.itemList.clear()
 		this.itemList.addAll(itemList)
 
@@ -175,9 +166,9 @@ class ImagesAdapter(private val listener: OnImageListener,
 	}
 
 	interface OnImageListener {
-		fun onImageSelected(item: ImageItem?)
-		fun onLongClicked(item: ImageItem)
-		fun showImage(imageItem: ImageItem)
+		fun onImageSelected(item: CachedImageItem?)
+		fun onLongClicked(item: CachedImageItem)
+		fun showImage(imageItem: CachedImageItem)
 	}
 
 }

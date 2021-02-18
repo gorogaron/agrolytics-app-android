@@ -11,7 +11,7 @@ import android.view.LayoutInflater
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.database.DataClient
+import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.networking.model.MeasurementResult
