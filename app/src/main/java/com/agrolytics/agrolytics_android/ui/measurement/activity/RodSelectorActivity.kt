@@ -1,15 +1,9 @@
 package com.agrolytics.agrolytics_android.ui.measurement.activity
 
-import android.app.Activity
-import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.widget.*
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.database.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
@@ -52,8 +46,7 @@ class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 		btn_back.setOnClickListener{onBackPressed()}
 		rod_selector_canvas.setImage(bitmap!!)
 
-		//Util.showParameterSettingsWindow(this, sessionManager)
-		showOnlineMeasurementErrorDialog()
+		Util.showParameterSettingsWindow(this, sessionManager)
 	}
 
 	//TODO: Not a good function name...
@@ -68,53 +61,6 @@ class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 			intent.putExtra(ConfigInfo.METHOD, method)
 			startActivity(intent)
 			finish()
-	}
-
-	fun showOnlineMeasurementErrorDialog(){
-		val builder = AlertDialog.Builder(this)
-		builder.setTitle("Hiba")
-		val view = LayoutInflater.from(this).inflate(R.layout.online_measurement_error_dialog, null, false)
-
-		/**Set text for included layout elements (buttons)*/
-		view.findViewById<ConstraintLayout>(R.id.button_1).apply {
-			findViewById<TextView>(R.id.buttonText).text = "Kép mentése későbbi feldolgozásra"
-			setOnClickListener { saveForLater() }
-		}
-		view.findViewById<ConstraintLayout>(R.id.button_2).apply {
-			findViewById<TextView>(R.id.buttonText).text = "Új kép"
-			setOnClickListener { newImage() }
-		}
-		view.findViewById<ConstraintLayout>(R.id.button_3).apply {
-			findViewById<TextView>(R.id.buttonText).text = "Munkamenet áttekintése"
-			setOnClickListener { showCurrentSession() }
-		}
-		view.findViewById<ConstraintLayout>(R.id.button_4).apply {
-			findViewById<TextView>(R.id.buttonText).text = "Offline mérés"
-			setOnClickListener { measureOffline() }
-		}
-
-		builder.setView(view)
-		builder.setCancelable(false)
-
-		val dialog = builder.create()
-		dialog.window!!.setBackgroundDrawableResource(R.drawable.bg_dialog)
-		dialog.show()
-	}
-
-	fun saveForLater(){
-		showToast("saveForLater - to be implemented")
-	}
-
-	fun newImage(){
-		showToast("newImage - to be implemented")
-	}
-
-	fun showCurrentSession(){
-		showToast("showCurrentSession - to be implemented")
-	}
-
-	fun measureOffline(){
-		showToast("measureOffline - to be implemented")
 	}
 
 	override fun negativeButtonClicked() { }
