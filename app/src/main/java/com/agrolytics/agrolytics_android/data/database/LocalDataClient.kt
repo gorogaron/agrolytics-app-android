@@ -3,6 +3,8 @@ package com.agrolytics.agrolytics_android.data.database
 import android.content.Context
 import androidx.room.Room
 import com.agrolytics.agrolytics_android.data.database.tables.CachedImageItem
+import com.agrolytics.agrolytics_android.data.database.tables.ProcessedImageItem
+import com.agrolytics.agrolytics_android.data.database.tables.UnprocessedImageItem
 
 class LocalDataClient(context: Context) {
 
@@ -49,5 +51,17 @@ class LocalDataClient(context: Context) {
 
     fun clearDatabase() {
         database?.clearAllTables()
+    }
+
+    fun addUnprocessedImageItem(unprocessedImageItem: UnprocessedImageItem){
+        database?.unprocessedImageDao()?.add(unprocessedImageItem)
+    }
+
+    fun addProcessedImageItem(processedImageItem: ProcessedImageItem){
+        database?.processedImageDao()?.add(processedImageItem)
+    }
+
+    fun deleteUnprocessedImageItemById(id : Long){
+        database?.unprocessedImageDao()?.deleteById(id)
     }
 }

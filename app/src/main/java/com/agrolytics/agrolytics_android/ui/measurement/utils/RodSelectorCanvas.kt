@@ -215,10 +215,10 @@ class RodSelectorCanvas(context: Context?, attrs: AttributeSet?) : View(context,
     }
 
     //Returns the rod length in pixels if the image was resized
-    fun getRodLengthPixels_640_480(): Int{
-        var canvasImgHeight = dstRect.bottom - dstRect.top
-        var canvasImgWidth = dstRect.right - dstRect.left
-        var linePoints_640_480 =
+    fun getRodLengthPixels_640_480(): Double {
+        val canvasImgHeight = dstRect.bottom - dstRect.top
+        val canvasImgWidth = dstRect.right - dstRect.left
+        val linePoints_640_480 =
             LinePoints()
 
         val wRatio = 640f/canvasImgWidth
@@ -232,6 +232,6 @@ class RodSelectorCanvas(context: Context?, attrs: AttributeSet?) : View(context,
         val dy = abs(linePoints_640_480.y2 - linePoints_640_480.y1)
         val dx = abs(linePoints_640_480.x2 - linePoints_640_480.x1)
 
-        return sqrt(dx*dx + dy*dy).toInt()
+        return sqrt(dx*dx + dy*dy).toDouble()
     }
 }

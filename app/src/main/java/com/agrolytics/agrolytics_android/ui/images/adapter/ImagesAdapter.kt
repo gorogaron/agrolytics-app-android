@@ -78,7 +78,7 @@ class ImagesAdapter(private val listener: OnImageListener,
 					if (it.startsWith("https",true)) {
 						Glide.with(context).load(it).into(itemView.iv_image)
 					} else {
-						Glide.with(context).load(ImageUtils.getImage(item.imageUrl)).into(itemView.iv_image)
+						Glide.with(context).load(ImageUtils.getImageFromBase64(item.imageUrl)).into(itemView.iv_image)
 					}
 				}
 			} ?: run {

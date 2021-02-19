@@ -27,6 +27,9 @@ interface UnprocessedImageItemDao {
     @Query("DELETE FROM unprocessed_images WHERE session_id LIKE :sessionId")
     fun deleteBySessionId(sessionId: String)
 
+    @Query("DELETE FROM unprocessed_images WHERE id LIKE :id")
+    fun deleteById(id: Long)
+
     @Query("DELETE FROM unprocessed_images")
     fun deleteAll()
 }

@@ -1,21 +1,14 @@
 package com.agrolytics.agrolytics_android.networking.model
 
-import android.graphics.Color
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
 
-class ImageUploadResponse() {
-    var mask: String? = null
-    var numOfWoodPixels: Int = 0
+data class ImageUploadResponse(var mask : String){
 
-    constructor(b64: String) : this() {
-        mask = b64
-        val mask_bmp = com.agrolytics.agrolytics_android.utils.ImageUtils.getImage(b64)
-        for (i in 0 until mask_bmp.width){
-            for (j in 0 until mask_bmp.height) {
-                if (mask_bmp.getPixel(i,j) != Color.BLACK){
-                    numOfWoodPixels = numOfWoodPixels + 1
-                }
-            }
-        }
+    fun toBitmap() : Bitmap{
+        val arr = Base64.decode(mask, Base64.NO_WRAP)
+        return BitmapFactory.decodeByteArray(arr, 0, arr.size)
     }
 
 }
