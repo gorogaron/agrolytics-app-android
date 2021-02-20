@@ -55,7 +55,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:textStyle="normal"
-            android:textColor="@color/mediumGrey"
+            android:textColor="@color/darkGrey"
             android:background="@drawable/login_btn_clickable"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

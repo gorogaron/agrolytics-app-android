@@ -1,29 +1,8 @@
 <resources>
     <string name="app_name">Agrolytics</string>
-    <string name="woodworks_image_content_description">Woodworks Image</string>
-    <string name="add_photo_message">Készíts, vagy tallóz képet a sarangról!</string>
     <string name="is_fill_correct_message">Helyes a képen látható kijelölés?</string>
-    <string name="final_state_explanation_message">a sarang térfogata.</string>
     <string name="wood_volume_value">%1$.2f m³</string>
-    <string name="create_new_button_text">KÉSZÍTEK ÚJAT</string>
-    <string name="errorMessage">Hiba történt</string>
-    <string name="backButtonText">Vissza</string>
-    <string name="crop_image_menu_crop">Tovább</string>
 
-
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
-
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
-    <string name="menu_tools">Tools</string>
-    <string name="menu_share">Share</string>
-    <string name="menu_send">Send</string>
 
     <string name="guide">
         A mérés pontosságát növelheti, ha fényképezés során ügyelünk a képi torzításokból adodó hatások minimalizálására.
@@ -37,28 +16,8 @@
     </string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="okay">Okay</string>
-    <string name="permission_not_given">Permission Not given</string>
-    <string name="permission_message">Seems like permission was not given. Press \'Okay\' to give permission to continue the process</string>
-    <string name="wait_message_location">Please wait while we capture the location</string>
-    <string name="processing">Processing</string>
     <string name="processed">Feldolgozott</string>
     <string name="not_processed">Nem feldolgozott</string>
-    <string name="msg_turn_gps_on">Please turn on the gps so that location can be captured</string>
-    <string name="location_not_found">GPS location not found</string>
-    <string name="location_message">Please provide the location permission so that app can perform it\'s functionality</string>
-    <string name="gps_turned_off">Gps turned off</string>
-    <string name="location_perm_required">Location Permission Required</string>
-    <string name="no_internet_message">Seems like there is no internet connected with device. The image is saved locally and can be seen through going to \'Locally Saved Image\'</string>
-    <string name="no_internet_title">Nincs internet kapcsolat.</string>
-    <string name="save_images_locally">Mentés készülékre</string>
-    <string name="discard">Elvetés</string>
-    <string name="slow_internet">Lassú internetkapcsolat</string>
-    <string name="slow_internet_message">Az internetkapcsoalt túl lassú. Szeretnéd elmenteni a képet a telefon memóriába vagy vessük el?</string>
-    <string name="length">Hossz: 1</string>
-    <string name="len">Hossz\u0020 </string>
-    <string name="leng">Hossz</string>
     <string name="logs_volume">a farakás térfogata</string>
     <string name="item_id">ID</string>
     <string name="item_volume">Térfogat:</string>
@@ -68,13 +27,9 @@
     <string name="hint_email">Email</string>
     <string name="hint_password">Jelszó</string>
     <string name="btn_login">Bejelentkezés</string>
-    <string name="toolbar_login">Bejelentkezés</string>
     <string name="empty_list">Üres lista</string>
     <string name="done">Kész</string>
-    <string name="toolbar_upload_finished">Sikeres feltöltés</string>
     <string name="more_declined">Nem megfelelő kijelölés. A képet kitöröltük a telefonról.</string>
-    <string name="btn_done">Kész</string>
-    <string name="toolbar_rod_selector">Rúd kijelölés</string>
     <string name="length_of_rod">Írd be a rúd méretét. (m)</string>
     <string name="length_of_wood">Írd be a farakás hosszát. (m)</string>
     <string name="select_item">Először válassz ki elemeket</string>
@@ -83,6 +38,4 @@
     <string name="deleted">Elemek törölve</string>
     <string name="toolbar_images">Képek</string>
     <string name="toolbar_map">Térkép</string>
-    <string name="enter_length_here">Írd be a hosszt..</string>
-    <string name="toolbar_set_length">Hossz beállítás</string>
 </resources>

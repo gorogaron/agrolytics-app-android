@@ -10,9 +10,7 @@ import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.presenter.ApproveMeasurementPresenter
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_upload_finished.*
-import kotlinx.coroutines.*
 import org.jetbrains.anko.doAsync
 
 

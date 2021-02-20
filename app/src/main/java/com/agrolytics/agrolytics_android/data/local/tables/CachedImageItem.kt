@@ -1,12 +1,14 @@
 package com.agrolytics.agrolytics_android.data.local.tables
 
+import android.media.Image
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.google.firebase.firestore.GeoPoint
 
 @Entity(tableName = "cached_images")
-data class CachedImageItem(
+data class CachedImageItem (
     @PrimaryKey(autoGenerate = true) var id: Long,
     @ColumnInfo(name = "session_id") var sessionId: String,
     @ColumnInfo(name = "forestry_id") var forestryId: String,
@@ -24,4 +26,9 @@ data class CachedImageItem(
     @ColumnInfo(name = "timestamp") var timestamp: Long,
     @ColumnInfo(name = "firestore_id") var firestoreId: String,
     @ColumnInfo(name = "local_path") var localPath: String
-)
+) : ImageItemBase {
+
+    override fun getItemType(): ConfigInfo.IMAGE_ITEM_TYPE {
+        return ConfigInfo.IMAGE_ITEM_TYPE.CACHED
+    }
+}

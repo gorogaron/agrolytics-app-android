@@ -104,7 +104,7 @@ class Util {
 
             builder.setCancelable(false)
             val dialog = builder.create()
-            dialog.window!!.setBackgroundDrawableResource(R.drawable.bg_dialog)
+            dialog.window!!.setBackgroundDrawableResource(R.drawable.bg_white_round)
             dialog.window.setDimAmount(0.0f)
             dialog.show()
         }

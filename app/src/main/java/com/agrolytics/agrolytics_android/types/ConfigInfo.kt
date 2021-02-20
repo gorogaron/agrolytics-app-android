@@ -26,4 +26,11 @@ object ConfigInfo {
 		ERROR,
 		UNDEFINED
 	}
+
+	/**Local database item types*/
+	enum class IMAGE_ITEM_TYPE {
+		CACHED,
+		PROCESSED,
+		UNPROCESSED
+	}
 }

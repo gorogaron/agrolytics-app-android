@@ -6,7 +6,7 @@
     android:paddingLeft="24dp"
     android:paddingRight="24dp"
     android:paddingTop="8dp"
-    android:background="@drawable/bg_dialog">
+    android:background="@drawable/bg_white_round">
 
     <TextView
         android:id="@+id/rod_size_text"

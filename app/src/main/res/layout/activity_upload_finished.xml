@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/image"
             android:layout_margin="24dp"
-            android:background="@drawable/bg_dialog"
+            android:background="@drawable/bg_white_round"
             android:elevation="2dp">
 
             <TextView
