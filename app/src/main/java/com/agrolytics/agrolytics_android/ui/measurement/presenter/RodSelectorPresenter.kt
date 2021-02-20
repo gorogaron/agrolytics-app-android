@@ -3,12 +3,13 @@ package com.agrolytics.agrolytics_android.ui.measurement.presenter
 import android.content.Context
 import android.graphics.Bitmap
 import com.agrolytics.agrolytics_android.ui.base.BasePresenter
-import com.agrolytics.agrolytics_android.data.database.tables.UnprocessedImageItem
+import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.activity.RodSelectorActivity
 import com.agrolytics.agrolytics_android.utils.ImageUtils
 import com.agrolytics.agrolytics_android.utils.MeasurementUtils
 import com.agrolytics.agrolytics_android.utils.Util
+import com.google.firebase.firestore.GeoPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -29,8 +30,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
             image = bitmap,
             woodType = sessionManager?.woodType!!,
             woodLength = sessionManager?.woodLength!!.toDouble(),
-            lat = Util.lat!!,
-            lon = Util.long!!,
+            location = GeoPoint(Util.lat!!, Util.long!!),
             rodLength = rodLength,
             rodLengthPixel = rodLengthPixels,
             timestamp = sessionManager?.measurementStartTimestamp!!

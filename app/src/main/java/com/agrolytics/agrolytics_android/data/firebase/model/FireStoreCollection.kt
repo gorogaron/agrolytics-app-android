@@ -1,4 +1,4 @@
-package com.agrolytics.agrolytics_android.data.firestore
+package com.agrolytics.agrolytics_android.data.firebase.model
 
 enum class FireStoreCollection(var tag: String) {
     USER("user"),

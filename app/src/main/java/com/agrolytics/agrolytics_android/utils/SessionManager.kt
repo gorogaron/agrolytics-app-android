@@ -8,7 +8,7 @@ class SessionManager(var context: Context) {
 	private val SESSION_ID = "session.id"
 	private val USER_ID = "user.id"
 	private val USER_LEADER_ID = "user.leader_id"
-	private val USER_EXPIRE_DATE = "user.expire_date"
+	private val LICENCE_EXPIRATION_DATE = "user.expire_date"
 	private val USER_ROLE = "user.role"
 	private val USER_EMAIL = "user.email"
 	private val USER_FORESTRY_ID = "forestry.id"
@@ -35,9 +35,9 @@ class SessionManager(var context: Context) {
 		get() = sharedPreferences.getString(USER_EMAIL, "")!!
 		set(userEmail) = sharedPreferences.edit().putString(USER_EMAIL, userEmail).apply()
 
-	var userExpireDate: Long
-		get() = sharedPreferences.getLong(USER_EXPIRE_DATE, 1600000000)
-		set(expireDate) = sharedPreferences.edit().putLong(USER_EXPIRE_DATE, expireDate).apply()
+	var licenceExpirationDate: Long
+		get() = sharedPreferences.getLong(LICENCE_EXPIRATION_DATE, 1600000000)
+		set(expireDate) = sharedPreferences.edit().putLong(LICENCE_EXPIRATION_DATE, expireDate).apply()
 
 	var userRole: String
 		get() = sharedPreferences.getString(USER_ROLE, "")!!
@@ -60,7 +60,7 @@ class SessionManager(var context: Context) {
 		set(length) = sharedPreferences.edit().putFloat(WOOD_LENGTH, length).apply()
 
 	var woodType: String
-		get() = sharedPreferences.getString(WOOD_TYPE, "")!!
+		get() = sharedPreferences.getString(WOOD_TYPE, "Bükk")!!
 		set(type) = sharedPreferences.edit().putString(WOOD_TYPE, type).apply()
 
 	var rodLength: Float
@@ -78,7 +78,7 @@ class SessionManager(var context: Context) {
 			.remove(WOOD_TYPE)
 			.remove(USER_ROLE)
 			.remove(USER_ID)
-			.remove(USER_EXPIRE_DATE)
+			.remove(LICENCE_EXPIRATION_DATE)
 			.remove(USER_LEADER_ID)
 			.remove(USER_EMAIL)
 			.remove(USER_FORESTRY_ID)

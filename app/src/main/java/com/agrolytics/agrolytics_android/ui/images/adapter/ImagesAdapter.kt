@@ -6,8 +6,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.data.database.tables.CachedImageItem
-import com.agrolytics.agrolytics_android.utils.ImageUtils
+import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.utils.extensions.animateSlide
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.item_images.view.*
@@ -78,7 +77,7 @@ class ImagesAdapter(private val listener: OnImageListener,
 					if (it.startsWith("https",true)) {
 						Glide.with(context).load(it).into(itemView.iv_image)
 					} else {
-						Glide.with(context).load(ImageUtils.getImageFromBase64(item.imageUrl)).into(itemView.iv_image)
+						//Glide.with(context).load(ImageUtils.getImageFromBase64(item.imageUrl)).into(itemView.iv_image)
 					}
 				}
 			} ?: run {

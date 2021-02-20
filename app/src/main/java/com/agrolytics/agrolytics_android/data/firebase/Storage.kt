@@ -1,8 +1,8 @@
-package com.agrolytics.agrolytics_android.data.firestore
+package com.agrolytics.agrolytics_android.data.firebase
 
 import android.net.Uri
+import com.agrolytics.agrolytics_android.data.firebase.model.FireBaseStorageItem
 import com.agrolytics.agrolytics_android.utils.ImageUtils
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
 import com.google.firebase.storage.StorageReference
@@ -12,29 +12,13 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
+class Storage {
+    private val url: String = "gs://agrolytics-2d8ea.appspot.com"
 
-class FireBaseDataClient {
-
-    private val url: String = "gs://webhost-7bf8f.appspot.com"
-
-    var firestore: FirebaseFirestore? = null
     var storage: FirebaseStorage? = null
 
     init {
-        firestore = FirebaseFirestore.getInstance()
         storage = FirebaseStorage.getInstance(url)
-    }
-
-    suspend fun uploadToFireStore(
-        fireStoreImageItem: FireStoreImageItem
-    ) : String = suspendCoroutine { cont ->
-        firestore?.collection(FireStoreCollection.IMAGES.tag)?.add(fireStoreImageItem.toHashMap())
-            ?.addOnSuccessListener {
-                cont.resume(it.id)
-            }
-            ?.addOnFailureListener{
-                cont.resumeWithException(it)
-            }
     }
 
     suspend fun uploadToFireBaseStorage(
@@ -73,17 +57,10 @@ class FireBaseDataClient {
         throw Exception()
     }
 
-    fun downloadFromFireStore() : FireStoreImageItem {
-        throw NotImplementedError()
-    }
-    fun downloadFromFireBaseStorage() : FireBaseStorageItem {
-        throw NotImplementedError()
-    }
-
     private suspend fun uploadImageToStorage(
         reference: StorageReference,
         bytes: ByteArray)
-    : Uri = suspendCoroutine { cont ->
+            : Uri = suspendCoroutine { cont ->
         reference.putBytes(bytes)
             .addOnSuccessListener { task ->
                 val metadata = StorageMetadata.Builder()
@@ -104,5 +81,4 @@ class FireBaseDataClient {
                 cont.resumeWithException(it)
             }
     }
-
 }

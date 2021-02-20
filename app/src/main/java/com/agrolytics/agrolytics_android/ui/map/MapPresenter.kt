@@ -1,11 +1,12 @@
 package com.agrolytics.agrolytics_android.ui.map
 
-import com.agrolytics.agrolytics_android.data.firestore.FireStoreCollection
-import com.agrolytics.agrolytics_android.data.firestore.FireStoreImagesField
+import com.agrolytics.agrolytics_android.data.firebase.model.FireStoreCollection
+import com.agrolytics.agrolytics_android.data.firebase.model.FireStoreImagesField
 import com.agrolytics.agrolytics_android.ui.base.BasePresenter
-import com.agrolytics.agrolytics_android.data.database.tables.CachedImageItem
+import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.types.UserRole
 import com.agrolytics.agrolytics_android.utils.MeasurementUtils
+import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -25,7 +26,7 @@ class MapPresenter: BasePresenter<MapScreen>() {
 
 	private fun subscribeAdminImages() {
 		screen?.showLoading()
-		dataClient?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
+		dataClient?.fireBase?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
 			?.whereEqualTo(FireStoreImagesField.FORESTRY_ID.tag, sessionManager?.forestryId)
 			?.addSnapshotListener { value, e ->
 				if (e != null) {
@@ -36,9 +37,7 @@ class MapPresenter: BasePresenter<MapScreen>() {
 				if (fireBaseList.isEmpty()) {
 					for (document in value!!) {
 						val imageItem = createImageItem(document)
-						if (imageItem.lat != null && imageItem.lon != null) {
-							addItemToList(imageItem)
-						}
+						addItemToList(imageItem)
 					}
 				} else {
 					for (document in value!!.documentChanges) {
@@ -54,7 +53,7 @@ class MapPresenter: BasePresenter<MapScreen>() {
 	private fun subscribeLeaderImages() {
 		screen?.showLoading()
 		getLeaderImages()
-		dataClient?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
+		dataClient?.fireBase?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
 			?.whereEqualTo(FireStoreImagesField.LEADER_ID.tag, sessionManager?.userId)
 			?.addSnapshotListener { value, e ->
 				if (e != null) {
@@ -75,7 +74,7 @@ class MapPresenter: BasePresenter<MapScreen>() {
 
 	private fun subscribeWorkerImages() {
 		screen?.showLoading()
-		dataClient?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
+		dataClient?.fireBase?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
 			?.whereEqualTo(FireStoreImagesField.USER_ID.tag, sessionManager?.userId)
 			?.addSnapshotListener { value, e ->
 				if (e != null) {
@@ -104,14 +103,14 @@ class MapPresenter: BasePresenter<MapScreen>() {
 	}
 
 	private fun getLeaderImages() {
-		dataClient?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
+		dataClient?.fireBase?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
 			?.whereEqualTo(FireStoreImagesField.LEADER_ID.tag, sessionManager?.userId)
 			?.get()?.addOnSuccessListener { it ->
 				for (document in it) {
 					val imageItem = createImageItem(document)
 					addItemToList(imageItem)
 				}
-				dataClient?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
+				dataClient?.fireBase?.fireStore?.firestore?.collection(FireStoreCollection.IMAGES.tag)
 					?.whereEqualTo(FireStoreImagesField.USER_ID.tag, sessionManager?.userId)
 					?.get()?.addOnSuccessListener {
 						for (document in it) {
@@ -124,9 +123,7 @@ class MapPresenter: BasePresenter<MapScreen>() {
 	}
 
 	private fun addItemToList(imageItem: CachedImageItem) {
-		if (imageItem.lat != null && imageItem.lon != null) {
-			fireBaseList.add(imageItem)
-		}
+		fireBaseList.add(imageItem)
 	}
 
 	private fun createImageItem(document: QueryDocumentSnapshot): CachedImageItem {
@@ -143,8 +140,7 @@ class MapPresenter: BasePresenter<MapScreen>() {
 		return CachedImageItem(
 			id = 0,
 			sessionId = MeasurementUtils.generateSessionId(),
-			lat = document[FireStoreImagesField.LOC_LAT.tag] as Double,
-			lon = document[FireStoreImagesField.LOC_LON.tag] as Double,
+			location = document[FireStoreImagesField.LOCATION.tag] as GeoPoint,
 			woodLength = length as Double,
 			woodVolume = document[FireStoreImagesField.WOOD_VOLUME.tag] as Double,
 			timestamp = document[FireStoreImagesField.TIME.tag] as Long,
@@ -163,7 +159,7 @@ class MapPresenter: BasePresenter<MapScreen>() {
 
 	fun getAllLocalImage() {
 		doAsync {
-			dataClient?.local?.getAllImages().let { images ->
+			dataClient?.local?.cache?.getAllImages().let { images ->
 				uiThread {
 					images?.let { it1 -> fireBaseList.addAll(it1) }
 					screen?.loadImages(ArrayList(images), false)

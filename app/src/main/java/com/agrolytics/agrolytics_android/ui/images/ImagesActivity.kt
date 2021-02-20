@@ -1,6 +1,5 @@
 package com.agrolytics.agrolytics_android.ui.images
 
-import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
@@ -10,13 +9,11 @@ import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.networking.AppServer
-import com.agrolytics.agrolytics_android.data.database.tables.CachedImageItem
-import com.agrolytics.agrolytics_android.ui.measurement.activity.ApproveMeasurementActivity
+import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.ui.images.adapter.ImagesAdapter
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
 import com.agrolytics.agrolytics_android.ui.map.MapActivity
-import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.types.MenuItem
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.agrolytics.agrolytics_android.utils.extensions.animateSlide
@@ -162,38 +159,6 @@ class ImagesActivity: BaseActivity(), ImagesScreen, ImagesAdapter.OnImageListene
 			}
 		}
 		drawer_layout.closeDrawers()
-	}
-
-	override fun sendResultsToFragment(responseList: ArrayList<Pair<MeasurementResult, Pair<String, String>>>?) {
-		val intent = Intent(this, ApproveMeasurementActivity::class.java)
-		val responses = arrayListOf<MeasurementResult>()
-		val pathList = arrayListOf<String>()
-		val idList = arrayListOf<String>()
-		responseList?.let {
-			if (it.isNotEmpty()) {
-				for (pair in responseList) {
-					if (pair.first.getMaskedInput() != null && pair.first.getVolume() != null) {
-						responses.add(pair.first)
-						pathList.add(pair.second.first)
-						idList.add(pair.second.second)
-					}
-				}
-				if (pathList.isNotEmpty() && idList.isNotEmpty() && responseList.isNotEmpty()) {
-					ApproveMeasurementActivity.responseList = responses
-					intent.putStringArrayListExtra(ConfigInfo.CROPPED_RESIZED_IMG_PATH, pathList)
-					intent.putStringArrayListExtra(ConfigInfo.ID, idList)
-					intent.putExtra(ConfigInfo.METHOD, "online")
-					startActivity(intent)
-					finish()
-				} else {
-					showToast("A szerver nem tudta feldolgozni a kérést, kérlek készíts másik képek.")
-				}
-			} else {
-				showToast("A szerver nem tudta feldolgozni a kérést, kérlek készíts másik képek.")
-			}
-		} ?: run {
-			showToast("A szerver nem tudta feldolgozni a kérést, kérlek készíts másik képek.")
-		}
 	}
 
 	override fun onBackPressed() {

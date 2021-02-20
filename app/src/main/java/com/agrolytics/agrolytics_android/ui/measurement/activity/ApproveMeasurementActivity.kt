@@ -1,15 +1,19 @@
 package com.agrolytics.agrolytics_android.ui.measurement.activity
 
 import android.os.Bundle
+import android.view.View
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import org.koin.android.ext.android.inject
 import com.agrolytics.agrolytics_android.data.DataClient
-import com.agrolytics.agrolytics_android.data.database.tables.ProcessedImageItem
+import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
+import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.presenter.ApproveMeasurementPresenter
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_upload_finished.*
 import kotlinx.coroutines.*
+import org.jetbrains.anko.doAsync
 
 
 class ApproveMeasurementActivity : BaseActivity() {
@@ -27,10 +31,11 @@ class ApproveMeasurementActivity : BaseActivity() {
 
 		btn_decline.setOnClickListener{ onDeclineClicked() }
 		btn_accept.setOnClickListener{ onAcceptClicked() }
+		btn_new.setOnClickListener { newImage() }
 		image.setImageBitmap(processedImageItem.image)
 	}
 
-	fun onDeclineClicked() {
+	private fun onDeclineClicked() {
 		when (method){
 			"online" -> {
 				//TODO: Új mérés vagy session áttekintése?
@@ -39,26 +44,20 @@ class ApproveMeasurementActivity : BaseActivity() {
 				//TODO: Szeretnéd később online megpróbálni?
 			}
 		}
-
-		/*if (fragmentList.size == 1) {
-			//Return to main activity
-			val intent = Intent(this, MainActivity::class.java)
-			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(intent);
-		} else {
-			fragment.updateDeclineView()
-			presenter.deleteImageFromLocalDatabase(id)
-		}*/
 	}
 
-	fun onAcceptClicked() {
-		showLoading()
-		GlobalScope.launch {
-			withContext(Dispatchers.IO) {
-				presenter.uploadMeasurementToFirebase(processedImageItem, method)
-				hideLoading()
-			}
+	private fun onAcceptClicked() {
+		container_selection.animate().alpha(0f).duration = 300
+		container_after_selection.visibility = View.VISIBLE
+		tv_result.text = processedImageItem.woodVolume.toString()
+		doAsync {
+			dataClient.local.processed.addProcessedImageItem(processedImageItem)
 		}
+	}
+
+	private fun newImage() {
+		finish()
+		MeasurementManager.hookImage(this, MeasurementManager.sessionImagePickerID)
 	}
 
 	companion object Result {

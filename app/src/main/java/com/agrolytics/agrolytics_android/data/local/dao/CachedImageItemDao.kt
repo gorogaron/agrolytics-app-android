@@ -1,10 +1,10 @@
-package com.agrolytics.agrolytics_android.data.database.dao
+package com.agrolytics.agrolytics_android.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.agrolytics.agrolytics_android.data.database.tables.CachedImageItem
+import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
 
 @Dao
 interface CachedImageItemDao {

@@ -2,26 +2,26 @@ package com.agrolytics.agrolytics_android.ui.login
 
 import android.content.Context
 import android.util.Log
-import com.agrolytics.agrolytics_android.data.firestore.FireStoreCollection
-import com.agrolytics.agrolytics_android.data.firestore.FireStoreForestryField
-import com.agrolytics.agrolytics_android.data.firestore.FireStoreUserField
+import com.agrolytics.agrolytics_android.data.firebase.model.FireStoreCollection
+import com.agrolytics.agrolytics_android.data.firebase.model.FireStoreForestryField
+import com.agrolytics.agrolytics_android.data.firebase.model.FireStoreUserField
 import com.agrolytics.agrolytics_android.ui.base.BasePresenter
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.Util
-import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import org.jetbrains.anko.doAsync
-import java.time.LocalDate
-import java.time.Period
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 
 class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
 
     private lateinit var userDocument : DocumentSnapshot
+    private lateinit var forestryDocument : DocumentSnapshot
 
     companion object {
         private const val TAG = "LoginPresenter"
@@ -34,7 +34,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
                 signInResultCode = signInFirebaseUser(email, password)
                 when (signInResultCode) {
                     ConfigInfo.LOGIN.AUTH_FAILED -> return signInResultCode
-                    ConfigInfo.LOGIN.SUCCESS -> signInResultCode = hasLoggedInUserExpired()
+                    ConfigInfo.LOGIN.SUCCESS -> signInResultCode = checkLicence()
                 }
                 when (signInResultCode) {
                     ConfigInfo.LOGIN.USER_EXPIRED -> return signInResultCode
@@ -52,10 +52,10 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
         return signInResultCode
     }
 
-    suspend fun hasLoggedInUserExpired(): ConfigInfo.LOGIN {
-        userDocument = getUserDocument(auth?.currentUser)
-        val firstLogin = getFirstLogin()
-        return if (checkUserExpired(firstLogin)) {
+    suspend fun checkLicence(): ConfigInfo.LOGIN {
+        userDocument = dataClient!!.fireBase.fireStore.getUserDocumentById(auth?.currentUser?.uid!!)
+        forestryDocument = dataClient!!.fireBase.fireStore.getForestryDocumentById(userDocument[FireStoreUserField.FORESTRY_ID.tag] as String)
+        return if (hasLicenceExpired()) {
             auth?.signOut()
             ConfigInfo.LOGIN.USER_EXPIRED
         } else {
@@ -76,22 +76,21 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
 
     suspend fun saveCurrentUser() {
         // TODO: felhasználók egybezárása
-        val roleDocumentSnapshot = getRoleDocument(userDocument[FireStoreUserField.ROLE.tag] as DocumentReference)
-        sessionManager?.userRole = (roleDocumentSnapshot[FireStoreUserField.ROLE.tag] as String?)!!
-        sessionManager?.userId = userDocument.id
-        sessionManager?.userEmail = (userDocument[FireStoreUserField.EMAIL.tag] as String?)!!
-        sessionManager?.forestryId = (userDocument[FireStoreUserField.FORESTRY_ID.tag] as String?)!!
-        sessionManager?.userExpireDate = (userDocument[FireStoreUserField.FIRST_LOGIN.tag] as Long?)!!
+        val roleDocumentSnapshot = dataClient!!.fireBase.fireStore.getRoleDocumentByRef(userDocument[FireStoreUserField.ROLE.tag] as DocumentReference)
 
-        dataClient?.fireStore?.firestore?.collection(FireStoreCollection.FORESTRY.tag)?.document(sessionManager?.forestryId!!)
-            ?.get()
-            ?.addOnSuccessListener {
-                sessionManager?.forestryName = it[FireStoreForestryField.NAME.tag] as String
-            }
-        //Admins don't have leaderID
+        /**Save user data*/
+        sessionManager?.userRole = roleDocumentSnapshot[FireStoreUserField.ROLE.tag] as String
+        sessionManager?.userId = userDocument.id
+        sessionManager?.userEmail = userDocument[FireStoreUserField.EMAIL.tag] as String
         if ((userDocument[FireStoreUserField.LEADER_ID.tag] as String?) != null){
+            //Admins don't have leaderID
             sessionManager?.leaderId = userDocument[FireStoreUserField.LEADER_ID.tag] as String
         }
+
+        /**Save forestry data*/
+        sessionManager?.licenceExpirationDate = (forestryDocument[FireStoreForestryField.EXPIRATION.tag] as Timestamp).seconds
+        sessionManager?.forestryName = forestryDocument[FireStoreForestryField.NAME.tag] as String
+        sessionManager?.forestryId = userDocument[FireStoreUserField.FORESTRY_ID.tag] as String
 
         //Update user token. TODO: Move token to shared preferences
         updateUserToken()
@@ -109,33 +108,13 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
             }
     }
 
-    private fun checkUserExpired(firstLogin: String) : Boolean {
-        val firstLoginDate = LocalDate.parse(firstLogin)
-        val period = Period.between(firstLoginDate, LocalDate.now())
+    private fun hasLicenceExpired() : Boolean {
+        val expirationDate = forestryDocument[FireStoreForestryField.EXPIRATION.tag] as Timestamp
+        val currentTime = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
 
-        return period.months >= 1
+        return expirationDate.seconds < currentTime
     }
 
-    private suspend fun getUserDocument(user: FirebaseUser?) : DocumentSnapshot = suspendCoroutine { cont->
-        if (user != null){
-            val userDocumentReference = dataClient?.fireStore?.firestore?.collection(FireStoreCollection.USER.tag)?.document(user.uid)
-            userDocumentReference?.get()
-                ?.addOnSuccessListener { cont.resume(it) }
-                ?.addOnFailureListener { cont.resumeWithException(it) }
-        } else {
-            cont.resumeWithException(NullPointerException())
-        }
-    }
-
-    private suspend fun getRoleDocument(roleRef : DocumentReference) : DocumentSnapshot = suspendCoroutine { cont->
-        roleRef.get()
-            .addOnSuccessListener { cont.resume(it) }
-            .addOnFailureListener { cont.resumeWithException(it) }
-    }
-
-    private fun getFirstLogin() : String {
-        return userDocument[FireStoreUserField.FIRST_LOGIN.tag] as String
-    }
 
     private fun clearSession() {
         auth?.signOut()

@@ -3,14 +3,13 @@ package com.agrolytics.agrolytics_android.ui.measurement.activity
 import android.app.AlertDialog
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.icu.util.Measure
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
-import com.agrolytics.agrolytics_android.data.database.tables.UnprocessedImageItem
+import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.ui.measurement.presenter.RodSelectorPresenter
@@ -86,7 +85,7 @@ class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 
 	fun saveForLater(unprocessedImageItem: UnprocessedImageItem){
 		doAsync {
-			dataClient.local.addUnprocessedImageItem(unprocessedImageItem)
+			dataClient.local.unprocessed.addUnprocessedImageItem(unprocessedImageItem)
 		}
 	}
 

@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
-import com.agrolytics.agrolytics_android.data.database.tables.CachedImageItem
+import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
@@ -87,9 +87,7 @@ class MapActivity : BaseActivity(), MapScreen, View.OnClickListener {
 
         var latLng = LatLng()
         for (mMarker in images) {
-            if (mMarker.lat != null && mMarker.lon != null) {
-                latLng = LatLng(mMarker.lat!!, mMarker.lon!!)
-            }
+            latLng = LatLng(mMarker.location.latitude, mMarker.location.longitude)
             latLngBounds.include(latLng)
 
             val options = MarkerOptions()

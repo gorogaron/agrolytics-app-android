@@ -1,4 +1,6 @@
-package com.agrolytics.agrolytics_android.data.firestore
+package com.agrolytics.agrolytics_android.data.firebase.model
+
+import com.google.firebase.firestore.GeoPoint
 
 data class FireStoreImageItem(
     val forestryId: String,
@@ -12,8 +14,7 @@ data class FireStoreImageItem(
     val woodType: String? = null,
     val woodLength: Double,
     val woodVolume: Double,
-    val locLat: Double? = null,
-    val locLon: Double? = null,
+    val location: GeoPoint? = null,
     val timestamp: String
 ) {
     fun toHashMap() : HashMap<String, Any?> {
@@ -30,8 +31,7 @@ data class FireStoreImageItem(
             FireStoreImagesField.WOOD_TYPE.tag to this.woodType,
             FireStoreImagesField.WOOD_LENGTH.tag to this.woodLength,
             FireStoreImagesField.WOOD_VOLUME.tag to this.woodLength,
-            FireStoreImagesField.LOC_LAT.tag to this.locLat,
-            FireStoreImagesField.LOC_LON.tag to this.locLon
-        )
+            FireStoreImagesField.LOCATION.tag to this.location
+            )
     }
 }

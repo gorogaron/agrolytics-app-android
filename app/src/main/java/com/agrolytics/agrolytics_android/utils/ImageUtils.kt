@@ -13,9 +13,9 @@ import java.io.FileOutputStream
 object ImageUtils {
 
     // convert from bitmap to byte array
-    fun getBytes(bitmap: Bitmap): ByteArray? {
+    fun getBytes(bitmap: Bitmap): ByteArray {
         val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 1, stream)
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
         //return Base64.encodeToString(stream.toByteArray(), Base64.NO_WRAP)
         return stream.toByteArray()
     }

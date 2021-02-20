@@ -4,8 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import android.se.omapi.Session
-import com.agrolytics.agrolytics_android.data.database.tables.ProcessedImageItem
+import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
@@ -16,8 +15,6 @@ import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.measurement.activity.ApproveMeasurementActivity
 import com.agrolytics.agrolytics_android.utils.ImageUtils
 import com.agrolytics.agrolytics_android.utils.SessionManager
-import org.apache.commons.codec.digest.DigestUtils
-import org.jetbrains.anko.doAsync
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import retrofit2.Response
@@ -28,6 +25,7 @@ object MeasurementManager : KoinComponent{
 
     private val appServer: AppServer by inject()
     private val sessionManager : SessionManager by inject()
+    var sessionImagePickerID : ImagePickerID = ImagePickerID.ID_CAMERA
 
     enum class ImagePickerID {
         ID_CAMERA, ID_BROWSER

@@ -1,7 +1,7 @@
 package com.agrolytics.agrolytics_android.ui.images
 
 import android.content.Context
-import com.agrolytics.agrolytics_android.data.database.tables.CachedImageItem
+import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.ui.base.BasePresenter
 
 
