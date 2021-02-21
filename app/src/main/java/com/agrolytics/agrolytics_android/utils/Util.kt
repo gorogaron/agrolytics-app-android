@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlin.math.round
 
 
 class Util {
@@ -68,6 +69,12 @@ class Util {
             } catch (e: IOException) {
                 false
             }
+        }
+
+        fun Double.round(decimals: Int): Double {
+            var multiplier = 1.0
+            repeat(decimals) { multiplier *= 10 }
+            return round(this * multiplier) / multiplier
         }
 
         fun showParameterSettingsWindow(context: Context, sessionManager: SessionManager, blurFunction: ((Int) -> Unit)? = null) {

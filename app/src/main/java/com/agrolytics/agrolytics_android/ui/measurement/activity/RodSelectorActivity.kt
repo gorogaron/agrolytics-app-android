@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
@@ -18,6 +19,7 @@ import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import kotlinx.android.synthetic.main.activity_rod_selector.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
 
 class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
@@ -60,7 +62,11 @@ class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 		/**Set text for included layout elements (buttons)*/
 		view.findViewById<ConstraintLayout>(R.id.button_1).apply {
 			findViewById<TextView>(R.id.buttonText).text = "Kép mentése későbbi feldolgozásra"
-			setOnClickListener { saveForLater(unprocessedImageItem) }
+			setOnClickListener {
+				findViewById<TextView>(R.id.buttonText).setTextColor(ContextCompat.getColor(this@RodSelectorActivity, R.color.mediumGrey))
+				saveForLater(unprocessedImageItem)
+				it.isEnabled = false
+			}
 		}
 		view.findViewById<ConstraintLayout>(R.id.button_2).apply {
 			findViewById<TextView>(R.id.buttonText).text = "Új kép"
@@ -86,6 +92,7 @@ class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 	fun saveForLater(unprocessedImageItem: UnprocessedImageItem){
 		doAsync {
 			dataClient.local.unprocessed.addUnprocessedImageItem(unprocessedImageItem)
+			uiThread { showToast("A kép mentésre került.") }
 		}
 	}
 
@@ -96,7 +103,8 @@ class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 	}
 
 	fun showCurrentSession(){
-		showToast("showCurrentSession - to be implemented")
+		MeasurementManager.showSession(this, sessionManager.sessionId)
+		finish()
 	}
 
 	fun measureOffline(){

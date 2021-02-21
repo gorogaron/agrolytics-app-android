@@ -180,8 +180,8 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.cameraFab -> MeasurementManager.hookImage(this, MeasurementManager.ImagePickerID.ID_CAMERA)
-            R.id.browseFab -> MeasurementManager.hookImage(this, MeasurementManager.ImagePickerID.ID_BROWSER)
+            R.id.cameraFab -> MeasurementManager.startNewMeasurementSession(this, MeasurementManager.ImagePickerID.ID_CAMERA)
+            R.id.browseFab -> MeasurementManager.startNewMeasurementSession(this, MeasurementManager.ImagePickerID.ID_BROWSER)
 
             R.id.menu_frame -> drawer_layout.openDrawer(GravityCompat.START)
             R.id.rod_frame -> openActivity(MenuItem.ROD)
@@ -284,6 +284,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
     }
 
 
+    //TODO: Ez a fv. az ApproveMeasurementActivity-ben is ugyanígy van
     @KoinApiExtension
     public override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import android.se.omapi.Session
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
@@ -13,6 +14,7 @@ import com.agrolytics.agrolytics_android.ui.measurement.activity.RodSelectorActi
 import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.measurement.activity.ApproveMeasurementActivity
+import com.agrolytics.agrolytics_android.ui.measurement.activity.SessionActivity
 import com.agrolytics.agrolytics_android.utils.ImageUtils
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import org.koin.core.component.KoinComponent
@@ -31,10 +33,16 @@ object MeasurementManager : KoinComponent{
         ID_CAMERA, ID_BROWSER
     }
 
+    fun startNewMeasurementSession(callingActivity: Activity, imagePickerID: ImagePickerID) {
+        val currentTimeStamp = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
+        if (sessionManager.sessionId == "") sessionManager.sessionId = currentTimeStamp.toString()
+        sessionImagePickerID = imagePickerID
+        hookImage(callingActivity, imagePickerID)
+    }
+
     fun hookImage(callingActivity: Activity, imagePickerID : ImagePickerID){
         val currentTimeStamp = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
         sessionManager.measurementStartTimestamp = currentTimeStamp
-        if (sessionManager.sessionId == "") sessionManager.sessionId = currentTimeStamp.toString()
 
         ImageObtainer.setActivity(callingActivity)
         if (imagePickerID == ImagePickerID.ID_CAMERA){
@@ -64,6 +72,7 @@ object MeasurementManager : KoinComponent{
         ApproveMeasurementActivity.method = method
         ApproveMeasurementActivity.processedImageItem = processedImageItem
         val intent = Intent(callingActivity, ApproveMeasurementActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
         callingActivity.finish()
         callingActivity.startActivity(intent)
     }
@@ -77,6 +86,13 @@ object MeasurementManager : KoinComponent{
         val imageUploadRequest = ImageUploadRequest()
         bitmap?.let { imageUploadRequest.image = ImageUtils.bitmapToBase64(bitmap) }
         return imageUploadRequest
+    }
+
+    fun showSession(callingActivity : Activity, sessionId : String) {
+        SessionActivity.sessionId = sessionId
+        val intent = Intent(callingActivity, SessionActivity::class.java)
+        callingActivity.startActivity(intent)
+        //callingActivity.finish()
     }
 
 }

@@ -38,7 +38,7 @@ class TypeConverter {
         val bytes = ByteBuffer.wrap(byteArray)
         return GeoPoint(
             bytes.getDouble(0),
-            bytes.getDouble(1)
+            bytes.getDouble(8)
         )
     }
 }

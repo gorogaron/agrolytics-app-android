@@ -1,19 +1,21 @@
 package com.agrolytics.agrolytics_android.ui.measurement.presenter
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
-import com.agrolytics.agrolytics_android.ui.base.BasePresenter
 import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
+import com.agrolytics.agrolytics_android.ui.base.BasePresenter
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.activity.RodSelectorActivity
 import com.agrolytics.agrolytics_android.utils.ImageUtils
 import com.agrolytics.agrolytics_android.utils.MeasurementUtils
 import com.agrolytics.agrolytics_android.utils.Util
+import com.agrolytics.agrolytics_android.utils.Util.Companion.round
 import com.google.firebase.firestore.GeoPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.lang.Exception
+
 
 class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActivity>() {
 
@@ -24,6 +26,10 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
     }
 
     fun uploadImage(bitmap: Bitmap, rodLength: Double, rodLengthPixels: Double) {
+        if (Util.lat == null || Util.lat == null) {
+            Util.lat = 0.0
+            Util.long = 0.0
+        }
         val unprocessedImageItem = UnprocessedImageItem(
             id = sessionManager?.measurementStartTimestamp!!,
             sessionId = sessionManager?.sessionId!!,
@@ -32,7 +38,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
             woodLength = sessionManager?.woodLength!!.toDouble(),
             location = GeoPoint(Util.lat!!, Util.long!!),
             rodLength = rodLength,
-            rodLengthPixel = rodLengthPixels,
+            rodLengthPixel = rodLengthPixels.round(2),
             timestamp = sessionManager?.measurementStartTimestamp!!
         )
 
@@ -52,11 +58,12 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
                             unprocessedImageItem.rodLength,
                             unprocessedImageItem.rodLengthPixel,
                             unprocessedImageItem.woodLength
-                        )
+                        ).round(2)
 
                         val processedImageItem = unprocessedImageItem.toProcessedImageItem(maskedImg, volume)
                         activity.hideLoading()
                         MeasurementManager.startApproveMeasurementActivity(activity, processedImageItem, "online")
+
                     } else {
                         activity.hideLoading()
                         activity.showOnlineMeasurementErrorDialog(unprocessedImageItem)

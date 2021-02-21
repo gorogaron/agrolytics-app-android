@@ -6,8 +6,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.local.tables.ImageItemBase
+import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
+import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo
+import com.google.firebase.Timestamp
 import kotlinx.android.synthetic.main.recycler_view_measurement_item.view.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 class SessionRecyclerViewAdapter(var itemList : ArrayList<ImageItemBase>) : RecyclerView.Adapter<SessionRecyclerViewAdapter.SessionViewHolder>() {
 
@@ -18,21 +23,27 @@ class SessionRecyclerViewAdapter(var itemList : ArrayList<ImageItemBase>) : Recy
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_images, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_measurement_item, parent, false)
         return SessionViewHolder(view)
     }
 
     override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        return itemList.size
     }
 
     override fun onBindViewHolder(holder: SessionViewHolder, position: Int) {
         val imageItem = itemList[position]
         if (imageItem.getItemType() == ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED) {
-            // TODO: Bind processed image item
+            val processedImageItem = imageItem as ProcessedImageItem
+            holder.imageView.setImageBitmap(processedImageItem.image)
+            holder.volumeTextView.text = processedImageItem.woodVolume.toString()
+            holder.dateTextView.text = Date(processedImageItem.timestamp).toString()
         }
         else if (imageItem.getItemType() == ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED) {
-            // TODO: Bind unprocessed image item
+            val unprocessedImageItem = imageItem as UnprocessedImageItem
+            holder.imageView.setImageBitmap(unprocessedImageItem.image)
+            holder.volumeTextView.text = ""
+            holder.dateTextView.text = Date(unprocessedImageItem.timestamp).toString()
         }
     }
 }
