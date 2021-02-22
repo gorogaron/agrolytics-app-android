@@ -16,7 +16,9 @@ import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.ui.measurement.presenter.RodSelectorPresenter
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
+import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageSegmentation
 import com.agrolytics.agrolytics_android.utils.SessionManager
+import com.google.android.gms.common.util.IOUtils
 import kotlinx.android.synthetic.main.activity_rod_selector.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -57,7 +59,10 @@ class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 	fun showOnlineMeasurementErrorDialog(unprocessedImageItem: UnprocessedImageItem){
 		val builder = AlertDialog.Builder(this)
 		builder.setTitle("Hiba")
+		//builder.setCancelable(true)
 		val view = LayoutInflater.from(this).inflate(R.layout.online_measurement_error_dialog, null, false)
+		builder.setView(view)
+		val dialog = builder.create()
 
 		/**Set text for included layout elements (buttons)*/
 		view.findViewById<ConstraintLayout>(R.id.button_1).apply {
@@ -70,44 +75,49 @@ class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 		}
 		view.findViewById<ConstraintLayout>(R.id.button_2).apply {
 			findViewById<TextView>(R.id.buttonText).text = "Új kép"
-			setOnClickListener { newImage() }
+			setOnClickListener {
+				newImage()
+				dialog.dismiss()
+			}
 		}
 		view.findViewById<ConstraintLayout>(R.id.button_3).apply {
 			findViewById<TextView>(R.id.buttonText).text = "Munkamenet áttekintése"
-			setOnClickListener { showCurrentSession() }
+			setOnClickListener {
+				showCurrentSession()
+				dialog.dismiss()
+			}
 		}
 		view.findViewById<ConstraintLayout>(R.id.button_4).apply {
 			findViewById<TextView>(R.id.buttonText).text = "Offline mérés"
-			setOnClickListener { measureOffline() }
+			setOnClickListener {
+				measureOffline(unprocessedImageItem)
+				dialog.dismiss()
+			}
 		}
 
-		builder.setView(view)
-		builder.setCancelable(false)
-
-		val dialog = builder.create()
 		dialog.window!!.setBackgroundDrawableResource(R.drawable.bg_white_round)
 		dialog.show()
 	}
 
-	fun saveForLater(unprocessedImageItem: UnprocessedImageItem){
+	private fun saveForLater(unprocessedImageItem: UnprocessedImageItem){
 		doAsync {
 			dataClient.local.unprocessed.addUnprocessedImageItem(unprocessedImageItem)
 			uiThread { showToast("A kép mentésre került.") }
 		}
 	}
 
-	fun newImage(){
-		val imagePickerID = MeasurementManager.ImagePickerID.ID_CAMERA
+	private fun newImage(){
 		finish()
-		MeasurementManager.hookImage(this, imagePickerID)
+		MeasurementManager.hookImage(this, MeasurementManager.sessionImagePickerID)
 	}
 
-	fun showCurrentSession(){
+	private fun showCurrentSession(){
 		MeasurementManager.showSession(this, sessionManager.sessionId)
 		finish()
 	}
 
-	fun measureOffline(){
+	private fun measureOffline(unprocessedImageItem: UnprocessedImageItem){
+		MeasurementManager.startOfflineMeasurement(unprocessedImageItem.image)
 		showToast("measureOffline - to be implemented")
 	}
 

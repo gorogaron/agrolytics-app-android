@@ -3,11 +3,18 @@ package com.agrolytics.agrolytics_android.ui.measurement.utils
 import ai.onnxruntime.OnnxTensor
 import ai.onnxruntime.OrtEnvironment
 import ai.onnxruntime.OrtSession
+import android.content.res.AssetFileDescriptor
+import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.Color
 
-class ImageSegmentation {
-    private val modelPath = "C:\\Users\\kenderak\\Projects\\Agrolytics\\agrolytics-app-android\\app\\src\\main\\assets\\deeplab.onnx"
+object ImageSegmentation {
+
+    lateinit var assetManager: AssetManager
+
+    fun init(iAssetManager : AssetManager) {
+        assetManager = iAssetManager
+    }
 
     fun segment(
         inputImage: Bitmap
@@ -25,7 +32,8 @@ class ImageSegmentation {
         OrtEnvironment.getEnvironment().use { env ->
             OrtSession.SessionOptions().use { opts ->
                 opts.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.BASIC_OPT)
-                env.createSession(modelPath, opts).use { session ->
+                val modelInputStream = assetManager.open("deeplab.onnx")
+                env.createSession(modelInputStream.readBytes(), opts).use { session ->
                     val inputName = session.inputNames.iterator().next()
                     OnnxTensor.createTensor(env, floatMatrix).use { imageTensor ->
                         val imageTensorMap = HashMap<String, OnnxTensor>()

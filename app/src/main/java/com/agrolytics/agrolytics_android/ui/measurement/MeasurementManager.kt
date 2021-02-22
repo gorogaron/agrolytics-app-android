@@ -15,6 +15,7 @@ import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.measurement.activity.ApproveMeasurementActivity
 import com.agrolytics.agrolytics_android.ui.measurement.activity.SessionActivity
+import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageSegmentation
 import com.agrolytics.agrolytics_android.utils.ImageUtils
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import org.koin.core.component.KoinComponent
@@ -80,6 +81,10 @@ object MeasurementManager : KoinComponent{
     suspend fun startOnlineMeasurement(bitmap: Bitmap) : Response<ImageUploadResponse>{
         val request = createImageUploadRequest(bitmap)
         return appServer.uploadImage(request)
+    }
+
+    fun startOfflineMeasurement(bitmap : Bitmap) : Pair<Bitmap, Int> {
+        return ImageSegmentation.segment(bitmap)
     }
 
     private fun createImageUploadRequest(bitmap: Bitmap?): ImageUploadRequest {
