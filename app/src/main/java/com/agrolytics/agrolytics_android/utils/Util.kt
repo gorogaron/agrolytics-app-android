@@ -13,9 +13,14 @@ import com.agrolytics.agrolytics_android.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import okhttp3.internal.UTC
 import java.io.IOException
 import java.net.*
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -33,12 +38,10 @@ class Util {
             inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
         }
 
-        fun getCurrentDateString(): String {
-            val c = Calendar.getInstance().time
-
-            val df = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val formattedDate = df.format(c)
-            return formattedDate
+        fun getFormattedDateTime(epochSeconds : Long) : String {
+            val localDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(epochSeconds), ZoneId.of("UTC+1"))
+            val localDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            return localDateTimeFormatter.format(localDateTime)
         }
 
         fun isNetworkAvailable(): Boolean {

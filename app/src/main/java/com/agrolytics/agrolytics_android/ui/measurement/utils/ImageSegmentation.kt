@@ -1,12 +1,13 @@
 package com.agrolytics.agrolytics_android.ui.measurement.utils
 
-import ai.onnxruntime.OnnxTensor
-import ai.onnxruntime.OrtEnvironment
-import ai.onnxruntime.OrtSession
 import android.content.res.AssetFileDescriptor
 import android.content.res.AssetManager
 import android.graphics.Bitmap
 import android.graphics.Color
+import org.tensorflow.lite.Interpreter
+import java.io.FileInputStream
+import java.nio.MappedByteBuffer
+import java.nio.channels.FileChannel
 
 object ImageSegmentation {
 
@@ -25,26 +26,25 @@ object ImageSegmentation {
         return postProcessData(inputImage, modelOutput)
     }
 
+    private fun loadModelFile(filename: String): MappedByteBuffer {
+        val fileDescriptor: AssetFileDescriptor = assetManager.openFd(filename)
+        val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
+        val fileChannel = inputStream.channel
+        val startOffset: Long = fileDescriptor.startOffset
+        val declaredLength: Long = fileDescriptor.declaredLength
+        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
+    }
+
     private fun predict(
         floatMatrix: Array<Array<Array<FloatArray>>>
     ) : Array<Array<Array<FloatArray>>> {
+        
+        val model = Interpreter(loadModelFile("deeplabv3_640_480.tflite"))
+        val output = Array(1) { Array(480) { Array(640) { FloatArray(2) } } }
 
-        OrtEnvironment.getEnvironment().use { env ->
-            OrtSession.SessionOptions().use { opts ->
-                opts.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.BASIC_OPT)
-                val modelInputStream = assetManager.open("deeplab.onnx")
-                env.createSession(modelInputStream.readBytes(), opts).use { session ->
-                    val inputName = session.inputNames.iterator().next()
-                    OnnxTensor.createTensor(env, floatMatrix).use { imageTensor ->
-                        val imageTensorMap = HashMap<String, OnnxTensor>()
-                        imageTensorMap[inputName] = imageTensor
-                        session.run(imageTensorMap).use { output ->
-                            return output.get(0).value as Array<Array<Array<FloatArray>>>
-                        }
-                    }
-                }
-            }
-        }
+        model.run(floatMatrix, output)
+
+        return output
     }
 
     private fun preProcessData(bitmap: Bitmap) : Array<Array<Array<FloatArray>>> {

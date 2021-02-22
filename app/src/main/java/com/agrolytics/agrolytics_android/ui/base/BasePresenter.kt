@@ -4,19 +4,14 @@ import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.networking.AppServer
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.google.firebase.auth.FirebaseAuth
-import io.reactivex.disposables.CompositeDisposable
 
 abstract class BasePresenter<T> {
 
-    // TODO: clear subscriptions when needed
-    var subscriptions: CompositeDisposable? = null
     var screen: T? = null
     var appServer: AppServer? = null
     var sessionManager: SessionManager? = null
     var auth: FirebaseAuth? = null
     var dataClient: DataClient? = null
-
-    init { subscriptions = CompositeDisposable() }
 
     fun addInjections(arrayList: ArrayList<Any>) {
         for (item in arrayList) {
@@ -34,7 +29,6 @@ abstract class BasePresenter<T> {
     }
 
     fun removeView() {
-        subscriptions?.clear()
         screen = null
     }
 }

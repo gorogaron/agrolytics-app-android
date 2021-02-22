@@ -9,6 +9,7 @@ import com.agrolytics.agrolytics_android.data.local.tables.ImageItemBase
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo
+import com.agrolytics.agrolytics_android.utils.Util.Companion.getFormattedDateTime
 import com.google.firebase.Timestamp
 import kotlinx.android.synthetic.main.recycler_view_measurement_item.view.*
 import java.util.*
@@ -37,13 +38,13 @@ class SessionRecyclerViewAdapter(var itemList : ArrayList<ImageItemBase>) : Recy
             val processedImageItem = imageItem as ProcessedImageItem
             holder.imageView.setImageBitmap(processedImageItem.image)
             holder.volumeTextView.text = processedImageItem.woodVolume.toString()
-            holder.dateTextView.text = Date(processedImageItem.timestamp).toString()
+            holder.dateTextView.text = getFormattedDateTime(processedImageItem.timestamp)
         }
         else if (imageItem.getItemType() == ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED) {
             val unprocessedImageItem = imageItem as UnprocessedImageItem
             holder.imageView.setImageBitmap(unprocessedImageItem.image)
             holder.volumeTextView.text = ""
-            holder.dateTextView.text = Date(unprocessedImageItem.timestamp).toString()
+            holder.dateTextView.text = getFormattedDateTime(unprocessedImageItem.timestamp)
         }
     }
 }
