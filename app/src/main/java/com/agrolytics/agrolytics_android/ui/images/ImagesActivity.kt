@@ -1,6 +1,7 @@
 package com.agrolytics.agrolytics_android.ui.images
 
 import android.os.Bundle
+import androidx.lifecycle.ViewModelProvider
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.data.local.tables.BaseImageItem
@@ -15,7 +16,6 @@ class ImagesActivity: BaseActivity(), ImagesScreen {
 
 	private val TAG = "ImagesActivity"
 
-	private val presenter: ImagesPresenter by inject()
 	private val sessionManager: SessionManager by inject()
 	private val dataClient: DataClient by inject()
 	private val appServer: AppServer by inject()
@@ -27,9 +27,6 @@ class ImagesActivity: BaseActivity(), ImagesScreen {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_images)
 
-		presenter.addView(this)
-		presenter.addInjections(arrayListOf(sessionManager, appServer, dataClient))
-		presenter.setActivity(this)
-
+//		val viewModel = ViewModelProviders.of(this).get(ImagesViewModel::class.java)
 	}
 }
