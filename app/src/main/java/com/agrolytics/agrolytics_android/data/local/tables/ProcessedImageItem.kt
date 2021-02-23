@@ -6,7 +6,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.google.firebase.firestore.GeoPoint
-import java.io.Serializable
 
 @Entity(tableName = "processed_images")
 data class ProcessedImageItem(
@@ -18,7 +17,7 @@ data class ProcessedImageItem(
     @ColumnInfo(name = "location") var location : GeoPoint,
     @ColumnInfo(name = "wood_volume") var woodVolume: Double,
     @ColumnInfo(name = "timestamp") var timestamp: Long
-) : ImageItemBase {
+) : BaseImageItem {
 
     override fun getItemType(): ConfigInfo.IMAGE_ITEM_TYPE {
         return ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED

@@ -18,7 +18,7 @@ data class UnprocessedImageItem(
     @ColumnInfo(name = "rod_length") var rodLength: Double,
     @ColumnInfo(name = "rod_length_pixel") var rodLengthPixel: Double,
     @ColumnInfo(name = "timestamp") var timestamp: Long
-) : ImageItemBase
+) : BaseImageItem
 {
 
     fun toProcessedImageItem(maskedImage : Bitmap, volume : Double) : ProcessedImageItem{

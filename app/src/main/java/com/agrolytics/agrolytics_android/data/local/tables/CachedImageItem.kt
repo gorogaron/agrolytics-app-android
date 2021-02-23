@@ -1,6 +1,5 @@
 package com.agrolytics.agrolytics_android.data.local.tables
 
-import android.media.Image
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -26,7 +25,7 @@ data class CachedImageItem (
     @ColumnInfo(name = "timestamp") var timestamp: Long,
     @ColumnInfo(name = "firestore_id") var firestoreId: String,
     @ColumnInfo(name = "local_path") var localPath: String
-) : ImageItemBase {
+) : BaseImageItem {
 
     override fun getItemType(): ConfigInfo.IMAGE_ITEM_TYPE {
         return ConfigInfo.IMAGE_ITEM_TYPE.CACHED

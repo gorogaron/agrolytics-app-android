@@ -5,17 +5,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.data.local.tables.ImageItemBase
+import com.agrolytics.agrolytics_android.data.local.tables.BaseImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.Util.Companion.getFormattedDateTime
-import com.google.firebase.Timestamp
 import kotlinx.android.synthetic.main.recycler_view_measurement_item.view.*
-import java.util.*
 import kotlin.collections.ArrayList
 
-class SessionRecyclerViewAdapter(var itemList : ArrayList<ImageItemBase>) : RecyclerView.Adapter<SessionRecyclerViewAdapter.SessionViewHolder>() {
+class SessionRecyclerViewAdapter(var itemList : ArrayList<BaseImageItem>) : RecyclerView.Adapter<SessionRecyclerViewAdapter.SessionViewHolder>() {
 
     inner class SessionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var imageView = itemView.image
