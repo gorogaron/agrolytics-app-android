@@ -18,9 +18,9 @@ class ImagesViewModel: ViewModel(), KoinComponent {
     private val dataClient: DataClient by inject()
     private val sessionManager: SessionManager by inject()
 
-    private lateinit var cachedImageItems: MutableLiveData<List<CachedImageItem>>
-    private lateinit var processedImageItems: MutableLiveData<List<ProcessedImageItem>>
-    private lateinit var unprocessedImageItems: MutableLiveData<List<UnprocessedImageItem>>
+    lateinit var cachedImageItems: MutableLiveData<List<CachedImageItem>>
+    lateinit var processedImageItems: MutableLiveData<List<ProcessedImageItem>>
+    lateinit var unprocessedImageItems: MutableLiveData<List<UnprocessedImageItem>>
 
     fun getUnprocessedImageItems() {
         unprocessedImageItems.value = dataClient.local.unprocessed.getBySessionId(sessionManager.sessionId)

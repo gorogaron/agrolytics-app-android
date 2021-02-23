@@ -1,4 +1,4 @@
-package com.agrolytics.agrolytics_android.networking.model
+package com.agrolytics.agrolytics_android.network.model
 
 import com.google.gson.annotations.SerializedName
 

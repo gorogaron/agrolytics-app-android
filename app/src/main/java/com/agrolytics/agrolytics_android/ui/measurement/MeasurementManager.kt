@@ -6,9 +6,9 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.se.omapi.Session
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
-import com.agrolytics.agrolytics_android.networking.AppServer
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
+import com.agrolytics.agrolytics_android.network.AppServer
+import com.agrolytics.agrolytics_android.network.model.ImageUploadRequest
+import com.agrolytics.agrolytics_android.network.model.ImageUploadResponse
 import com.agrolytics.agrolytics_android.ui.measurement.activity.CropperActivity
 import com.agrolytics.agrolytics_android.ui.measurement.activity.RodSelectorActivity
 import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer

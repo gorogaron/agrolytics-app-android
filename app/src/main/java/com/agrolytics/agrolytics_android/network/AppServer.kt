@@ -1,7 +1,7 @@
-package com.agrolytics.agrolytics_android.networking
+package com.agrolytics.agrolytics_android.network
 
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
+import com.agrolytics.agrolytics_android.network.model.ImageUploadRequest
+import com.agrolytics.agrolytics_android.network.model.ImageUploadResponse
 import retrofit2.Response
 
 class AppServer {

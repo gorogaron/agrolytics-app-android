@@ -1,9 +1,9 @@
-package com.agrolytics.agrolytics_android.networking
+package com.agrolytics.agrolytics_android.network
 
 
 import com.agrolytics.agrolytics_android.BuildConfig
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadRequest
-import com.agrolytics.agrolytics_android.networking.model.ImageUploadResponse
+import com.agrolytics.agrolytics_android.network.model.ImageUploadRequest
+import com.agrolytics.agrolytics_android.network.model.ImageUploadResponse
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
