@@ -82,7 +82,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         presenter.addView(this)
         presenter.addInjections(arrayListOf(appServer, dataClient, sessionManager))
         presenter.setActivity(this)
-        
+
         initFabColorAnimators()
 
         menu_frame.setOnClickListener(this)

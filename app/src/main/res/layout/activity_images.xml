@@ -15,13 +15,13 @@
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/greenDark">
+            android:background="@color/yellow">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@color/greenDark">
+                android:background="@color/yellow">
 
                 <TextView
                     android:id="@+id/tv_toolbar"
@@ -40,17 +40,6 @@
                     android:background="@android:color/transparent"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_arrow_back"
-                    android:tint="@android:color/white" />
-
-                <ImageButton
-                    android:id="@+id/btn_settings"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="end"
-                    android:layout_marginEnd="12dp"
-                    android:background="@android:color/transparent"
-                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_settings"
                     android:tint="@android:color/white" />
 
             </androidx.appcompat.widget.Toolbar>
@@ -86,20 +75,6 @@
             android:textStyle="bold"
             android:visibility="gone"
             tools:text="No image saved locally" />
-
-        <include
-            android:id="@+id/custom_toolbar"
-            layout="@layout/custom_bottom_toolbar" />
     </RelativeLayout>
-
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start">
-
-        <include layout="@layout/nav_bar" />
-
-    </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>
