@@ -17,4 +17,8 @@ class UnprocessedImageQueries(var unprocessedImageItemDao : UnprocessedImageItem
     fun getBySessionId(sessionId : String) : List<UnprocessedImageItem>{
         return unprocessedImageItemDao.getBySessionId(sessionId)
     }
+
+    fun getAll() : List<UnprocessedImageItem>{
+        return unprocessedImageItemDao.getAll()
+    }
 }

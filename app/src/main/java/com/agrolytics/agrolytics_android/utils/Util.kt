@@ -3,6 +3,7 @@ package com.agrolytics.agrolytics_android.utils
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -10,6 +11,8 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import com.agrolytics.agrolytics_android.R
+import com.agrolytics.agrolytics_android.ui.main.MainActivity
+import com.agrolytics.agrolytics_android.ui.measurement.activity.SessionActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -78,6 +81,13 @@ class Util {
             var multiplier = 1.0
             repeat(decimals) { multiplier *= 10 }
             return round(this * multiplier) / multiplier
+        }
+
+        //TODO: Find a way to do this without clearing stack
+        fun makeMainActivityAsRootOnStack(callingActivity: Activity) {
+            val intent = Intent(callingActivity, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+            callingActivity.startActivity(intent)
         }
 
         fun showParameterSettingsWindow(context: Context, sessionManager: SessionManager, blurFunction: ((Int) -> Unit)? = null) {

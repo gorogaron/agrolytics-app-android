@@ -11,4 +11,8 @@ class ProcessedImageQueries(var processedImageItemDao: ProcessedImageItemDao) {
     fun getBySessionId(sessionId : String) : List<ProcessedImageItem>{
         return processedImageItemDao.getBySessionId(sessionId)
     }
+
+    fun getAll() : List<ProcessedImageItem> {
+        return processedImageItemDao.getAll()
+    }
 }

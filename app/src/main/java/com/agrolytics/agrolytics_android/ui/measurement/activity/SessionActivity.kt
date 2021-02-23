@@ -1,6 +1,7 @@
 package com.agrolytics.agrolytics_android.ui.measurement.activity
 
 import android.os.Bundle
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
@@ -29,11 +30,12 @@ class SessionActivity : BaseActivity() {
         setContentView(R.layout.activity_session)
 
         upload.setOnClickListener{uploadSession()}
+        cancel_delete.setOnClickListener{hideDeleteButtons()}
 
         doAsync {
 
             val imageItemList = getAllLocalImagesInSession()
-            recyclerViewAdapter = SessionRecyclerViewAdapter(imageItemList!!)
+            recyclerViewAdapter = SessionRecyclerViewAdapter(this@SessionActivity, imageItemList!!)
             recyclerViewLayoutManager = LinearLayoutManager(this@SessionActivity)
 
             uiThread {
@@ -44,8 +46,10 @@ class SessionActivity : BaseActivity() {
     }
 
     private fun getAllLocalImagesInSession() : ArrayList<BaseImageItem>?{
-        val processedImageItemsInSession = dataClient.local.processed.getBySessionId(sessionId)
-        val unprocessedImageItemsInSession = dataClient.local.unprocessed.getBySessionId(sessionId)
+//        val processedImageItemsInSession = dataClient.local.processed.getBySessionId(sessionId)
+//        val unprocessedImageItemsInSession = dataClient.local.unprocessed.getBySessionId(sessionId)
+        val processedImageItemsInSession = dataClient.local.processed.getAll()
+        val unprocessedImageItemsInSession = dataClient.local.unprocessed.getAll()
 
         val imageItemList = ArrayList<BaseImageItem>(processedImageItemsInSession)
         imageItemList.addAll(unprocessedImageItemsInSession)
@@ -55,5 +59,26 @@ class SessionActivity : BaseActivity() {
 
     private fun uploadSession() {
         sessionManager.sessionId = ""
+    }
+
+
+    fun showDeleteButtons(){
+        confirm_delete.visibility = View.VISIBLE
+        cancel_delete.visibility = View.VISIBLE
+        confirm_delete.animate()
+            .translationY(-100f)
+            .alpha(1f)
+        cancel_delete.animate()
+            .translationY(-100f)
+            .alpha(1f)
+    }
+
+    fun hideDeleteButtons(){
+        cancel_delete.animate()
+            .translationY(100f)
+            .alpha(0f)
+        confirm_delete.animate()
+            .translationY(100f)
+            .alpha(0f)
     }
 }

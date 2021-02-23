@@ -1,24 +1,43 @@
 package com.agrolytics.agrolytics_android.ui.measurement.utils
 
+import android.app.Activity
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.local.tables.BaseImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo
+import com.agrolytics.agrolytics_android.ui.measurement.activity.SessionActivity
 import com.agrolytics.agrolytics_android.utils.Util.Companion.getFormattedDateTime
 import kotlinx.android.synthetic.main.recycler_view_measurement_item.view.*
 import kotlin.collections.ArrayList
 
-class SessionRecyclerViewAdapter(var itemList : ArrayList<BaseImageItem>) : RecyclerView.Adapter<SessionRecyclerViewAdapter.SessionViewHolder>() {
+class SessionRecyclerViewAdapter(var activity : Activity, var itemList : ArrayList<BaseImageItem>) : RecyclerView.Adapter<SessionRecyclerViewAdapter.SessionViewHolder>() {
 
-    inner class SessionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class SessionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
         var imageView = itemView.image
         var volumeTextView = itemView.volume_text
         var dateTextView = itemView.date_text
+
+        init {
+            itemView.setOnClickListener(this)
+            itemView.setOnLongClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+            Log.d("CLICK", "$bindingAdapterPosition")
+        }
+
+        override fun onLongClick(v: View?): Boolean {
+            (activity as SessionActivity).showDeleteButtons()
+            itemView.root_card_view.setCardBackgroundColor(ContextCompat.getColor(itemView.context, R.color.red))
+            return true
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionViewHolder {

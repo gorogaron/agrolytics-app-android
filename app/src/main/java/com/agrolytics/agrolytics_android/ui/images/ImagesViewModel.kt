@@ -25,7 +25,7 @@ class ImagesViewModel: ViewModel(), KoinComponent {
 
     fun getUnprocessedImageItems() {
         doAsync {
-            unprocessedImageItems.value = dataClient.local.unprocessed.getBySessionId(sessionManager.sessionId)
+            unprocessedImageItems.postValue(dataClient.local.unprocessed.getBySessionId(sessionManager.sessionId))
         }
     }
 

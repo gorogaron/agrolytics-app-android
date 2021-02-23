@@ -1,6 +1,7 @@
 package com.agrolytics.agrolytics_android.ui.images
 
 import android.os.Bundle
+import android.util.Log
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.agrolytics.agrolytics_android.R
@@ -32,6 +33,7 @@ class ImagesActivity: BaseActivity(), ImagesScreen {
 		viewModel.getUnprocessedImageItems()
 		viewModel.unprocessedImageItems.observe(this, Observer {
 			localImageItems = it
+			Log.d("FIKA", "GECI")
 		})
 	}
 }
