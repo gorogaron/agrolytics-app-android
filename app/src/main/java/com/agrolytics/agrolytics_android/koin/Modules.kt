@@ -26,7 +26,6 @@ val appModule = module {
 
     // Presenter
     factory { MainPresenter(androidContext()) }
-    factory { ImagesPresenter(androidContext()) }
     factory { ApproveMeasurementPresenter() }
     factory { MapPresenter() }
     factory { LoginPresenter(androidContext()) }

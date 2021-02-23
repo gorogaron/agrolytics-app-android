@@ -1,6 +1,7 @@
 package com.agrolytics.agrolytics_android.ui.images
 
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
@@ -28,6 +29,9 @@ class ImagesActivity: BaseActivity(), ImagesScreen {
 		setContentView(R.layout.activity_images)
 
 		val viewModel = ViewModelProvider(this).get(ImagesViewModel::class.java)
-		viewModel.unprocessedImageItems
+		viewModel.getUnprocessedImageItems()
+		viewModel.unprocessedImageItems.observe(this, Observer {
+			localImageItems = it
+		})
 	}
 }

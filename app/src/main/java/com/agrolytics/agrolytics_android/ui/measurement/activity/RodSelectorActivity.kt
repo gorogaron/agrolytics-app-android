@@ -16,9 +16,7 @@ import com.agrolytics.agrolytics_android.network.AppServer
 import com.agrolytics.agrolytics_android.ui.measurement.presenter.RodSelectorPresenter
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
-import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageSegmentation
 import com.agrolytics.agrolytics_android.utils.SessionManager
-import com.google.android.gms.common.util.IOUtils
 import kotlinx.android.synthetic.main.activity_rod_selector.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread

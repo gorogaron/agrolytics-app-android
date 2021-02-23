@@ -7,6 +7,7 @@ import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.utils.SessionManager
+import org.jetbrains.anko.doAsync
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -18,12 +19,14 @@ class ImagesViewModel: ViewModel(), KoinComponent {
     private val dataClient: DataClient by inject()
     private val sessionManager: SessionManager by inject()
 
-    lateinit var cachedImageItems: MutableLiveData<List<CachedImageItem>>
-    lateinit var processedImageItems: MutableLiveData<List<ProcessedImageItem>>
-    lateinit var unprocessedImageItems: MutableLiveData<List<UnprocessedImageItem>>
+    var cachedImageItems = MutableLiveData<List<CachedImageItem>>()
+    var processedImageItems = MutableLiveData<List<ProcessedImageItem>>()
+    var unprocessedImageItems = MutableLiveData<List<UnprocessedImageItem>>()
 
     fun getUnprocessedImageItems() {
-        unprocessedImageItems.value = dataClient.local.unprocessed.getBySessionId(sessionManager.sessionId)
+        doAsync {
+            unprocessedImageItems.value = dataClient.local.unprocessed.getBySessionId(sessionManager.sessionId)
+        }
     }
 
     fun getProcessedImageItems() {
