@@ -29,7 +29,6 @@ import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.login.LoginActivity
 import com.agrolytics.agrolytics_android.ui.map.MapActivity
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
-import com.agrolytics.agrolytics_android.ui.measurement.utils.Detector
 import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
 import com.agrolytics.agrolytics_android.utils.*
 import com.agrolytics.agrolytics_android.utils.Util.Companion.showParameterSettingsWindow
@@ -83,8 +82,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         presenter.addView(this)
         presenter.addInjections(arrayListOf(appServer, dataClient, sessionManager))
         presenter.setActivity(this)
-
-        Detector.init(assets)
+        
         initFabColorAnimators()
 
         menu_frame.setOnClickListener(this)
