@@ -159,7 +159,7 @@ class MapPresenter: BasePresenter<MapScreen>() {
 
 	fun getAllLocalImage() {
 		doAsync {
-			dataClient?.local?.cache?.getAllImages().let { images ->
+			dataClient?.local?.cache?.getAll().let { images ->
 				uiThread {
 					images?.let { it1 -> fireBaseList.addAll(it1) }
 					screen?.loadImages(ArrayList(images), false)

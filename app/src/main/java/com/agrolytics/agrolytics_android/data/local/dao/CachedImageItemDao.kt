@@ -18,6 +18,9 @@ interface CachedImageItemDao {
     @Query("SELECT * FROM cached_images WHERE session_id LIKE :sessionId")
     fun getBySessionId(sessionId: String): List<CachedImageItem>
 
+    @Query("SELECT DISTINCT session_id FROM cached_images")
+    fun getAllSessionIds(): List<String>
+
     @Insert
     fun add(cachedImageItem: CachedImageItem)
 

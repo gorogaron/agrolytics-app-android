@@ -82,7 +82,6 @@ class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 			findViewById<TextView>(R.id.buttonText).text = "Munkamenet áttekintése"
 			setOnClickListener {
 				showCurrentSession()
-				dialog.dismiss()
 			}
 		}
 		view.findViewById<ConstraintLayout>(R.id.button_4).apply {
@@ -99,7 +98,7 @@ class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 
 	private fun saveForLater(unprocessedImageItem: UnprocessedImageItem){
 		doAsync {
-			dataClient.local.unprocessed.addUnprocessedImageItem(unprocessedImageItem)
+			dataClient.local.unprocessed.add(unprocessedImageItem)
 			uiThread { showToast("A kép mentésre került.") }
 		}
 	}
@@ -111,7 +110,6 @@ class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 
 	private fun showCurrentSession(){
 		MeasurementManager.showSession(this, sessionManager.sessionId)
-		finish()
 	}
 
 	private fun measureOffline(unprocessedImageItem: UnprocessedImageItem){

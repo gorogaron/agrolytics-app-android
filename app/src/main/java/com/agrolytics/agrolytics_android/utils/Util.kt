@@ -83,13 +83,6 @@ class Util {
             return round(this * multiplier) / multiplier
         }
 
-        //TODO: Find a way to do this without clearing stack
-        fun makeMainActivityAsRootOnStack(callingActivity: Activity) {
-            val intent = Intent(callingActivity, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-            callingActivity.startActivity(intent)
-        }
-
         fun showParameterSettingsWindow(context: Context, sessionManager: SessionManager, blurFunction: ((Int) -> Unit)? = null) {
             if (blurFunction != null) {
                 blurFunction(10)

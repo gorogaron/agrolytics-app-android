@@ -72,7 +72,6 @@ object MeasurementManager : KoinComponent{
         ApproveMeasurementActivity.method = method
         ApproveMeasurementActivity.processedImageItem = processedImageItem
         val intent = Intent(callingActivity, ApproveMeasurementActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
         callingActivity.startActivity(intent)
         callingActivity.finish()
     }
@@ -95,9 +94,7 @@ object MeasurementManager : KoinComponent{
     fun showSession(callingActivity : Activity, sessionId : String) {
         SessionActivity.sessionId = sessionId
         val intent = Intent(callingActivity, SessionActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
         callingActivity.startActivity(intent)
-        callingActivity.finish()
     }
 
 }

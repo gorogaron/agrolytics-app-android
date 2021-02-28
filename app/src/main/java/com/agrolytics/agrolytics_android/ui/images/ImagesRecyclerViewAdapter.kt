@@ -1,0 +1,48 @@
+package com.agrolytics.agrolytics_android.ui.images
+
+import android.app.Activity
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.agrolytics.agrolytics_android.R
+import com.agrolytics.agrolytics_android.utils.Util.Companion.getFormattedDateTime
+import com.google.firebase.storage.internal.Util
+import kotlinx.android.synthetic.main.recycler_view_session_item.view.*
+import kotlin.collections.ArrayList
+
+class ImagesRecyclerViewAdapter(var activity : Activity, var itemList : ArrayList<ImagesActivity.SessionItem>) : RecyclerView.Adapter<ImagesRecyclerViewAdapter.SessionViewHolder>() {
+
+    inner class SessionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+        var lengthTextView = itemView.length_value
+        var typeTextView = itemView.wood_type_value
+        var volumeTextView = itemView.wood_volume_value
+        var dateTextView = itemView.date_value
+
+        init {
+            itemView.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+            Log.d("CLICK", "$bindingAdapterPosition")
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_session_item, parent, false)
+        return SessionViewHolder(view)
+    }
+
+    override fun getItemCount(): Int {
+        return itemList.size
+    }
+
+    override fun onBindViewHolder(holder: SessionViewHolder, position: Int) {
+        val sessionItem = itemList[position]
+        holder.lengthTextView.text = sessionItem.woodLength.toString()
+        holder.typeTextView.text = sessionItem.woodType
+        holder.volumeTextView.text = sessionItem.woodVolume.toString()
+        holder.dateTextView.text = getFormattedDateTime(sessionItem.timestamp)
+    }
+}

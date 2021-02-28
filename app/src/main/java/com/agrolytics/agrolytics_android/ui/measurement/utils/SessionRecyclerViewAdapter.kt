@@ -19,24 +19,17 @@ import kotlin.collections.ArrayList
 
 class SessionRecyclerViewAdapter(var activity : Activity, var itemList : ArrayList<BaseImageItem>) : RecyclerView.Adapter<SessionRecyclerViewAdapter.SessionViewHolder>() {
 
-    inner class SessionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
+    inner class SessionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         var imageView = itemView.image
         var volumeTextView = itemView.volume_text
         var dateTextView = itemView.date_text
 
         init {
             itemView.setOnClickListener(this)
-            itemView.setOnLongClickListener(this)
         }
 
         override fun onClick(v: View?) {
             Log.d("CLICK", "$bindingAdapterPosition")
-        }
-
-        override fun onLongClick(v: View?): Boolean {
-            (activity as SessionActivity).showDeleteButtons()
-            itemView.root_card_view.setCardBackgroundColor(ContextCompat.getColor(itemView.context, R.color.red))
-            return true
         }
     }
 

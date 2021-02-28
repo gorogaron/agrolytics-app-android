@@ -15,6 +15,9 @@ interface UnprocessedImageItemDao {
     @Query("SELECT * FROM unprocessed_images WHERE session_id LIKE :sessionId")
     fun getBySessionId(sessionId: String): List<UnprocessedImageItem>
 
+    @Query("SELECT DISTINCT session_id FROM unprocessed_images")
+    fun getAllSessionIds(): List<String>
+
     @Insert
     fun add(unprocessedImageItem: UnprocessedImageItem)
 

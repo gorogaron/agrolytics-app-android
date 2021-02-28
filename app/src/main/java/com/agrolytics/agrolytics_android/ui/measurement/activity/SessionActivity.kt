@@ -29,8 +29,7 @@ class SessionActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_session)
 
-        upload.setOnClickListener{uploadSession()}
-        cancel_delete.setOnClickListener{hideDeleteButtons()}
+        save.setOnClickListener{ saveBtnClicked() }
 
         doAsync {
 
@@ -46,10 +45,8 @@ class SessionActivity : BaseActivity() {
     }
 
     private fun getAllLocalImagesInSession() : ArrayList<BaseImageItem>?{
-//        val processedImageItemsInSession = dataClient.local.processed.getBySessionId(sessionId)
-//        val unprocessedImageItemsInSession = dataClient.local.unprocessed.getBySessionId(sessionId)
-        val processedImageItemsInSession = dataClient.local.processed.getAll()
-        val unprocessedImageItemsInSession = dataClient.local.unprocessed.getAll()
+        val processedImageItemsInSession = dataClient.local.processed.getBySessionId(sessionId)
+        val unprocessedImageItemsInSession = dataClient.local.unprocessed.getBySessionId(sessionId)
 
         val imageItemList = ArrayList<BaseImageItem>(processedImageItemsInSession)
         imageItemList.addAll(unprocessedImageItemsInSession)
@@ -57,28 +54,7 @@ class SessionActivity : BaseActivity() {
         return imageItemList
     }
 
-    private fun uploadSession() {
+    private fun saveBtnClicked() {
         sessionManager.sessionId = ""
-    }
-
-
-    fun showDeleteButtons(){
-        confirm_delete.visibility = View.VISIBLE
-        cancel_delete.visibility = View.VISIBLE
-        confirm_delete.animate()
-            .translationY(-100f)
-            .alpha(1f)
-        cancel_delete.animate()
-            .translationY(-100f)
-            .alpha(1f)
-    }
-
-    fun hideDeleteButtons(){
-        cancel_delete.animate()
-            .translationY(100f)
-            .alpha(0f)
-        confirm_delete.animate()
-            .translationY(100f)
-            .alpha(0f)
     }
 }
