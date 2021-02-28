@@ -55,11 +55,11 @@ class ImagesViewModel: ViewModel(), KoinComponent {
                 woodTypes.add(unprocessedImage.woodType)
             }
 
-            if (woodLengths.size == woodLengths.distinct().size) {
+            if (woodLengths.distinct().size == 1) {
                 woodLength = woodLengths[0]
             }
 
-            if (woodTypes.size == woodTypes.distinct().size) {
+            if (woodTypes.distinct().size == 1) {
                 woodType = woodTypes[0]
             }
 
