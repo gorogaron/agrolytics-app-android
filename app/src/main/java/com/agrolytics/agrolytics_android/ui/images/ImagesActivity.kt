@@ -19,7 +19,7 @@ import org.koin.core.component.KoinApiExtension
 
 class ImagesActivity: BaseActivity(), ImagesScreen {
 
-	inner class SessionItem(var woodLength : Int, var woodType : String, var woodVolume : Double, var timestamp : Long)
+	inner class SessionItem(var woodLength : Double, var woodType : String, var woodVolume : Double, var timestamp : Long)
 
 	private val dataClient : DataClient by inject()
 	private val sessionManager : SessionManager by inject()
