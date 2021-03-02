@@ -1,11 +1,10 @@
 package com.agrolytics.agrolytics_android.ui.login
 
-import ai.onnxruntime.OnnxTensor
-import ai.onnxruntime.OrtEnvironment
-import ai.onnxruntime.OrtSession
 import android.content.Context
+import android.graphics.Bitmap
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageSegmentation
 import com.google.firebase.FirebaseApp
 import org.junit.Before
 import org.junit.Test
@@ -25,24 +24,14 @@ class TestSegmentor {
 
     @Test
     fun testModel() {
-        val modelPath = "C:\\Users\\kenderak\\Projects\\Agrolytics\\agrolytics-app-android\\app\\src\\main\\assets\\xgboost.onnx"
+        val model = ImageSegmentation()
 
-        val floatVector: FloatArray = floatArrayOf(122f, 119f, 149f, 135f, 154f, 140f, 140f, 132f)
-        val floatMatrix: Array<FloatArray> = arrayOf(floatVector, floatVector)
-        OrtEnvironment.getEnvironment().use { env ->
-            OrtSession.SessionOptions().use { opts ->
-                opts.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.BASIC_OPT)
-                env.createSession(modelPath, opts).use { session ->
-                    val inputName = session.inputNames.iterator().next()
-                    OnnxTensor.createTensor(env, floatMatrix).use { imageTensor ->
-                        val imageTensorMap = HashMap<String, OnnxTensor>()
-                        imageTensorMap[inputName] = imageTensor
-                        session.run(imageTensorMap).use { output ->
-                            output.get(0).value as FloatArray
-                        }
-                    }
-                }
-            }
-        }
+        val conf = Bitmap.Config.ARGB_8888 // see other conf types
+        val bmp = Bitmap.createBitmap(640, 480, conf) // this creates a MUTABLE bitmap
+
+
+        val testOutput = model.segment(bmp)
+
+        print("OK")
     }
 }

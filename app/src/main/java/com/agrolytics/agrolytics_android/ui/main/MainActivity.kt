@@ -20,7 +20,7 @@ import androidx.core.view.GravityCompat
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
-import com.agrolytics.agrolytics_android.networking.AppServer
+import com.agrolytics.agrolytics_android.network.AppServer
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.types.MenuItem
 import com.agrolytics.agrolytics_android.ui.guide.GuideActivity
@@ -29,7 +29,6 @@ import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.login.LoginActivity
 import com.agrolytics.agrolytics_android.ui.map.MapActivity
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
-import com.agrolytics.agrolytics_android.ui.measurement.utils.Detector
 import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
 import com.agrolytics.agrolytics_android.utils.*
 import com.agrolytics.agrolytics_android.utils.Util.Companion.showParameterSettingsWindow
@@ -84,7 +83,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
         presenter.addInjections(arrayListOf(appServer, dataClient, sessionManager))
         presenter.setActivity(this)
 
-        Detector.init(assets)
         initFabColorAnimators()
 
         menu_frame.setOnClickListener(this)
@@ -180,8 +178,8 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.cameraFab -> MeasurementManager.hookImage(this, MeasurementManager.ImagePickerID.ID_CAMERA)
-            R.id.browseFab -> MeasurementManager.hookImage(this, MeasurementManager.ImagePickerID.ID_BROWSER)
+            R.id.cameraFab -> MeasurementManager.startNewMeasurementSession(this, MeasurementManager.ImagePickerID.ID_CAMERA)
+            R.id.browseFab -> MeasurementManager.startNewMeasurementSession(this, MeasurementManager.ImagePickerID.ID_BROWSER)
 
             R.id.menu_frame -> drawer_layout.openDrawer(GravityCompat.START)
             R.id.rod_frame -> openActivity(MenuItem.ROD)
@@ -284,6 +282,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
     }
 
 
+    //TODO: Ez a fv. az ApproveMeasurementActivity-ben is ugyanígy van
     @KoinApiExtension
     public override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)

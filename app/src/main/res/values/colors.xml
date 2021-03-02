@@ -1,35 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">@color/gradientEnd</color>
-    <color name="colorPrimaryDark">@color/gradientStart</color>
     <color name="colorAccent">#405370</color>
 
     <color name="textColor">#949DAB</color>
-    <color name="negativeButtonColor">#B8B8B8</color>
 
-    <color name="gradientStart">#263143</color>
     <color name="gradientEnd">#363B4D</color>
-
-    <color name="grayish">#D0D0D0</color>
-
-    <color name="defaultTextColor">#404249</color>
 
     <color name="greenDark">#0d8000</color>
     <color name="lightGreen">#800d8000</color>
-    <color name="maxLightGreen">#A2A5A2</color>
 
     <color name="darkAdapterColor">#FFFFFF</color>
     <color name="lightAdapterColor">#F2FFF2</color>
 
     <color name="transparent_background">#e13c4f5e</color>
 
-    <color name="transparentWhite">#40FFFFFF</color>
+    <color name="transparentWhite">#80FFFFFF</color>
 
     <color name="darkGrey">#333333</color>
-    <color name="mediumGrey">#E0E0E0</color>
-    <color name="lightGrey">#F8F8F8</color>
+    <color name="mediumGrey">#BDBDBD</color>
+    <color name="lightGrey">#F7F7F7</color>
 
     <color name="yellow">#F2C94C</color>
+    <color name="darkYellow">#BC9A33</color>
 
     <color name="white">#FFFFFF</color>
     <color name="red">#D73434</color>

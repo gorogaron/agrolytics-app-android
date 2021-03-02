@@ -3,6 +3,7 @@ package com.agrolytics.agrolytics_android.utils
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -10,15 +11,23 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import com.agrolytics.agrolytics_android.R
+import com.agrolytics.agrolytics_android.ui.main.MainActivity
+import com.agrolytics.agrolytics_android.ui.measurement.activity.SessionActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import okhttp3.internal.UTC
 import java.io.IOException
 import java.net.*
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlin.math.round
 
 
 class Util {
@@ -32,12 +41,10 @@ class Util {
             inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
         }
 
-        fun getCurrentDateString(): String {
-            val c = Calendar.getInstance().time
-
-            val df = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val formattedDate = df.format(c)
-            return formattedDate
+        fun getFormattedDateTime(epochSeconds : Long) : String {
+            val localDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(epochSeconds), ZoneId.of("UTC+1"))
+            val localDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            return localDateTimeFormatter.format(localDateTime)
         }
 
         fun isNetworkAvailable(): Boolean {
@@ -70,13 +77,19 @@ class Util {
             }
         }
 
+        fun Double.round(decimals: Int): Double {
+            var multiplier = 1.0
+            repeat(decimals) { multiplier *= 10 }
+            return round(this * multiplier) / multiplier
+        }
+
         fun showParameterSettingsWindow(context: Context, sessionManager: SessionManager, blurFunction: ((Int) -> Unit)? = null) {
             if (blurFunction != null) {
                 blurFunction(10)
             }
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Adatok")
-            val view = LayoutInflater.from(context).inflate(R.layout.rod_dialog, null, false)
+            val view = LayoutInflater.from(context).inflate(R.layout.parameter_settings_dialog, null, false)
 
             val et_length_rod = view.findViewById<EditText>(R.id.et_length_rod)
             val et_length_wood = view.findViewById<EditText>(R.id.et_wood_length)
@@ -104,7 +117,7 @@ class Util {
 
             builder.setCancelable(false)
             val dialog = builder.create()
-            dialog.window!!.setBackgroundDrawableResource(R.drawable.parameter_dialog_bg)
+            dialog.window!!.setBackgroundDrawableResource(R.drawable.bg_white_round)
             dialog.window.setDimAmount(0.0f)
             dialog.show()
         }

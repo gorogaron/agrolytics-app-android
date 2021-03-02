@@ -27,3 +27,6 @@ local.properties
 
 # TensorFlow image segmentation model
 *.tflite
+
+# ONNX image segmentation model
+*.onnx

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp"
+    android:paddingTop="8dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:fontFamily="@font/roboto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="18sp"
+        android:padding="15dp"
+        android:text="Nem megfelelő az internetkapcsolat. Hogyan szeretné folytatni?"/>
+
+    <FrameLayout
+        android:id="@+id/button_frame_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        android:padding="15dp">
+        <include
+            android:id="@+id/button_1"
+            layout="@layout/dialog_button_item"/>
+    </FrameLayout>
+    <FrameLayout
+        android:id="@+id/button_frame_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/button_frame_1"
+        android:padding="15dp">
+        <include
+            android:id="@+id/button_2"
+            layout="@layout/dialog_button_item"/>
+    </FrameLayout>
+    <FrameLayout
+        android:id="@+id/button_frame_3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/button_frame_2"
+        android:padding="15dp">
+        <include
+            android:id="@+id/button_3"
+            layout="@layout/dialog_button_item"/>
+    </FrameLayout>
+    <FrameLayout
+        android:id="@+id/button_frame_4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/button_frame_3"
+        android:padding="15dp">
+        <include
+            android:id="@+id/button_4"
+            layout="@layout/dialog_button_item"/>
+    </FrameLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

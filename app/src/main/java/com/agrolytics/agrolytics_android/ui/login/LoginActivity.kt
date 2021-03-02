@@ -6,7 +6,7 @@ import android.text.TextWatcher
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
-import com.agrolytics.agrolytics_android.networking.AppServer
+import com.agrolytics.agrolytics_android.network.AppServer
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.SessionManager
@@ -78,7 +78,7 @@ class LoginActivity: BaseActivity(), LoginScreen {
     private fun checkUserLoggedInState() {
         if (auth.currentUser != null) {
             GlobalScope.launch(Dispatchers.IO) {
-                when (presenter.hasLoggedInUserExpired()) {
+                when (presenter.checkLicence()) {
                     ConfigInfo.LOGIN.SUCCESS -> loginSuccess()
                     else -> {}
                 }
