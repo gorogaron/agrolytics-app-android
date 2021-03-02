@@ -13,10 +13,10 @@ interface ProcessedImageItemDao {
     fun getAll(): List<ProcessedImageItem>
 
     @Query("SELECT * FROM processed_images WHERE session_id LIKE :sessionId")
-    fun getBySessionId(sessionId: String): List<ProcessedImageItem>
+    fun getBySessionId(sessionId: Long): List<ProcessedImageItem>
 
     @Query("SELECT DISTINCT session_id FROM processed_images")
-    fun getAllSessionIds(): List<String>
+    fun getAllSessionIds(): List<Long>
 
     @Insert
     fun add(processedImageItem: ProcessedImageItem)
@@ -28,7 +28,7 @@ interface ProcessedImageItemDao {
     fun delete(processedImageItem: ProcessedImageItem)
 
     @Query("DELETE FROM processed_images WHERE session_id LIKE :sessionId")
-    fun deleteBySessionId(sessionId: String)
+    fun deleteBySessionId(sessionId: Long)
 
     @Query("DELETE FROM processed_images")
     fun deleteAll()

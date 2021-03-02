@@ -31,7 +31,6 @@ class MapActivity : BaseActivity(), MapScreen, View.OnClickListener {
 
     private val TAG = "MapActivity"
 
-    private val presenter: MapPresenter by inject()
     private val sessionManager: SessionManager by inject()
     private val dataClient: DataClient by inject()
 
@@ -41,8 +40,8 @@ class MapActivity : BaseActivity(), MapScreen, View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
-        presenter.addView(this)
-        presenter.addInjections(arrayListOf(sessionManager, dataClient))
+        //presenter.addView(this)
+        //presenter.addInjections(arrayListOf(sessionManager, dataClient))
 
         btn_back.setOnClickListener { onBackPressed() }
 
@@ -64,12 +63,12 @@ class MapActivity : BaseActivity(), MapScreen, View.OnClickListener {
 
                 mapboxMap.clear()
 
-                presenter.getAllUploadedImage()
-                presenter.getAllLocalImage()
+                //presenter.getAllUploadedImage()
+                //presenter.getAllLocalImage()
 
                 map.setOnMarkerClickListener {
                     val id = it.id
-                    presenter.getItemFromList(id.toInt())
+                    //presenter.getItemFromList(id.toInt())
                     true
                 }
             }

@@ -13,10 +13,10 @@ interface UnprocessedImageItemDao {
     fun getAll(): List<UnprocessedImageItem>
 
     @Query("SELECT * FROM unprocessed_images WHERE session_id LIKE :sessionId")
-    fun getBySessionId(sessionId: String): List<UnprocessedImageItem>
+    fun getBySessionId(sessionId: Long): List<UnprocessedImageItem>
 
     @Query("SELECT DISTINCT session_id FROM unprocessed_images")
-    fun getAllSessionIds(): List<String>
+    fun getAllSessionIds(): List<Long>
 
     @Insert
     fun add(unprocessedImageItem: UnprocessedImageItem)
@@ -28,7 +28,7 @@ interface UnprocessedImageItemDao {
     fun delete(unprocessedImageItem: UnprocessedImageItem)
 
     @Query("DELETE FROM unprocessed_images WHERE session_id LIKE :sessionId")
-    fun deleteBySessionId(sessionId: String)
+    fun deleteBySessionId(sessionId: Long)
 
     @Query("DELETE FROM unprocessed_images WHERE id LIKE :id")
     fun deleteById(id: Long)

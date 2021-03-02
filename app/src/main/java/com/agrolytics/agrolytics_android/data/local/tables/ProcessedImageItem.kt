@@ -10,7 +10,7 @@ import com.google.firebase.firestore.GeoPoint
 @Entity(tableName = "processed_images")
 data class ProcessedImageItem(
     @PrimaryKey(autoGenerate = true) var id: Long,
-    @ColumnInfo(name = "session_id") var sessionId: String,
+    @ColumnInfo(name = "session_id") var sessionId: Long,
     @ColumnInfo(name = "image") var image: Bitmap,
     @ColumnInfo(name = "wood_type") var woodType: String,
     @ColumnInfo(name = "wood_length") var woodLength: Double,

@@ -22,7 +22,7 @@ class SessionActivity : BaseActivity() {
     lateinit var recyclerViewLayoutManager : LinearLayoutManager
 
     companion object {
-        var sessionId : String = ""
+        var sessionId : Long = 0
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,6 +55,6 @@ class SessionActivity : BaseActivity() {
     }
 
     private fun saveBtnClicked() {
-        sessionManager.sessionId = ""
+        sessionManager.sessionId = 0
     }
 }

@@ -1,4 +1,4 @@
-package com.agrolytics.agrolytics_android.ui.images
+package com.agrolytics.agrolytics_android.ui.images.recyclerview
 
 import android.app.Activity
 import android.util.Log
@@ -8,17 +8,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.utils.Util.Companion.getFormattedDateTime
-import com.google.firebase.storage.internal.Util
 import kotlinx.android.synthetic.main.recycler_view_session_item.view.*
 import kotlin.collections.ArrayList
 
-class ImagesRecyclerViewAdapter(var activity : Activity, var itemList : ArrayList<ImagesActivity.SessionItem>) : RecyclerView.Adapter<ImagesRecyclerViewAdapter.SessionViewHolder>() {
+class ImagesRecyclerViewAdapter(var activity : Activity, var itemList : ArrayList<SessionItem>) : RecyclerView.Adapter<ImagesRecyclerViewAdapter.SessionViewHolder>() {
 
     inner class SessionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         var lengthTextView = itemView.length_value
         var typeTextView = itemView.wood_type_value
         var volumeTextView = itemView.wood_volume_value
         var dateTextView = itemView.date_value
+        var sessionImage = itemView.image
 
         init {
             itemView.setOnClickListener(this)
@@ -40,9 +40,10 @@ class ImagesRecyclerViewAdapter(var activity : Activity, var itemList : ArrayLis
 
     override fun onBindViewHolder(holder: SessionViewHolder, position: Int) {
         val sessionItem = itemList[position]
-        holder.lengthTextView.text = sessionItem.woodLength.toString()
-        holder.typeTextView.text = sessionItem.woodType
-        holder.volumeTextView.text = sessionItem.woodVolume.toString()
+        holder.lengthTextView.text = if (sessionItem.woodLength > 0) sessionItem.woodLength.toString() else "Változó"
+        holder.typeTextView.text = if (sessionItem.woodType != "") sessionItem.woodType else "Változó"
+        holder.volumeTextView.text = if (sessionItem.woodVolume > 0) sessionItem.woodVolume.toString() else "Nincs kész"
         holder.dateTextView.text = getFormattedDateTime(sessionItem.timestamp)
+        holder.sessionImage.setImageBitmap(sessionItem.sessionImage)
     }
 }

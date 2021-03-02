@@ -35,7 +35,7 @@ object MeasurementManager : KoinComponent{
 
     fun startNewMeasurementSession(callingActivity: Activity, imagePickerID: ImagePickerID) {
         val currentTimeStamp = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
-        if (sessionManager.sessionId == "") sessionManager.sessionId = currentTimeStamp.toString()
+        if (sessionManager.sessionId == 0L) sessionManager.sessionId = currentTimeStamp
         sessionImagePickerID = imagePickerID
         hookImage(callingActivity, imagePickerID)
     }
@@ -91,7 +91,7 @@ object MeasurementManager : KoinComponent{
         return imageUploadRequest
     }
 
-    fun showSession(callingActivity : Activity, sessionId : String) {
+    fun showSession(callingActivity : Activity, sessionId : Long) {
         SessionActivity.sessionId = sessionId
         val intent = Intent(callingActivity, SessionActivity::class.java)
         callingActivity.startActivity(intent)

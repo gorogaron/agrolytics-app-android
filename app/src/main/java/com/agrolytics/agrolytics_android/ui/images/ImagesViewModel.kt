@@ -1,12 +1,18 @@
 package com.agrolytics.agrolytics_android.ui.images
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.agrolytics.agrolytics_android.data.DataClient
+import com.agrolytics.agrolytics_android.ui.images.recyclerview.SessionItem
 import com.agrolytics.agrolytics_android.utils.SessionManager
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import kotlinx.coroutines.Dispatchers as Dispatchers
 
 
 @KoinApiExtension
@@ -15,11 +21,11 @@ class ImagesViewModel: ViewModel(), KoinComponent {
     private val dataClient: DataClient by inject()
     private val sessionManager: SessionManager by inject()
 
-    var sessionItems = MutableLiveData<List<ImagesActivity.SessionItem>>()
+    var sessionItems = MutableLiveData<List<SessionItem>>()
 
-    fun getSessionItems() {
+    fun getSessionItems() = viewModelScope.launch(Dispatchers.IO) {
         val sessionIds = getSessionIdList()
-        val sessionItemList = ArrayList<ImagesActivity.SessionItem>()
+        val sessionItemList = ArrayList<SessionItem>()
 
         // Minden session-höz előállítjuk az item-eket
         for (sessionId in sessionIds) {
@@ -27,6 +33,7 @@ class ImagesViewModel: ViewModel(), KoinComponent {
             var woodLength = -1.0
             var woodVolume = -1.0
             var woodType = ""
+            var sessionImage = Bitmap.createBitmap(640, 480, Bitmap.Config.ARGB_8888)
 
             // Kigyűjtött értékek listái
             val woodLengths = ArrayList<Double>()
@@ -42,17 +49,20 @@ class ImagesViewModel: ViewModel(), KoinComponent {
                 woodLengths.add(cachedImage.woodLength)
                 woodTypes.add(cachedImage.woodType)
                 woodVolumes.add(cachedImage.woodVolume)
+                if (cachedImage.id == sessionId) sessionImage = cachedImage.image
             }
 
             for (processedImage in processedImages) {
                 woodLengths.add(processedImage.woodLength)
                 woodTypes.add(processedImage.woodType)
                 woodVolumes.add(processedImage.woodVolume)
+                if (processedImage.id == sessionId) sessionImage = processedImage.image
             }
 
             for (unprocessedImage in unprocessedImages) {
                 woodLengths.add(unprocessedImage.woodLength)
                 woodTypes.add(unprocessedImage.woodType)
+                if (unprocessedImage.id == sessionId) sessionImage = unprocessedImage.image
             }
 
             if (woodLengths.distinct().size == 1) {
@@ -68,35 +78,22 @@ class ImagesViewModel: ViewModel(), KoinComponent {
             }
 
             // SessionItem hozzáadása a listához
-            sessionItemList.add(ImagesActivity.SessionItem(
+            sessionItemList.add(SessionItem(
                 woodLength = woodLength,
                 woodType = woodType,
                 woodVolume = woodVolume,
-                timestamp = sessionId))
+                timestamp = sessionId,
+                sessionImage = sessionImage))
         }
-        sessionItems.value = sessionItemList
-        /** Kedves Józsi!
-         *
-         * Itt a sessionIds-ben van az összes session ID. Minden sessionhöz ezeket kell meghatározni a megjelenítéshez:
-         * -hossz : Ha a session alatt lévő összes itemben a wood_length megegyezik, akkor az az érték, egyébként -1
-         * -fajta : Ha a session alatt lévő összes itemben a wood_volume megegyezik, akkor az az érték, egyébként -1
-         * -térfogat : Ha a session alatt nincs unprocessedImageItem akkor a session alatt lévő képek össztérfogata, egyébként -1
-         * -dátum : A session első képének a dátuma
-         *
-         * Ezekből a paraméterekből ImagesActivity.SessionItem objektumokat kell csinálni, és beletenni őket a sessionItems LiveData-ba.
-         * Ez alapján fogjuk megjeleníteni a sessionök listáját.
-         *
-         * Felebaráti szeretettel,
-         * Áron
-        */
+        sessionItems.postValue(sessionItemList)
     }
 
-    private fun getSessionIdList() : ArrayList<String> {
+    private fun getSessionIdList() : ArrayList<Long> {
         val sessionIdListUnprocessed = dataClient.local.unprocessed.getAllSessionIds()
         val sessionIdListProcessed = dataClient.local.processed.getAllSessionIds()
         val sessionIdListCached = dataClient.local.cache.getAllSessionIds()
 
-        val sessionIdList = ArrayList<String>()
+        val sessionIdList = ArrayList<Long>()
         sessionIdList.addAll(sessionIdListCached)
         sessionIdList.addAll(sessionIdListProcessed)
         sessionIdList.addAll(sessionIdListUnprocessed)

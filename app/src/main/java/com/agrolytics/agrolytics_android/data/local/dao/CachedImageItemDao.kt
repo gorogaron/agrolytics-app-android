@@ -13,13 +13,13 @@ interface CachedImageItemDao {
     fun getAll(): List<CachedImageItem>
 
     @Query("SELECT * FROM cached_images WHERE id LIKE :id")
-    fun getById(id: String): CachedImageItem
+    fun getById(id: Long): CachedImageItem
 
     @Query("SELECT * FROM cached_images WHERE session_id LIKE :sessionId")
-    fun getBySessionId(sessionId: String): List<CachedImageItem>
+    fun getBySessionId(sessionId: Long): List<CachedImageItem>
 
     @Query("SELECT DISTINCT session_id FROM cached_images")
-    fun getAllSessionIds(): List<String>
+    fun getAllSessionIds(): List<Long>
 
     @Insert
     fun add(cachedImageItem: CachedImageItem)
@@ -31,7 +31,7 @@ interface CachedImageItemDao {
     fun delete(cachedImageItem: CachedImageItem)
 
     @Query("DELETE FROM cached_images WHERE session_id LIKE :sessionId")
-    fun deleteBySessionId(sessionId: String)
+    fun deleteBySessionId(sessionId: Long)
 
     @Query("DELETE FROM cached_images")
     fun deleteAll()

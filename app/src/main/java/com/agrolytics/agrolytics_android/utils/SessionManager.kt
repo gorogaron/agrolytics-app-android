@@ -23,9 +23,9 @@ class SessionManager(var context: Context) {
 		context.getSharedPreferences(SESSION_FILE_NAME, Context.MODE_PRIVATE)
 
 
-	var sessionId: String
-		get() = sharedPreferences.getString(SESSION_ID, "")!!
-		set(sessionId) = sharedPreferences.edit().putString(SESSION_ID, sessionId).apply()
+	var sessionId: Long
+		get() = sharedPreferences.getLong(SESSION_ID, 0)
+		set(sessionId) = sharedPreferences.edit().putLong(SESSION_ID, sessionId).apply()
 
 	var userId: String
 		get() = sharedPreferences.getString(USER_ID, "")!!
