@@ -10,7 +10,9 @@ import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.ui.images.recyclerview.ImagesRecyclerViewAdapter
 import com.agrolytics.agrolytics_android.ui.images.recyclerview.SessionItem
 import com.agrolytics.agrolytics_android.utils.SessionManager
+import kotlinx.android.synthetic.main.activity_images.*
 import kotlinx.android.synthetic.main.activity_session.*
+import kotlinx.android.synthetic.main.activity_session.recycler_view
 import org.koin.android.ext.android.inject
 import org.koin.core.component.KoinApiExtension
 
@@ -27,8 +29,11 @@ class ImagesActivity: BaseActivity(), ImagesScreen {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_images)
 
+		btn_back.setOnClickListener{ onBackPressed() }
+
 		val viewModel = ViewModelProvider(this).get(ImagesViewModel::class.java)
 		viewModel.getSessionItems()
+
 		viewModel.sessionItems.observe(this, Observer {
 			recyclerViewAdapter = ImagesRecyclerViewAdapter(this, ArrayList(it))
 			recyclerViewLayoutManager = GridLayoutManager(this, 2)

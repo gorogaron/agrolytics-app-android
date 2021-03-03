@@ -22,7 +22,7 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
 
-class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
+class RodSelectorActivity : BaseActivity(){
 
 	private val presenter: RodSelectorPresenter by inject()
 	private val appServer: AppServer by inject()
@@ -117,17 +117,8 @@ class RodSelectorActivity : BaseActivity(), BaseActivity.OnDialogActions {
 		showToast("measureOffline - to be implemented")
 	}
 
-
 	companion object {
 		var bitmap: Bitmap? = null
-	}
-
-	override fun positiveButtonClicked() {
-
-	}
-
-	override fun negativeButtonClicked() {
-
 	}
 
 }

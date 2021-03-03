@@ -13,14 +13,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import com.agrolytics.agrolytics_android.AgrolyticsApp
 import com.agrolytics.agrolytics_android.R
+import com.agrolytics.agrolytics_android.types.ConfigInfo
+import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
+import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
 import com.agrolytics.agrolytics_android.utils.fragments.CustomFragmentManager
 
 abstract class BaseActivity : AppCompatActivity(), BaseScreen {
 
-    var toolbarText: TextView? = null
     private var dialog: AlertDialog? = null
-    protected val fragmentManager =
-        CustomFragmentManager(supportFragmentManager)
 
     override fun showLoading() {
         dialog = AlertDialog.Builder(this).create()
@@ -40,28 +40,12 @@ abstract class BaseActivity : AppCompatActivity(), BaseScreen {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun showToolbar(show: Boolean) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
-    override fun startActivityForward(activityToLoad: Class<out Activity>, bundle: Bundle) {
-        val intent = Intent(this, activityToLoad)
-        if (!bundle.isEmpty) {
-            intent.putExtra("extra", bundle)
-        }
-        startActivity(intent)
-        this.finish()
-        this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-    }
-
-    override fun startActivityBack(activityToLoad: Class<out Activity>, bundle: Bundle) {
-        val intent = Intent(this, activityToLoad)
-        if (!bundle.isEmpty) {
-            intent.putExtra("extra", bundle)
-        }
-        startActivity(intent)
-        this.finish()
-        this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+    override fun getContext(): Context {
+        return this
     }
 
     override fun startActivity(activityToLoad: Class<out Activity>, bundle: Bundle, isFromMain: Boolean) {
@@ -73,66 +57,20 @@ abstract class BaseActivity : AppCompatActivity(), BaseScreen {
         }
     }
 
-    override fun startCustomActivityForResult(activityToLoad: Class<out Activity>, bundle: Bundle, requestCode: Int) {
-        val intent = Intent(this, activityToLoad)
-        intent.putExtras(bundle)
-        startActivityForResult(intent, requestCode)
-    }
-
-    override fun setToolbarTitle(title: String) {
-        toolbarText?.let { it.text = title }
-    }
-
-    override fun showFragmentBack(fragment: BaseFragment, tag: String) {
-        fragmentManager.showFragmentBack(fragment, tag)
-    }
-
-    override fun showFragmentForward(fragment: BaseFragment, tag: String) {
-        fragmentManager.showFragmentForward(fragment, tag)
-    }
-
-    override fun showFragment(fragment: BaseFragment, tag: String) {
-        fragmentManager.showFragment(fragment, tag)
-    }
-
-    override fun clearFragments() {
-        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-    }
-
-    override fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-    }
-
-    override fun showAlertDialog(title: String?, message: String?) {
-        androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton(android.R.string.ok) { dialog, which ->
-                dialog.dismiss()
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
+        //Can only return from camera or browser activity
+        if (resultCode == Activity.RESULT_OK ){
+            when (requestCode) {
+                ConfigInfo.IMAGE_CAPTURE -> {
+                    MeasurementManager.startCropperActivity(this, ImageObtainer.cameraImageUri)
+                }
+                ConfigInfo.IMAGE_BROWSE -> {
+                    if (intent?.data != null){
+                        MeasurementManager.startCropperActivity(this, intent.data!!)
+                    }
+                }
             }
-            .show()
-    }
-
-    override fun showAlertDialog(title: String, message: String, listener: OnDialogActions, cancelable: Boolean, positiveButtonText: String) {
-        androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle(title)
-            .setMessage(message)
-            .setCancelable(cancelable)
-            .setPositiveButton(positiveButtonText) { dialog, which ->
-                listener.positiveButtonClicked()
-            }
-            .setNegativeButton("Mégse") { dialog, which ->
-                dialog.dismiss()
-            }
-            .show()
-    }
-
-    override fun getContext(): Context {
-        return this
-    }
-
-    interface OnDialogActions {
-        fun positiveButtonClicked()
-        fun negativeButtonClicked()
+        }
     }
 }
