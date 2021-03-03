@@ -11,12 +11,15 @@ import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
@@ -25,6 +28,7 @@ import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.types.MenuItem
 import com.agrolytics.agrolytics_android.ui.guide.GuideActivity
 import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
+import com.agrolytics.agrolytics_android.ui.images.ImagesViewModel
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.login.LoginActivity
 import com.agrolytics.agrolytics_android.ui.map.MapActivity
@@ -47,7 +51,6 @@ import kotlin.system.exitProcess
 
 class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
 
-    private val presenter: MainPresenter by inject()
     private val appServer: AppServer by inject()
     private val sessionManager: SessionManager by inject()
     private val dataClient: DataClient by inject()
@@ -76,12 +79,10 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
     private val internetCheckHandler = Handler()
     private val internetCheckRunnable = Runnable{handleWifiGpsIcons()}
 
+    @KoinApiExtension
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        presenter.addView(this)
-        presenter.addInjections(arrayListOf(appServer, dataClient, sessionManager))
-        presenter.setActivity(this)
 
         initFabColorAnimators()
 
@@ -103,6 +104,12 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
         internetCheckHandler.postDelayed(internetCheckRunnable, 0)
 
         mainFab.setOnClickListener { fabHandler() }
+
+        val viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel.getLastMeasurementItems()
+        viewModel.lastMeasurementItems.observe(this, Observer {
+            Log.d("FIKA", "GECI")
+        })
 
         requestForAllPermissions(this)
     }
@@ -280,26 +287,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
         checkInternetAndGpsConnection()
         locationManager?.removeUpdates(locationListener)
     }
-
-
-    //TODO: Ez a fv. az ApproveMeasurementActivity-ben is ugyanígy van
-    @KoinApiExtension
-    public override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        super.onActivityResult(requestCode, resultCode, intent)
-        //Can only return from camera or browser activity
-        if (resultCode == Activity.RESULT_OK ){
-            when (requestCode) {
-                ConfigInfo.IMAGE_CAPTURE -> {
-                    MeasurementManager.startCropperActivity(this, ImageObtainer.cameraImageUri)
-                }
-                ConfigInfo.IMAGE_BROWSE -> {
-                    if (intent?.data != null){
-                        MeasurementManager.startCropperActivity(this, intent.data!!)
-                    }
-                }
-            }
-        }
-     }
 
     private fun blur(iRadius : Int){
         val wView = (findViewById<View>(android.R.id.content) as ViewGroup).getChildAt(0) as ViewGroup

@@ -6,10 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -66,66 +62,19 @@
                     android:textColor="@color/darkGrey" />
             </FrameLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/top_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/agrolytics_text"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="35dp"
+                android:layout_marginLeft="15dp"
+                android:text="Legutóbbi mérés"
+                android:textSize="25sp"
+                android:fontFamily="@font/roboto_bold"
+                android:textColor="@color/darkGrey"/>
 
-        <!--
-        <FrameLayout
-            android:id="@+id/frameLayout"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:background="@color/greenDark"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-        <TextView
-            android:id="@+id/tv_show_old_length"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginLeft="16dp"
-            android:gravity="center"
-            android:text="Length: 2"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/frameLayout"
-            app:layout_constraintStart_toStartOf="@+id/frameLayout"
-            app:layout_constraintTop_toTopOf="@+id/frameLayout" />
-
-        <ImageView
-            android:id="@+id/btn_gps"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="32dp"
-            android:padding="14dp"
-            android:tint="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="@+id/frameLayout"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toEndOf="@+id/frameLayout"
-            app:layout_constraintTop_toTopOf="@+id/frameLayout"
-            app:srcCompat="@drawable/ic_gps_off" />
-
-        <ImageView
-            android:id="@+id/btn_internet"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="32dp"
-            android:padding="14dp"
-            android:tint="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="@+id/frameLayout"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toStartOf="@+id/btn_gps"
-            app:layout_constraintTop_toTopOf="@+id/frameLayout"
-            app:srcCompat="@drawable/ic_wifi_off" />
--->
-        <FrameLayout
-            android:id="@+id/frame_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -313,17 +262,17 @@
                 android:visibility="gone"
                 app:tint="@color/white"/>
 
-            <View
-                android:id="@+id/yellow_bg"
-                android:layout_height="match_parent"
-                android:layout_width="match_parent"
-                android:background="@color/yellow"
-                android:alpha="0"
-                android:elevation="10dp"
-                android:animateLayoutChanges="true" />
-
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/yellow_bg"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:background="@color/yellow"
+        android:alpha="0"
+        android:elevation="10dp"
+        android:animateLayoutChanges="true" />
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"

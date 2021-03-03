@@ -7,16 +7,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.LayoutInflater
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentManager
-import com.agrolytics.agrolytics_android.AgrolyticsApp
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
-import com.agrolytics.agrolytics_android.utils.fragments.CustomFragmentManager
 
 abstract class BaseActivity : AppCompatActivity(), BaseScreen {
 

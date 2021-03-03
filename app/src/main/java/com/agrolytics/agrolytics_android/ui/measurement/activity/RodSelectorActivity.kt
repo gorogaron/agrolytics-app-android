@@ -1,6 +1,7 @@
 package com.agrolytics.agrolytics_android.ui.measurement.activity
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -104,8 +105,12 @@ class RodSelectorActivity : BaseActivity(){
 	}
 
 	private fun newImage(){
-		finish()
 		MeasurementManager.hookImage(this, MeasurementManager.sessionImagePickerID)
+	}
+
+	override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+		super.onActivityResult(requestCode, resultCode, intent)
+		finish()
 	}
 
 	private fun showCurrentSession(){

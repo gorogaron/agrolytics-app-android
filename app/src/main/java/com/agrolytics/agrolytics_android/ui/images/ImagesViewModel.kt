@@ -19,7 +19,6 @@ import kotlinx.coroutines.Dispatchers as Dispatchers
 class ImagesViewModel: ViewModel(), KoinComponent {
 
     private val dataClient: DataClient by inject()
-    private val sessionManager: SessionManager by inject()
 
     var sessionItems = MutableLiveData<List<SessionItem>>()
 

@@ -5,7 +5,6 @@ import com.agrolytics.agrolytics_android.network.AppServer
 import com.agrolytics.agrolytics_android.ui.measurement.activity.ApproveMeasurementActivity
 import com.agrolytics.agrolytics_android.ui.measurement.presenter.ApproveMeasurementPresenter
 import com.agrolytics.agrolytics_android.ui.login.LoginPresenter
-import com.agrolytics.agrolytics_android.ui.main.MainPresenter
 import com.agrolytics.agrolytics_android.ui.measurement.activity.SessionActivity
 import com.agrolytics.agrolytics_android.ui.measurement.presenter.RodSelectorPresenter
 import com.agrolytics.agrolytics_android.utils.SessionManager
@@ -24,7 +23,6 @@ val appModule = module {
     single { SessionActivity() }
 
     // Presenter
-    factory { MainPresenter(androidContext()) }
     factory { ApproveMeasurementPresenter() }
     factory { LoginPresenter(androidContext()) }
     factory {

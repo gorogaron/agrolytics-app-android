@@ -70,25 +70,6 @@ class ApproveMeasurementActivity : BaseActivity() {
 		finish()
 	}
 
-	//TODO: Ez a fv. a main activity-ben is ugyanígy van
-	@KoinApiExtension
-	public override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-		super.onActivityResult(requestCode, resultCode, intent)
-		//Can only return from camera or browser activity
-		if (resultCode == Activity.RESULT_OK ){
-			when (requestCode) {
-				ConfigInfo.IMAGE_CAPTURE -> {
-					MeasurementManager.startCropperActivity(this, ImageObtainer.cameraImageUri)
-				}
-				ConfigInfo.IMAGE_BROWSE -> {
-					if (intent?.data != null){
-						MeasurementManager.startCropperActivity(this, intent.data!!)
-					}
-				}
-			}
-		}
-	}
-
 	companion object Result {
 	    lateinit var processedImageItem : ProcessedImageItem
 		lateinit var method : String
