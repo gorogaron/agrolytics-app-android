@@ -45,7 +45,7 @@ import org.koin.core.component.KoinApiExtension
 import kotlin.system.exitProcess
 
 
-class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActivity.OnDialogActions {
+class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
 
     private val presenter: MainPresenter by inject()
     private val appServer: AppServer by inject()
@@ -317,10 +317,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen, BaseActiv
                 .onto(wView)
         }
     }
-
-    override fun positiveButtonClicked() {}
-
-    override fun negativeButtonClicked() {}
 
     override fun onBackPressed() {
         finish()
