@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
@@ -34,6 +35,7 @@ import com.agrolytics.agrolytics_android.ui.login.LoginActivity
 import com.agrolytics.agrolytics_android.ui.map.MapActivity
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
+import com.agrolytics.agrolytics_android.ui.measurement.utils.SessionRecyclerViewAdapter
 import com.agrolytics.agrolytics_android.utils.*
 import com.agrolytics.agrolytics_android.utils.Util.Companion.showParameterSettingsWindow
 import com.agrolytics.agrolytics_android.utils.permissions.locationPermGiven
@@ -41,7 +43,10 @@ import com.agrolytics.agrolytics_android.utils.permissions.requestForAllPermissi
 import com.google.firebase.auth.FirebaseAuth
 import jp.wasabeef.blurry.Blurry
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.recycler_view
+import kotlinx.android.synthetic.main.activity_session.*
 import kotlinx.android.synthetic.main.nav_bar.*
+import kotlinx.android.synthetic.main.recycler_view_measurement_item.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
@@ -79,6 +84,11 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
     private val internetCheckHandler = Handler()
     private val internetCheckRunnable = Runnable{handleWifiGpsIcons()}
 
+    /**Recycler view*/
+    lateinit var recyclerViewAdapter : SessionRecyclerViewAdapter
+    lateinit var recyclerViewLayoutManager : LinearLayoutManager
+    lateinit var viewModel : MainViewModel
+
     @KoinApiExtension
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,10 +115,14 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
 
         mainFab.setOnClickListener { fabHandler() }
 
-        val viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.getLastMeasurementItems()
         viewModel.lastMeasurementItems.observe(this, Observer {
-            Log.d("FIKA", "GECI")
+            val lastMeasurementItems = ArrayList(viewModel.lastMeasurementItems.value!!.take(3))
+            recyclerViewAdapter = SessionRecyclerViewAdapter(this@MainActivity, lastMeasurementItems)
+            recyclerViewLayoutManager = LinearLayoutManager(this@MainActivity)
+            recycler_view.layoutManager = recyclerViewLayoutManager
+            recycler_view.adapter = recyclerViewAdapter
         })
 
         requestForAllPermissions(this)
@@ -313,6 +327,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
     override fun onResume() {
         super.onResume()
         updateLocation()
+        viewModel.getLastMeasurementItems()
     }
 
     override fun onPause() {
@@ -322,4 +337,5 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
             closeFab()
         }
     }
+
 }

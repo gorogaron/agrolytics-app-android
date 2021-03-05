@@ -53,7 +53,7 @@ class SessionRecyclerViewAdapter(var activity : Activity, var itemList : ArrayLi
         else if (imageItem.getItemType() == ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED) {
             val unprocessedImageItem = imageItem as UnprocessedImageItem
             holder.imageView.setImageBitmap(unprocessedImageItem.image)
-            holder.volumeTextView.text = ""
+            holder.volumeTextView.text = "Mérésre vár"
             holder.dateTextView.text = getFormattedDateTime(unprocessedImageItem.timestamp)
         }
     }

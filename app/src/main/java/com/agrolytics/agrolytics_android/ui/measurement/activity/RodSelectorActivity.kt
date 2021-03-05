@@ -30,7 +30,6 @@ class RodSelectorActivity : BaseActivity(){
 	private val dataClient: DataClient by inject()
 	private val sessionManager: SessionManager by inject()
 
-
 	var path: String? = null
 	var rodLength = 1.0
 
@@ -59,7 +58,7 @@ class RodSelectorActivity : BaseActivity(){
 		val builder = AlertDialog.Builder(this)
 		builder.setTitle("Hiba")
 		//builder.setCancelable(true)
-		val view = LayoutInflater.from(this).inflate(R.layout.online_measurement_error_dialog, null, false)
+		val view = LayoutInflater.from(this).inflate(R.layout.dialog_online_measurement_error, null, false)
 		builder.setView(view)
 		val dialog = builder.create()
 
@@ -110,6 +109,7 @@ class RodSelectorActivity : BaseActivity(){
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
 		super.onActivityResult(requestCode, resultCode, intent)
+		setResult(RESULT_OK)
 		finish()
 	}
 

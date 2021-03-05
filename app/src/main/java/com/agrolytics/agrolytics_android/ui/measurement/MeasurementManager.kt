@@ -65,7 +65,7 @@ object MeasurementManager : KoinComponent{
         val intent = Intent(callingActivity, RodSelectorActivity::class.java)
         intent.putExtra(ConfigInfo.CROPPED_RESIZED_IMG_PATH, cropImgUri!!.path)
         RodSelectorActivity.bitmap = croppedImgBitmap
-        callingActivity.startActivity(intent)
+        callingActivity.startActivityForResult(intent, ConfigInfo.ROD_SELECTOR)
     }
 
     fun startApproveMeasurementActivity(callingActivity: Activity, processedImageItem: ProcessedImageItem, method: String) {

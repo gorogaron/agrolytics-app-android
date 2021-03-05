@@ -1,5 +1,7 @@
 package com.agrolytics.agrolytics_android.ui.measurement.activity
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
@@ -8,7 +10,9 @@ import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_cropper.*
 import kotlinx.android.synthetic.main.activity_info.btn_back
 import android.provider.MediaStore
+import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
+import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
 import org.jetbrains.anko.toast
 
 
@@ -68,5 +72,16 @@ class CropperActivity: BaseActivity(), View.OnClickListener {
     override fun onResume() {
         super.onResume()
         poly_cropper_view.resetFinalImages()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
+        if (resultCode == Activity.RESULT_OK ){
+            when (requestCode) {
+                ConfigInfo.ROD_SELECTOR -> {
+                    finish()
+                }
+            }
+        }
     }
 }

@@ -19,8 +19,6 @@ import org.koin.core.component.KoinApiExtension
 
 class ImagesActivity: BaseActivity(), ImagesScreen {
 
-	private val dataClient : DataClient by inject()
-	private val sessionManager : SessionManager by inject()
 	lateinit var recyclerViewAdapter : ImagesRecyclerViewAdapter
 	lateinit var recyclerViewLayoutManager : GridLayoutManager
 
