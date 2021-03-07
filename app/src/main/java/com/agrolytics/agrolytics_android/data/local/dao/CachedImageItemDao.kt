@@ -33,6 +33,9 @@ interface CachedImageItemDao {
     @Query("DELETE FROM cached_images WHERE session_id LIKE :sessionId")
     fun deleteBySessionId(sessionId: Long)
 
+    @Query("DELETE FROM cached_images WHERE id LIKE :id")
+    fun deleteById(id: Long)
+
     @Query("DELETE FROM cached_images")
     fun deleteAll()
 }

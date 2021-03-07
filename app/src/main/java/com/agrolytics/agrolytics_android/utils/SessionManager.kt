@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 
 class SessionManager(var context: Context) {
 
-	private val SESSION_ID = "session.id"
 	private val USER_ID = "user.id"
 	private val USER_LEADER_ID = "user.leader_id"
 	private val LICENCE_EXPIRATION_DATE = "user.expire_date"
@@ -21,11 +20,6 @@ class SessionManager(var context: Context) {
 
 	private val sharedPreferences: SharedPreferences =
 		context.getSharedPreferences(SESSION_FILE_NAME, Context.MODE_PRIVATE)
-
-
-	var sessionId: Long
-		get() = sharedPreferences.getLong(SESSION_ID, 0)
-		set(sessionId) = sharedPreferences.edit().putLong(SESSION_ID, sessionId).apply()
 
 	var userId: String
 		get() = sharedPreferences.getString(USER_ID, "")!!
@@ -84,7 +78,6 @@ class SessionManager(var context: Context) {
 			.remove(USER_FORESTRY_ID)
 			.remove(USER_FORESTRY_NAME)
 			.remove(ROD_LENGTH)
-			.remove(SESSION_ID)
 			.remove(START_MEASUREMENT)
 			.apply()
 	}

@@ -7,8 +7,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.LayoutInflater
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
@@ -68,5 +71,39 @@ abstract class BaseActivity : AppCompatActivity(), BaseScreen {
                 }
             }
         }
+    }
+
+    fun show2OptionDialog(title : String,
+                          button1Text : String,
+                          button2Text : String,
+                          listener1: (() -> Unit),
+                          listener2: (() -> Unit),
+                          cancelable : Boolean = true)
+    {
+        val builder = AlertDialog.Builder(this)
+        builder.setCancelable(cancelable)
+        val view = LayoutInflater.from(this).inflate(R.layout.dialog_2_options, null, false)
+        builder.setView(view)
+        val dialog = builder.create()
+
+        view.findViewById<TextView>(R.id.title).text = title
+
+        view.findViewById<ConstraintLayout>(R.id.button_1).apply {
+            findViewById<TextView>(R.id.buttonText).text = button1Text
+            setOnClickListener{
+                listener1()
+                dialog.dismiss()
+            }
+        }
+        view.findViewById<ConstraintLayout>(R.id.button_2).apply {
+            findViewById<TextView>(R.id.buttonText).text = button2Text
+            setOnClickListener{
+                listener2()
+                dialog.dismiss()
+            }
+        }
+
+        dialog.window!!.setBackgroundDrawableResource(R.drawable.bg_white_round)
+        dialog.show()
     }
 }

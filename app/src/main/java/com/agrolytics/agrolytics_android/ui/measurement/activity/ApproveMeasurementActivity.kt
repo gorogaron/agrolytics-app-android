@@ -2,6 +2,7 @@ package com.agrolytics.agrolytics_android.ui.measurement.activity
 
 import android.app.Activity
 import android.content.Intent
+import android.icu.util.Measure
 import android.os.Bundle
 import android.view.View
 import com.agrolytics.agrolytics_android.R
@@ -11,6 +12,9 @@ import org.koin.android.ext.android.inject
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo
+import com.agrolytics.agrolytics_android.types.ConfigInfo.IMAGE_BROWSE
+import com.agrolytics.agrolytics_android.types.ConfigInfo.IMAGE_CAPTURE
+import com.agrolytics.agrolytics_android.types.ConfigInfo.SESSION
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.presenter.ApproveMeasurementPresenter
@@ -35,8 +39,10 @@ class ApproveMeasurementActivity : BaseActivity() {
 
 		btn_decline.setOnClickListener{ onDeclineClicked() }
 		btn_accept.setOnClickListener{ onAcceptClicked() }
+
 		btn_new.setOnClickListener { newImage() }
-		btn_show_session.setOnClickListener { MeasurementManager.showSession(this, sessionManager.sessionId) }
+		btn_show_session.setOnClickListener { MeasurementManager.showSession(this, MeasurementManager.currentSessionId) }
+
 		image.setImageBitmap(processedImageItem.image)
 	}
 
@@ -54,20 +60,29 @@ class ApproveMeasurementActivity : BaseActivity() {
 	private fun onAcceptClicked() {
 		container_selection.animate().alpha(0f).duration = 300
 		container_after_selection.visibility = View.VISIBLE
+		container_selection.visibility = View.GONE
 		tv_result.text = processedImageItem.woodVolume.toString()
 		doAsync {
 			dataClient.local.processed.add(processedImageItem)
+			MeasurementManager.recentlyAddedItemsIds.add(processedImageItem.id)
 		}
 	}
 
 	private fun newImage() {
-		MeasurementManager.hookImage(this, MeasurementManager.sessionImagePickerID)
+		MeasurementManager.addNewMeasurementForSession(this, MeasurementManager.currentSessionId)
 	}
 
 	override fun onBackPressed() {
-		val intent = Intent(this, MainActivity::class.java)
-		startActivity(intent)
-		finish()
+		MeasurementManager.closeMeasurementDialog(this)
+	}
+
+	override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+		super.onActivityResult(requestCode, resultCode, intent)
+		if (resultCode == Activity.RESULT_OK ){
+			when (requestCode) {
+				IMAGE_CAPTURE, IMAGE_BROWSE, SESSION -> finish()
+			}
+		}
 	}
 
 	companion object Result {

@@ -1,19 +1,24 @@
 package com.agrolytics.agrolytics_android.ui.measurement.utils
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.local.tables.BaseImageItem
+import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.measurement.activity.SessionActivity
 import com.agrolytics.agrolytics_android.utils.Util.Companion.getFormattedDateTime
+import com.github.chrisbanes.photoview.PhotoView
 import kotlinx.android.synthetic.main.recycler_view_measurement_item.view.*
 import kotlin.collections.ArrayList
 
@@ -30,6 +35,20 @@ class SessionRecyclerViewAdapter(var activity : Activity, var itemList : ArrayLi
 
         override fun onClick(v: View?) {
             Log.d("CLICK", "$bindingAdapterPosition")
+            val builder = AlertDialog.Builder(activity)
+            builder.setCancelable(true)
+            val view = LayoutInflater.from(activity).inflate(R.layout.dialog_image_item, null, false)
+            view.findViewById<PhotoView>(R.id.photo_view).apply {
+                setImageBitmap(when (itemList[bindingAdapterPosition].getItemType()) {
+                    ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> ((itemList[bindingAdapterPosition]) as CachedImageItem).image
+                    ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> ((itemList[bindingAdapterPosition]) as ProcessedImageItem).image
+                    ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> ((itemList[bindingAdapterPosition]) as UnprocessedImageItem).image
+                })
+            }
+            builder.setView(view)
+            val dialog = builder.create()
+            dialog.window!!.setBackgroundDrawableResource(R.drawable.bg_white_round)
+            dialog.show()
         }
     }
 

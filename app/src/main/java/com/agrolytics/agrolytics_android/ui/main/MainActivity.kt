@@ -3,15 +3,12 @@ package com.agrolytics.agrolytics_android.ui.main
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.content.res.ColorStateList
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -25,16 +22,13 @@ import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.network.AppServer
-import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.types.MenuItem
 import com.agrolytics.agrolytics_android.ui.guide.GuideActivity
 import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
-import com.agrolytics.agrolytics_android.ui.images.ImagesViewModel
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
 import com.agrolytics.agrolytics_android.ui.login.LoginActivity
 import com.agrolytics.agrolytics_android.ui.map.MapActivity
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
-import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
 import com.agrolytics.agrolytics_android.ui.measurement.utils.SessionRecyclerViewAdapter
 import com.agrolytics.agrolytics_android.utils.*
 import com.agrolytics.agrolytics_android.utils.Util.Companion.showParameterSettingsWindow
@@ -44,10 +38,9 @@ import com.google.firebase.auth.FirebaseAuth
 import jp.wasabeef.blurry.Blurry
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.recycler_view
-import kotlinx.android.synthetic.main.activity_session.*
 import kotlinx.android.synthetic.main.nav_bar.*
-import kotlinx.android.synthetic.main.recycler_view_measurement_item.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
 import org.koin.core.component.KoinApiExtension
@@ -108,6 +101,10 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
         container_guide.setOnClickListener(this)
         container_impressum.setOnClickListener(this)
         container_logout.setOnClickListener(this)
+
+        show_full_session.setOnClickListener(this)
+        session_add.setOnClickListener(this)
+        session_location.setOnClickListener(this)
 
         checkInternetAndGpsConnection()
         
@@ -211,6 +208,10 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
             R.id.container_impressum -> openActivity(MenuItem.INFO)
             R.id.container_guide -> openActivity(MenuItem.GUIDE)
             R.id.container_logout -> signOut()
+
+            R.id.show_full_session -> MeasurementManager.showSession(this, viewModel.lastSessionId.value)
+            R.id.session_add -> MeasurementManager.addNewMeasurementForSession(this, viewModel.lastSessionId.value!!)
+            R.id.session_location -> { this.toast("TODO") }
         }
     }
 

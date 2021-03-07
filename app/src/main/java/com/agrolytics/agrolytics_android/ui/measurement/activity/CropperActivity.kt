@@ -74,14 +74,7 @@ class CropperActivity: BaseActivity(), View.OnClickListener {
         poly_cropper_view.resetFinalImages()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        super.onActivityResult(requestCode, resultCode, intent)
-        if (resultCode == Activity.RESULT_OK ){
-            when (requestCode) {
-                ConfigInfo.ROD_SELECTOR -> {
-                    finish()
-                }
-            }
-        }
+    override fun onBackPressed() {
+        MeasurementManager.closeMeasurementDialog(this)
     }
 }

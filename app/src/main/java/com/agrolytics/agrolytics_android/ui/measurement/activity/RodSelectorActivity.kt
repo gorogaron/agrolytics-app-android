@@ -99,22 +99,22 @@ class RodSelectorActivity : BaseActivity(){
 	private fun saveForLater(unprocessedImageItem: UnprocessedImageItem){
 		doAsync {
 			dataClient.local.unprocessed.add(unprocessedImageItem)
+			MeasurementManager.recentlyAddedItemsIds.add(unprocessedImageItem.id)
 			uiThread { showToast("A kép mentésre került.") }
 		}
 	}
 
 	private fun newImage(){
-		MeasurementManager.hookImage(this, MeasurementManager.sessionImagePickerID)
+		MeasurementManager.addNewMeasurementForSession(this, MeasurementManager.currentSessionId)
 	}
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
 		super.onActivityResult(requestCode, resultCode, intent)
-		setResult(RESULT_OK)
 		finish()
 	}
 
 	private fun showCurrentSession(){
-		MeasurementManager.showSession(this, sessionManager.sessionId)
+		MeasurementManager.showSession(this, MeasurementManager.currentSessionId)
 	}
 
 	private fun measureOffline(unprocessedImageItem: UnprocessedImageItem){
@@ -124,6 +124,7 @@ class RodSelectorActivity : BaseActivity(){
 
 	companion object {
 		var bitmap: Bitmap? = null
+		var correspondingCropperActivity : CropperActivity? = null
 	}
 
 }

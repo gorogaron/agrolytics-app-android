@@ -97,7 +97,9 @@
                     app:layout_constraintTop_toTopOf="@id/top_text"
                     app:layout_constraintBottom_toBottomOf="@id/top_text"
                     app:layout_constraintEnd_toStartOf="@id/session_location"
-                    android:layout_marginEnd="25dp"/>
+                    android:layout_marginEnd="25dp"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless" />
                 <ImageView
                     android:id="@+id/session_location"
                     android:layout_width="wrap_content"
@@ -106,7 +108,9 @@
                     app:layout_constraintTop_toTopOf="@id/top_text"
                     app:layout_constraintBottom_toBottomOf="@id/top_text"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginEnd="25dp"/>
+                    android:layout_marginEnd="25dp"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"/>
 
                 <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
@@ -128,7 +132,7 @@
                             android:nestedScrollingEnabled="false"
                             android:background="@drawable/bg_white_round" />
 
-                        <TextView
+                        <Button
                             android:id="@+id/show_full_session"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -136,9 +140,9 @@
                             android:elevation="1dp"
                             android:text="Teljes csoport megjelenítése"
                             android:layout_marginTop="-65dp"
-                            android:textSize="15sp"
+                            android:textSize="10sp"
                             android:fontFamily="@font/roboto_bold"
-                            android:textColor="@color/darkGrey"/>
+                            android:textColor="@color/darkGrey" />
                     </LinearLayout>
                 </androidx.core.widget.NestedScrollView>
 

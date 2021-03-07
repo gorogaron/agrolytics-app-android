@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:textSize="18sp"
         android:padding="15dp"
-        android:text="Biztosan ki szeretne lépni mentés nélkül?"/>
+        android:text=""/>
 
     <FrameLayout
         android:id="@+id/button_frame_1"
@@ -31,7 +31,7 @@
             android:id="@+id/button_1"
             layout="@layout/dialog_button_item"/>
     </FrameLayout>
-    
+
     <FrameLayout
         android:id="@+id/button_frame_2"
         android:layout_width="0dp"

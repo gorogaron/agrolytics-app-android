@@ -141,5 +141,7 @@ dependencies {
     // Lifecycle ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0"
 
+    // Zoomable imageview
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 }
 apply plugin: 'com.google.gms.google-services'

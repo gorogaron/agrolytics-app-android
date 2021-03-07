@@ -30,6 +30,9 @@ interface ProcessedImageItemDao {
     @Query("DELETE FROM processed_images WHERE session_id LIKE :sessionId")
     fun deleteBySessionId(sessionId: Long)
 
+    @Query("DELETE FROM processed_images WHERE id LIKE :id")
+    fun deleteById(id: Long)
+
     @Query("DELETE FROM processed_images")
     fun deleteAll()
 }

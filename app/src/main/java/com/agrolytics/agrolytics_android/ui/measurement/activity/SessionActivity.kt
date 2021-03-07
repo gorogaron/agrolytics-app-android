@@ -1,5 +1,6 @@
 package com.agrolytics.agrolytics_android.ui.measurement.activity
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -7,6 +8,7 @@ import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.data.local.tables.BaseImageItem
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
+import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.utils.SessionRecyclerViewAdapter
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import kotlinx.android.synthetic.main.activity_session.*
@@ -17,7 +19,6 @@ import org.koin.android.ext.android.inject
 class SessionActivity : BaseActivity() {
 
     private val dataClient : DataClient by inject()
-    private val sessionManager : SessionManager by inject()
     lateinit var recyclerViewAdapter : SessionRecyclerViewAdapter
     lateinit var recyclerViewLayoutManager : LinearLayoutManager
 
@@ -55,6 +56,13 @@ class SessionActivity : BaseActivity() {
     }
 
     private fun saveBtnClicked() {
-        sessionManager.sessionId = 0
+        MeasurementManager.currentSessionId = 0
+        MeasurementManager.recentlyAddedItemsIds.clear()
+        setResult(Activity.RESULT_OK)
+        finish()
+    }
+
+    override fun onBackPressed() {
+        finish()
     }
 }

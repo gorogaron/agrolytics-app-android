@@ -20,16 +20,17 @@ class MainViewModel : ViewModel(), KoinComponent {
     private val dataClient : DataClient by inject()
 
     var lastMeasurementItems = MutableLiveData<ArrayList<BaseImageItem>>()
+    var lastSessionId = MutableLiveData<Long>()
 
     fun getLastMeasurementItems() = viewModelScope.launch(Dispatchers.IO) {
         val imageItemList = ArrayList<BaseImageItem>()
-        val sessionIdList = getSessionIdList()
-        val latestSessionId = sessionIdList.max()
+        val latestId = getSessionIdList().max()
 
-        if (latestSessionId != null){
-            val cachedImages = dataClient.local.cache.getBySessionId(latestSessionId)
-            val processedImages = dataClient.local.processed.getBySessionId(latestSessionId)
-            val unprocessedImages = dataClient.local.unprocessed.getBySessionId(latestSessionId)
+        if (latestId != null){
+            lastSessionId.postValue(latestId)
+            val cachedImages = dataClient.local.cache.getBySessionId(latestId)
+            val processedImages = dataClient.local.processed.getBySessionId(latestId)
+            val unprocessedImages = dataClient.local.unprocessed.getBySessionId(latestId)
 
             imageItemList.addAll(cachedImages)
             imageItemList.addAll(processedImages)

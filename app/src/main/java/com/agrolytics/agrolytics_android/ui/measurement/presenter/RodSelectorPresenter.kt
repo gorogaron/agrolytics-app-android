@@ -32,7 +32,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
         }
         val unprocessedImageItem = UnprocessedImageItem(
             id = sessionManager?.measurementStartTimestamp!!,
-            sessionId = sessionManager?.sessionId!!,
+            sessionId = MeasurementManager.currentSessionId,
             image = bitmap,
             woodType = sessionManager?.woodType!!,
             woodLength = sessionManager?.woodLength!!.toDouble(),
@@ -63,6 +63,9 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
                         val processedImageItem = unprocessedImageItem.toProcessedImageItem(maskedImg, volume)
                         activity.hideLoading()
                         MeasurementManager.startApproveMeasurementActivity(activity, processedImageItem, "online")
+                        activity.finish()
+                        RodSelectorActivity.correspondingCropperActivity!!.finish()
+                        RodSelectorActivity.correspondingCropperActivity = null
 
                     } else {
                         activity.hideLoading()
