@@ -91,7 +91,7 @@ class MapActivity : BaseActivity(), MapScreen, View.OnClickListener {
 
             val options = MarkerOptions()
             options.position(latLng)
-            options.title = mMarker.id.toString()
+            options.title = mMarker.timestamp.toString()
             options.marker.id = images.indexOf(mMarker).toLong()
             if (!isOnline) {
                 val iconFactory = IconFactory.getInstance(this)

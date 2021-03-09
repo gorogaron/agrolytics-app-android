@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import com.agrolytics.agrolytics_android.AgrolyticsApp
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
@@ -99,7 +100,7 @@ class RodSelectorActivity : BaseActivity(){
 	private fun saveForLater(unprocessedImageItem: UnprocessedImageItem){
 		doAsync {
 			dataClient.local.unprocessed.add(unprocessedImageItem)
-			MeasurementManager.recentlyAddedItemsIds.add(unprocessedImageItem.id)
+			MeasurementManager.recentlyAddedItemTimestamps.add(unprocessedImageItem.timestamp)
 			uiThread { showToast("A kép mentésre került.") }
 		}
 	}

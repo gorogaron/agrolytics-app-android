@@ -47,36 +47,6 @@ class Util {
             return localDateTimeFormatter.format(localDateTime)
         }
 
-        fun isNetworkAvailable(): Boolean {
-            return runBlocking { withContext(Dispatchers.IO){ isOnline()} }
-        }
-
-        suspend fun isOnline(): Boolean = suspendCoroutine { cont ->
-            try {
-                var addresses = InetAddress.getAllByName("www.google.com")
-                cont.resume(addresses[0].hostAddress != "")
-            } catch (e: UnknownHostException) {
-                // TODO: handle error
-                cont.resume(false)
-            }
-        }
-
-        fun isInternetAvailable(): Boolean {
-            return try {
-                val sock = Socket()
-                val sockaddr: SocketAddress = InetSocketAddress("8.8.8.8", 53)
-                runBlocking {
-                    withContext(Dispatchers.IO) {
-                        sock.connect(sockaddr, 1000) // This will block no more than timeoutMs
-                    }
-                }
-                sock.close()
-                true
-            } catch (e: IOException) {
-                false
-            }
-        }
-
         fun Double.round(decimals: Int): Double {
             var multiplier = 1.0
             repeat(decimals) { multiplier *= 10 }

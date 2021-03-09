@@ -3,8 +3,10 @@ package com.agrolytics.agrolytics_android
 import android.app.Application
 import android.content.Context
 import android.os.Environment
+import androidx.lifecycle.Observer
 import com.agrolytics.agrolytics_android.koin.appModule
 import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageSegmentation
+import com.agrolytics.agrolytics_android.utils.ConnectionLiveData
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import java.io.File
@@ -13,11 +15,10 @@ import java.io.IOException
 
 class AgrolyticsApp: Application() {
 
-	private var currentActivity : Context? = null
-
 	override fun onCreate() {
 		super.onCreate()
 		ImageSegmentation.init(assets)
+
 		startKoin {
 			androidContext(this@AgrolyticsApp)
 			modules(appModule)

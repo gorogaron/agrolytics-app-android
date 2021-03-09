@@ -12,14 +12,28 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.Observer
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
+import com.agrolytics.agrolytics_android.utils.ConnectionLiveData
 
 abstract class BaseActivity : AppCompatActivity(), BaseScreen {
 
     private var dialog: AlertDialog? = null
+
+   //TODO: Jobb lenne singleton livadata-t létrehozni
+    protected lateinit var connectionLiveData : ConnectionLiveData
+    var isInternetAvailable = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        connectionLiveData = ConnectionLiveData(this)
+        connectionLiveData.observe(this, Observer {value ->
+            isInternetAvailable = value
+        })
+    }
 
     override fun showLoading() {
         dialog = AlertDialog.Builder(this).create()

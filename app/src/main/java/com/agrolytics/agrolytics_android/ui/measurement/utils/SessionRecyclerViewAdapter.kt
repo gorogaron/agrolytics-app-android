@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -34,16 +35,20 @@ class SessionRecyclerViewAdapter(var activity : Activity, var itemList : ArrayLi
         }
 
         override fun onClick(v: View?) {
-            Log.d("CLICK", "$bindingAdapterPosition")
             val builder = AlertDialog.Builder(activity)
             builder.setCancelable(true)
             val view = LayoutInflater.from(activity).inflate(R.layout.dialog_image_item, null, false)
-            view.findViewById<PhotoView>(R.id.photo_view).apply {
+            view.findViewById<PhotoView>(R.id.image).apply {
                 setImageBitmap(when (itemList[bindingAdapterPosition].getItemType()) {
                     ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> ((itemList[bindingAdapterPosition]) as CachedImageItem).image
                     ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> ((itemList[bindingAdapterPosition]) as ProcessedImageItem).image
                     ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> ((itemList[bindingAdapterPosition]) as UnprocessedImageItem).image
                 })
+            }
+            view.findViewById<ImageView>(R.id.btn_delete).setOnClickListener {
+                val rootView = activity.window.decorView.rootView as ViewGroup
+                val childView = activity.layoutInflater.inflate(R.layout.confirm_delete, null)
+                rootView.addView(childView)
             }
             builder.setView(view)
             val dialog = builder.create()

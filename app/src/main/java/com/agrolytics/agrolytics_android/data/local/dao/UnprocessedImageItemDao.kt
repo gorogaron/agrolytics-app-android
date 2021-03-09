@@ -27,11 +27,11 @@ interface UnprocessedImageItemDao {
     @Delete
     fun delete(unprocessedImageItem: UnprocessedImageItem)
 
+    @Query("DELETE FROM unprocessed_images WHERE timestamp LIKE :timestamp")
+    fun deleteByTimestamp(timestamp : Long)
+
     @Query("DELETE FROM unprocessed_images WHERE session_id LIKE :sessionId")
     fun deleteBySessionId(sessionId: Long)
-
-    @Query("DELETE FROM unprocessed_images WHERE id LIKE :id")
-    fun deleteById(id: Long)
 
     @Query("DELETE FROM unprocessed_images")
     fun deleteAll()

@@ -31,7 +31,6 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
             Util.long = 0.0
         }
         val unprocessedImageItem = UnprocessedImageItem(
-            id = sessionManager?.measurementStartTimestamp!!,
             sessionId = MeasurementManager.currentSessionId,
             image = bitmap,
             woodType = sessionManager?.woodType!!,
@@ -42,7 +41,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
             timestamp = sessionManager?.measurementStartTimestamp!!
         )
 
-        if (!Util.isNetworkAvailable()) {
+        if (activity.isInternetAvailable) {
             activity.showOnlineMeasurementErrorDialog(unprocessedImageItem)
         }
         else {

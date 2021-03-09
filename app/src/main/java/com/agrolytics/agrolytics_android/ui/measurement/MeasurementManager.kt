@@ -1,18 +1,8 @@
 package com.agrolytics.agrolytics_android.ui.measurement
 
-import android.app.Activity
-import android.app.Activity.RESULT_OK
-import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import android.view.LayoutInflater
-import android.view.View
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
-import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.network.AppServer
@@ -30,7 +20,6 @@ import com.agrolytics.agrolytics_android.utils.ImageUtils
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
-import org.koin.android.ext.android.inject
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import retrofit2.Response
@@ -43,9 +32,8 @@ object MeasurementManager : KoinComponent{
     private val sessionManager : SessionManager by inject()
     private val dataClient: DataClient by inject()
 
-    var sessionImagePickerID : ImagePickerID = ImagePickerID.ID_CAMERA
     var currentSessionId : Long = 0L
-    var recentlyAddedItemsIds = ArrayList<Long>()
+    var recentlyAddedItemTimestamps = ArrayList<Long>()
 
     enum class ImagePickerID {
         ID_CAMERA, ID_BROWSER
@@ -55,7 +43,6 @@ object MeasurementManager : KoinComponent{
         val currentTimeStamp = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
         if (currentSessionId == 0L) {
             currentSessionId = currentTimeStamp
-            sessionImagePickerID = imagePickerID
             hookImage(callingActivity, imagePickerID)
         }
         else {
@@ -145,14 +132,14 @@ object MeasurementManager : KoinComponent{
 
     fun closeMeasurementDialog(callingActivity : BaseActivity){
         val exitListener = {
-            for (imageItemId in recentlyAddedItemsIds) {
+            for (imageItemTimestamps in recentlyAddedItemTimestamps) {
                 //cache-d item törlésére itt nincs szükség, mert itt a nem mentett képeket töröljük.
                 doAsync {
-                    dataClient.local.unprocessed.deleteById(imageItemId)
-                    dataClient.local.processed.deleteById(imageItemId)
+                    dataClient.local.unprocessed.deleteByTimestamp(imageItemTimestamps)
+                    dataClient.local.processed.deleteByTimestamp(imageItemTimestamps)
                 }
             }
-            recentlyAddedItemsIds.clear()
+            recentlyAddedItemTimestamps.clear()
             currentSessionId = 0
             callingActivity.finish()
         }
@@ -162,7 +149,7 @@ object MeasurementManager : KoinComponent{
         }
 
         callingActivity.show2OptionDialog(
-            "Biztosan ki szeretne lépni mentés nélkül? ${recentlyAddedItemsIds.size} újonnan hozzáadott kép törlésre kerül.",
+            "Biztosan ki szeretne lépni mentés nélkül? ${recentlyAddedItemTimestamps.size} újonnan hozzáadott kép törlésre kerül.",
             "Kilépés",
             "Mégse",
             exitListener,

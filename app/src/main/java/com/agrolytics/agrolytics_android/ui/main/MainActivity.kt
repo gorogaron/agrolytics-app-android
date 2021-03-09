@@ -67,16 +67,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
     private val grayToRedAnim = ValueAnimator()
     private val redToGrayAnim = ValueAnimator()
 
-    /**Internet Handler*/
-    /**
-     * TODO:
-     * -Add a broadcast receiver to check for connectivity changes. This will only be needed to update the icons
-     * -Decrease periodicity of internetCheckHandler
-     * -Use a combined version of internetCheckHandler and broadcast receiver
-    */
-    private val internetCheckHandler = Handler()
-    private val internetCheckRunnable = Runnable{handleWifiGpsIcons()}
-
     /**Recycler view*/
     lateinit var recyclerViewAdapter : SessionRecyclerViewAdapter
     lateinit var recyclerViewLayoutManager : LinearLayoutManager
@@ -107,8 +97,15 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
         session_location.setOnClickListener(this)
 
         checkInternetAndGpsConnection()
-        
-        internetCheckHandler.postDelayed(internetCheckRunnable, 0)
+
+        connectionLiveData.observe(this, Observer {
+            if(it){
+                wifi_icon.setImageResource(R.drawable.ic_wifi_on)
+            }
+            else {
+                wifi_icon.setImageResource(R.drawable.ic_wifi_off)
+            }
+        })
 
         mainFab.setOnClickListener { fabHandler() }
 
@@ -181,19 +178,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
         fabClicked = false
     }
 
-    private fun handleWifiGpsIcons() {
-        val connected = Util.isInternetAvailable()
-
-        if(connected){
-            wifi_icon.setImageResource(R.drawable.ic_wifi_on)
-        }
-        else {
-            wifi_icon.setImageResource(R.drawable.ic_wifi_off)
-        }
-
-        internetCheckHandler.postDelayed(internetCheckRunnable, 2000)
-    }
-
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.cameraFab -> MeasurementManager.startNewMeasurementSession(this, MeasurementManager.ImagePickerID.ID_CAMERA)
@@ -241,7 +225,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
     }
 
     private fun checkInternetAndGpsConnection() {
-        if (Util.isNetworkAvailable()) {
+        if (isInternetAvailable) {
             wifi_icon.setImageResource(R.drawable.ic_wifi_on)
 
             //This is needed to retrieve user token when during app startup

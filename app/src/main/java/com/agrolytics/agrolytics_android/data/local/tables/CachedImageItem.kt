@@ -9,7 +9,7 @@ import com.google.firebase.firestore.GeoPoint
 
 @Entity(tableName = "cached_images")
 data class CachedImageItem (
-    @PrimaryKey(autoGenerate = true) var id: Long,
+    @PrimaryKey(autoGenerate = false) var timestamp: Long,
     @ColumnInfo(name = "session_id") var sessionId: Long,
     @ColumnInfo(name = "forestry_id") var forestryId: String,
     @ColumnInfo(name = "leader_id") var leaderId: String?,
@@ -21,7 +21,6 @@ data class CachedImageItem (
     @ColumnInfo(name = "wood_length") var woodLength: Double,
     @ColumnInfo(name = "wood_volume") var woodVolume: Double,
     @ColumnInfo(name = "location") var location: GeoPoint,
-    @ColumnInfo(name = "timestamp") var timestamp: Long,
     @ColumnInfo(name = "firestore_id") var firestoreId: String,
     @ColumnInfo(name = "image") var image: Bitmap
 ) : BaseImageItem {

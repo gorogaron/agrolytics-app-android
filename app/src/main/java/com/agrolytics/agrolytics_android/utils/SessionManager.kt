@@ -61,6 +61,7 @@ class SessionManager(var context: Context) {
 		get() = sharedPreferences.getFloat(ROD_LENGTH, 1.0f)
 		set(length) = sharedPreferences.edit().putFloat(ROD_LENGTH, length).apply()
 
+	//TODO: move this to measurementmanager
 	var measurementStartTimestamp: Long
 		get() = sharedPreferences.getLong(START_MEASUREMENT, 0L)
 		set(start) = sharedPreferences.edit().putLong(START_MEASUREMENT, start).apply()

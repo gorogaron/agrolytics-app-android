@@ -2,7 +2,6 @@ package com.agrolytics.agrolytics_android.ui.measurement.activity
 
 import android.app.Activity
 import android.os.Bundle
-import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
@@ -10,7 +9,6 @@ import com.agrolytics.agrolytics_android.data.local.tables.BaseImageItem
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.utils.SessionRecyclerViewAdapter
-import com.agrolytics.agrolytics_android.utils.SessionManager
 import kotlinx.android.synthetic.main.activity_session.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -57,7 +55,7 @@ class SessionActivity : BaseActivity() {
 
     private fun saveBtnClicked() {
         MeasurementManager.currentSessionId = 0
-        MeasurementManager.recentlyAddedItemsIds.clear()
+        MeasurementManager.recentlyAddedItemTimestamps.clear()
         setResult(Activity.RESULT_OK)
         finish()
     }

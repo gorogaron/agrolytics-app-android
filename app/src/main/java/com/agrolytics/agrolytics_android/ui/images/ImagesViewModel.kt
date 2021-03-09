@@ -48,20 +48,20 @@ class ImagesViewModel: ViewModel(), KoinComponent {
                 woodLengths.add(cachedImage.woodLength)
                 woodTypes.add(cachedImage.woodType)
                 woodVolumes.add(cachedImage.woodVolume)
-                if (cachedImage.id == sessionId) sessionImage = cachedImage.image
+                if (cachedImage.timestamp == sessionId) sessionImage = cachedImage.image
             }
 
             for (processedImage in processedImages) {
                 woodLengths.add(processedImage.woodLength)
                 woodTypes.add(processedImage.woodType)
                 woodVolumes.add(processedImage.woodVolume)
-                if (processedImage.id == sessionId) sessionImage = processedImage.image
+                if (processedImage.timestamp == sessionId) sessionImage = processedImage.image
             }
 
             for (unprocessedImage in unprocessedImages) {
                 woodLengths.add(unprocessedImage.woodLength)
                 woodTypes.add(unprocessedImage.woodType)
-                if (unprocessedImage.id == sessionId) sessionImage = unprocessedImage.image
+                if (unprocessedImage.timestamp == sessionId) sessionImage = unprocessedImage.image
             }
 
             if (woodLengths.distinct().size == 1) {

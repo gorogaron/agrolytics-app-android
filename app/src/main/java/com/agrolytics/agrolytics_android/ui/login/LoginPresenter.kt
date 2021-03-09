@@ -29,7 +29,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
 
     suspend fun login(email: String, password: String) : ConfigInfo.LOGIN {
         var signInResultCode = ConfigInfo.LOGIN.NO_INTERNET
-        if (Util.isNetworkAvailable()) {
+        if ((context as LoginActivity).isInternetAvailable) {
             try {
                 signInResultCode = signInFirebaseUser(email, password)
                 when (signInResultCode) {

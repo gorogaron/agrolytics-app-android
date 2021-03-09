@@ -9,14 +9,13 @@ import com.google.firebase.firestore.GeoPoint
 
 @Entity(tableName = "processed_images")
 data class ProcessedImageItem(
-    @PrimaryKey(autoGenerate = true) var id: Long,
+    @PrimaryKey(autoGenerate = false) var timestamp: Long,
     @ColumnInfo(name = "session_id") var sessionId: Long,
     @ColumnInfo(name = "image") var image: Bitmap,
     @ColumnInfo(name = "wood_type") var woodType: String,
     @ColumnInfo(name = "wood_length") var woodLength: Double,
     @ColumnInfo(name = "location") var location : GeoPoint,
-    @ColumnInfo(name = "wood_volume") var woodVolume: Double,
-    @ColumnInfo(name = "timestamp") var timestamp: Long
+    @ColumnInfo(name = "wood_volume") var woodVolume: Double
 ) : BaseImageItem {
 
     override fun getItemType(): ConfigInfo.IMAGE_ITEM_TYPE {
