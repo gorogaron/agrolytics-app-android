@@ -45,6 +45,9 @@ class MainViewModel : ViewModel(), KoinComponent {
             }
             lastMeasurementItems.postValue(imageItemList)
         }
+        else {
+            lastMeasurementItems.postValue(null)
+        }
     }
 
     //TODO: Ezt használjuk az ImagesViewModel-ben is, vigyük át egy helyre

@@ -112,7 +112,21 @@
                     android:clickable="true"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"/>
 
+                <TextView
+                    android:id="@+id/no_measurement_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nincs megjeleníthető mérés"
+                    android:textSize="20sp"
+                    android:fontFamily="@font/roboto"
+                    android:textColor="@color/darkGrey"
+                    app:layout_constraintStart_toStartOf="@id/top_text"
+                    app:layout_constraintTop_toBottomOf="@id/top_text"
+                    android:layout_marginTop="25dp"
+                    android:visibility="gone"/>
+
                 <androidx.core.widget.NestedScrollView
+                    android:id="@+id/nested_scrollview"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     app:layout_constraintHeight_default="spread"

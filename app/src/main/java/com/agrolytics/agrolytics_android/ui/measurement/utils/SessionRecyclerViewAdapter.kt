@@ -17,13 +17,14 @@ import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo
+import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.ui.measurement.activity.SessionActivity
 import com.agrolytics.agrolytics_android.utils.Util.Companion.getFormattedDateTime
 import com.github.chrisbanes.photoview.PhotoView
 import kotlinx.android.synthetic.main.recycler_view_measurement_item.view.*
 import kotlin.collections.ArrayList
 
-class SessionRecyclerViewAdapter(var activity : Activity, var itemList : ArrayList<BaseImageItem>) : RecyclerView.Adapter<SessionRecyclerViewAdapter.SessionViewHolder>() {
+class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : ArrayList<BaseImageItem>) : RecyclerView.Adapter<SessionRecyclerViewAdapter.SessionViewHolder>() {
 
     inner class SessionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         var imageView = itemView.image
@@ -38,6 +39,9 @@ class SessionRecyclerViewAdapter(var activity : Activity, var itemList : ArrayLi
             val builder = AlertDialog.Builder(activity)
             builder.setCancelable(true)
             val view = LayoutInflater.from(activity).inflate(R.layout.dialog_image_item, null, false)
+            builder.setView(view)
+            val dialog = builder.create()
+
             view.findViewById<PhotoView>(R.id.image).apply {
                 setImageBitmap(when (itemList[bindingAdapterPosition].getItemType()) {
                     ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> ((itemList[bindingAdapterPosition]) as CachedImageItem).image
@@ -46,12 +50,10 @@ class SessionRecyclerViewAdapter(var activity : Activity, var itemList : ArrayLi
                 })
             }
             view.findViewById<ImageView>(R.id.btn_delete).setOnClickListener {
-                val rootView = activity.window.decorView.rootView as ViewGroup
                 val childView = activity.layoutInflater.inflate(R.layout.confirm_delete, null)
-                rootView.addView(childView)
+                activity.mContentView.addView(childView)
+                dialog.dismiss()
             }
-            builder.setView(view)
-            val dialog = builder.create()
             dialog.window!!.setBackgroundDrawableResource(R.drawable.bg_white_round)
             dialog.show()
         }

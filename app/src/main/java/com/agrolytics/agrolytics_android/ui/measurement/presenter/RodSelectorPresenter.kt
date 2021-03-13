@@ -41,7 +41,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
             timestamp = sessionManager?.measurementStartTimestamp!!
         )
 
-        if (activity.isInternetAvailable) {
+        if (!activity.isInternetAvailable) {
             activity.showOnlineMeasurementErrorDialog(unprocessedImageItem)
         }
         else {

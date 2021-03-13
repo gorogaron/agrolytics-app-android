@@ -1,4 +1,4 @@
-package com.agrolytics.agrolytics_android.utils
+package com.agrolytics.agrolytics_android.utils.connection
 
 import android.content.Context
 import android.content.Context.CONNECTIVITY_SERVICE
@@ -42,7 +42,7 @@ class ConnectionLiveData(context: Context) : LiveData<Boolean>() {
     }
 
     override fun onInactive() {
-        cm.unregisterNetworkCallback(networkCallback)
+        //cm.unregisterNetworkCallback(networkCallback)
     }
 
     private fun createNetworkCallback() = object : ConnectivityManager.NetworkCallback() {
@@ -59,7 +59,10 @@ class ConnectionLiveData(context: Context) : LiveData<Boolean>() {
             if (hasInternetCapability == true) {
                 // check if this network actually has internet
                 CoroutineScope(Dispatchers.IO).launch {
-                    val hasInternet = DoesNetworkHaveInternet.execute(network.socketFactory)
+                    val hasInternet =
+                        DoesNetworkHaveInternet.execute(
+                            network.socketFactory
+                        )
                     if(hasInternet){
                         withContext(Dispatchers.Main){
                             Log.d(TAG, "onAvailable: adding network. ${network}")

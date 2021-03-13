@@ -5,9 +5,9 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -17,7 +17,8 @@ import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
-import com.agrolytics.agrolytics_android.utils.ConnectionLiveData
+import com.agrolytics.agrolytics_android.utils.connection.ConnectionLiveData
+import org.jetbrains.anko.contentView
 
 abstract class BaseActivity : AppCompatActivity(), BaseScreen {
 
@@ -26,13 +27,20 @@ abstract class BaseActivity : AppCompatActivity(), BaseScreen {
    //TODO: Jobb lenne singleton livadata-t létrehozni
     protected lateinit var connectionLiveData : ConnectionLiveData
     var isInternetAvailable = false
+    lateinit var mContentView : ViewGroup
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        connectionLiveData = ConnectionLiveData(this)
+        connectionLiveData =
+            ConnectionLiveData(this)
         connectionLiveData.observe(this, Observer {value ->
             isInternetAvailable = value
         })
+    }
+
+    override fun setContentView(layoutResID: Int) {
+        mContentView = layoutInflater.inflate(layoutResID, null) as ViewGroup
+        setContentView(mContentView)
     }
 
     override fun showLoading() {

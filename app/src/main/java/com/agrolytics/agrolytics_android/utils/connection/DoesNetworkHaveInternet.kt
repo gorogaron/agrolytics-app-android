@@ -1,4 +1,4 @@
-package com.agrolytics.agrolytics_android.utils
+package com.agrolytics.agrolytics_android.utils.connection
 
 import java.io.IOException
 import java.net.InetSocketAddress
