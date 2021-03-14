@@ -21,7 +21,6 @@ data class CachedImageItem (
     @ColumnInfo(name = "wood_length") var woodLength: Double,
     @ColumnInfo(name = "wood_volume") var woodVolume: Double,
     @ColumnInfo(name = "location") var location: GeoPoint,
-    @ColumnInfo(name = "firestore_id") var firestoreId: String,
     @ColumnInfo(name = "image") var image: Bitmap
 ) : BaseImageItem {
 

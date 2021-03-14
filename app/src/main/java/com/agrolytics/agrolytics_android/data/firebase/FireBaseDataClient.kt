@@ -57,7 +57,6 @@ class FireBaseDataClient: KoinComponent {
             woodLength = firestoreImageItem.woodLength,
             woodVolume = firestoreImageItem.woodVolume,
             location = firestoreImageItem.location!!,
-            firestoreId = firestoreId,
             image = processedImageItem.image
         )
         return cachedImageItem
@@ -66,25 +65,24 @@ class FireBaseDataClient: KoinComponent {
     suspend fun downloadImageItems(timestamps: List<Long>)
     : List<CachedImageItem> {
         val cachedImageItems = ArrayList<CachedImageItem>()
-        val (firestoreItems, firestoreIds) = fireStore.downloadFromFireStore(timestamps)
-        for (i in firestoreItems.indices) {
-            val imageUrl = firestoreItems[i].imageUrl
+        val firestoreItems = fireStore.downloadFromFireStore(timestamps)
+        for (firestoreItem in firestoreItems) {
+            val imageUrl = firestoreItem.imageUrl
             val image = storage.downloadImage(imageUrl)
             cachedImageItems.add(
                 CachedImageItem(
-                    timestamp = firestoreItems[i].timestamp,
-                    sessionId = firestoreItems[i].sessionId,
-                    forestryId = firestoreItems[i].forestryId,
-                    leaderId = firestoreItems[i].leaderId,
-                    userId = firestoreItems[i].userId,
-                    userRole = firestoreItems[i].userRole,
-                    imageUrl = firestoreItems[i].imageUrl,
-                    thumbUrl = firestoreItems[i].thumbnailUrl,
-                    woodType = firestoreItems[i].woodType!!,
-                    woodLength = firestoreItems[i].woodLength,
-                    woodVolume = firestoreItems[i].woodVolume,
-                    location = firestoreItems[i].location!!,
-                    firestoreId = firestoreIds[i],
+                    timestamp = firestoreItem.timestamp,
+                    sessionId = firestoreItem.sessionId,
+                    forestryId = firestoreItem.forestryId,
+                    leaderId = firestoreItem.leaderId,
+                    userId = firestoreItem.userId,
+                    userRole = firestoreItem.userRole,
+                    imageUrl = firestoreItem.imageUrl,
+                    thumbUrl = firestoreItem.thumbnailUrl,
+                    woodType = firestoreItem.woodType!!,
+                    woodLength = firestoreItem.woodLength,
+                    woodVolume = firestoreItem.woodVolume,
+                    location = firestoreItem.location!!,
                     image = image!!
             ))
         }

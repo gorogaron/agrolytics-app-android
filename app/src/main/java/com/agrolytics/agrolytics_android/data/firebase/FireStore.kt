@@ -33,14 +33,12 @@ class FireStore: KoinComponent {
 
     suspend fun downloadFromFireStore(
         timestamps: List<Long>
-    ): Pair<List<FireStoreImageItem>, List<String>> {
+    ): List<FireStoreImageItem> {
         val firestoreImageItems = ArrayList<FireStoreImageItem>()
-        val firestoreImageItemIds = ArrayList<String>()
-        val sessionIdsToDownload = getSessionIdsToDownload(timestamps)
+        var sessionIds = ArrayList<Long>()
         return suspendCoroutine { cont ->
             firestore.collection(FireStoreCollection.IMAGES.tag)
                 .whereEqualTo(FireStoreImagesField.USER_ID.tag, sessionManager.userId)
-                .whereIn(FireStoreImagesField.SESSION_ID.tag, sessionIdsToDownload)
                 .whereNotIn(FireStoreImagesField.TIMESTAMP.tag, timestamps)
                 .orderBy(FireStoreImagesField.TIMESTAMP.tag, Query.Direction.DESCENDING)
                 .get()
@@ -61,10 +59,19 @@ class FireStore: KoinComponent {
                             woodLength = data[FireStoreImagesField.WOOD_LENGTH.tag] as Double,
                             location = data[FireStoreImagesField.LOCATION.tag] as GeoPoint
                         )
+                        sessionIds.add(firestoreImageItem.sessionId)
                         firestoreImageItems.add(firestoreImageItem)
-                        firestoreImageItemIds.add(document.id)
                     }
-                    cont.resume(Pair(firestoreImageItems, firestoreImageItemIds))
+
+                    // Következő 5 session letöltéséhez szükséges infók
+                    sessionIds = if (sessionIds.distinct().size >= 5) {
+                        sessionIds.distinct().subList(0, 5) as ArrayList<Long>
+                    } else {
+                        sessionIds.distinct() as ArrayList<Long>
+                    }
+                    firestoreImageItems.filter{ it.sessionId in sessionIds }
+
+                    cont.resume(firestoreImageItems)
                 }
                 .addOnFailureListener { exception ->
                     Log.w("TAG", "Error getting documents: ", exception)
@@ -98,22 +105,4 @@ class FireStore: KoinComponent {
                 .addOnSuccessListener { cont.resume(it) }
                 .addOnFailureListener { cont.resumeWithException(it) }
         }
-
-    private suspend fun getSessionIdsToDownload(timestamps: List<Long>)
-    : List<Long> = suspendCoroutine { cont ->
-        val sessionIds = ArrayList<Long>()
-        firestore.collection(FireStoreCollection.IMAGES.tag)
-            .whereEqualTo(FireStoreImagesField.USER_ID.tag, sessionManager.userId)
-            .whereNotIn(FireStoreImagesField.TIMESTAMP.tag, timestamps)
-            .orderBy(FireStoreImagesField.SESSION_ID.tag, Query.Direction.DESCENDING)
-            .limit(100)
-            .get()
-            .addOnSuccessListener { documents ->
-                for (document in documents) {
-                    val sessionId = document.data[FireStoreImagesField.SESSION_ID.tag] as Long
-                    sessionIds.add(sessionId)
-                }
-                cont.resume(sessionIds.distinct().subList(0, 5))
-            }
-    }
 }
