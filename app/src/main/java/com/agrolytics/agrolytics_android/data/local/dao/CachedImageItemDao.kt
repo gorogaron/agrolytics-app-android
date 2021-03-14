@@ -19,7 +19,7 @@ interface CachedImageItemDao {
     fun getAllSessionIds(): List<Long>
 
     @Query("SELECT timestamp FROM cached_images")
-    fun getAllTimestamps(): List<Long>
+    fun getAllTimestamps(): ArrayList<Long>
 
     @Insert
     fun add(cachedImageItem: CachedImageItem)

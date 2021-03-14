@@ -102,6 +102,9 @@ class ImagesViewModel: ViewModel(), KoinComponent {
 
     private suspend fun updateLocalCache() {
         val cachedImageItemIdsNotToDownload = dataClient.local.cache.getAllTimestamps()
+        if (cachedImageItemIdsNotToDownload.isEmpty()) {
+            cachedImageItemIdsNotToDownload.add(0)
+        }
         val cachedImageItemsToSave = dataClient.fireBase.downloadImageItems(cachedImageItemIdsNotToDownload)
         for (cachedImageItem in cachedImageItemsToSave) {
             dataClient.local.cache.add(cachedImageItem)
