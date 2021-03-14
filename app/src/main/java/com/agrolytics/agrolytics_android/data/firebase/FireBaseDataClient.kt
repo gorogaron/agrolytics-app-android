@@ -62,4 +62,32 @@ class FireBaseDataClient: KoinComponent {
         )
         return cachedImageItem
     }
+
+    suspend fun downloadImageItems(sessionIds: List<Long>)
+    : List<CachedImageItem> {
+        val cachedImageItems = ArrayList<CachedImageItem>()
+        val (firestoreItems, firestoreIds) = fireStore.downloadFromFireStore(sessionIds)
+        for (i in firestoreItems.indices) {
+            val imageUrl = firestoreItems[i].imageUrl
+            val image = storage.downloadImage(imageUrl)
+            cachedImageItems.add(
+                CachedImageItem(
+                    timestamp = firestoreItems[i].timestamp,
+                    sessionId = firestoreItems[i].sessionId,
+                    forestryId = firestoreItems[i].forestryId,
+                    leaderId = firestoreItems[i].leaderId,
+                    userId = firestoreItems[i].userId,
+                    userRole = firestoreItems[i].userRole,
+                    imageUrl = firestoreItems[i].imageUrl,
+                    thumbUrl = firestoreItems[i].thumbnailUrl,
+                    woodType = firestoreItems[i].woodType!!,
+                    woodLength = firestoreItems[i].woodLength,
+                    woodVolume = firestoreItems[i].woodVolume,
+                    location = firestoreItems[i].location!!,
+                    firestoreId = firestoreIds[i],
+                    image = image!!
+            ))
+        }
+        return cachedImageItems
+    }
 }
