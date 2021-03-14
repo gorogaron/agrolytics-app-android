@@ -23,7 +23,7 @@ class Storage {
 
     suspend fun uploadToFireBaseStorage(
         fireBaseStorageItem: FireBaseStorageItem
-    ): Pair<Pair<String, String>, Pair<String, String>> {
+    ): Pair<String, String> {
         val imageName = LocalDateTime.now().toString()
 
         // Referenciák
@@ -40,8 +40,8 @@ class Storage {
         var maskUri: Uri?
         var thumbUri: Uri?
         try {
-            maskUri = uploadImageToStorage(maskRef!!, maskBytes!!)
-            thumbUri = uploadImageToStorage(thumbRef!!, thumbBytes!!)
+            maskUri = uploadImageToStorage(maskRef!!, maskBytes)
+            thumbUri = uploadImageToStorage(thumbRef!!, thumbBytes)
         }
         catch (e: Exception) {
             // TODO: Handle Exception better
@@ -49,10 +49,8 @@ class Storage {
             thumbUri = null
         }
         if (maskUri != null && thumbUri != null) {
-            return Pair(
-                Pair(maskUri.toString(), maskRef!!.path),
-                Pair(thumbUri.toString(), thumbRef!!.path)
-            )
+            return Pair(maskUri.toString(), thumbUri.toString())
+
         }
         throw Exception()
     }

@@ -14,7 +14,6 @@ import com.agrolytics.agrolytics_android.types.ConfigInfo.IMAGE_BROWSE
 import com.agrolytics.agrolytics_android.types.ConfigInfo.IMAGE_CAPTURE
 import com.agrolytics.agrolytics_android.types.ConfigInfo.SESSION
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
-import com.agrolytics.agrolytics_android.ui.measurement.presenter.ApproveMeasurementPresenter
 import kotlinx.android.synthetic.main.activity_upload_finished.*
 import org.jetbrains.anko.doAsync
 
@@ -22,15 +21,11 @@ import org.jetbrains.anko.doAsync
 class ApproveMeasurementActivity : BaseActivity() {
 
 	private val sessionManager: SessionManager by inject()
-	private val presenter: ApproveMeasurementPresenter by inject()
 	private val dataClient: DataClient by inject()
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_upload_finished)
-
-		presenter.addView(this)
-		presenter.addInjections(arrayListOf(sessionManager, dataClient))
 
 		btn_decline.setOnClickListener{ onDeclineClicked() }
 		btn_accept.setOnClickListener{ onAcceptClicked() }

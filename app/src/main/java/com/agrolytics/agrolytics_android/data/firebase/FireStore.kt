@@ -16,11 +16,11 @@ class FireStore {
     suspend fun uploadToFireStore(
         fireStoreImageItem: FireStoreImageItem
     ) : String = suspendCoroutine { cont ->
-        firestore?.collection(FireStoreCollection.IMAGES.tag)?.add(fireStoreImageItem.toHashMap())
-            ?.addOnSuccessListener {
+        firestore.collection(FireStoreCollection.IMAGES.tag).add(fireStoreImageItem.toHashMap())
+            .addOnSuccessListener {
                 cont.resume(it.id)
             }
-            ?.addOnFailureListener{
+            .addOnFailureListener{
                 cont.resumeWithException(it)
             }
     }

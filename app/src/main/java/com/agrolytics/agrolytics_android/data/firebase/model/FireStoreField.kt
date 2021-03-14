@@ -12,19 +12,18 @@ enum class FireStoreRoleField(var tag: String) {
 }
 
 enum class FireStoreImagesField(var tag: String) {
+    TIMESTAMP("timestamp"),
+    SESSION_ID("session_id"),
     FORESTRY_ID("forestry_id"),
     LEADER_ID("leader_id"),
     USER_ID("user_id"),
     USER_ROLE("role"),
     IMAGE_URL("url"),
-    IMAGE_REFERENCE("image_ref"),
-    IMAGE_THUMBNAIL_REFERENCE("thumb_ref"),
     IMAGE_THUMBNAIL_URL("thumb_url"),
     WOOD_TYPE("wood_type"),
     WOOD_LENGTH("wood_length"),
     WOOD_VOLUME("wood_volume"),
-    LOCATION("location"),
-    TIME("timestamp"),
+    LOCATION("location")
 }
 
 enum class FireStoreUserField(var tag: String) {
