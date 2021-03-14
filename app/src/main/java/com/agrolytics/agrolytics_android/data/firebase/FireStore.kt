@@ -36,9 +36,6 @@ class FireStore: KoinComponent {
     ): List<FireStoreImageItem> {
         val firestoreImageItems = ArrayList<FireStoreImageItem>()
         return suspendCoroutine { cont ->
-            if (timestamps.size == 0) {
-                timestamps
-            }
             firestore.collection(FireStoreCollection.IMAGES.tag)
                 .whereEqualTo(FireStoreImagesField.USER_ID.tag, sessionManager.userId)
                 .whereNotIn(FireStoreImagesField.TIMESTAMP.tag, timestamps)
@@ -58,7 +55,8 @@ class FireStore: KoinComponent {
                             woodType = data[FireStoreImagesField.WOOD_TYPE.tag] as String,
                             woodVolume = data[FireStoreImagesField.WOOD_VOLUME.tag] as Double,
                             woodLength = data[FireStoreImagesField.WOOD_LENGTH.tag] as Double,
-                            location = data[FireStoreImagesField.LOCATION.tag] as GeoPoint
+                            location = data[FireStoreImagesField.LOCATION.tag] as GeoPoint,
+                            firestoreId = document.id
                         )
                         firestoreImageItems.add(firestoreImageItem)
                     }
@@ -96,4 +94,12 @@ class FireStore: KoinComponent {
                 .addOnSuccessListener { cont.resume(it) }
                 .addOnFailureListener { cont.resumeWithException(it) }
         }
+
+    //TODO: Ha nincs net, ez a végtelenségig blokkolni fog...
+    suspend fun deleteImage(firestoreId : String) : Boolean = suspendCoroutine {cont->
+        val imageRef = firestore.collection(FireStoreCollection.IMAGES.tag).document(firestoreId)
+        imageRef.delete()
+            .addOnSuccessListener { cont.resume(true) }
+            .addOnFailureListener { cont.resume(false) }
+    }
 }

@@ -21,9 +21,6 @@ class ImagesViewModel: ViewModel(), KoinComponent {
     var sessionItems = MutableLiveData<List<SessionItem>>()
 
     fun getSessionItems() = viewModelScope.launch(Dispatchers.IO) {
-        // Cache frissítése
-        updateLocalCache()
-
         val sessionIds = getSessionIdList()
         val sessionItemList = ArrayList<SessionItem>()
 
@@ -45,6 +42,7 @@ class ImagesViewModel: ViewModel(), KoinComponent {
             val processedImages = dataClient.local.processed.getBySessionId(sessionId)
             val unprocessedImages = dataClient.local.unprocessed.getBySessionId(sessionId)
 
+            //TODO: Mi van ha a session legelső képét kitöröltük?
             for (cachedImage in cachedImages) {
                 woodLengths.add(cachedImage.woodLength)
                 woodTypes.add(cachedImage.woodType)
@@ -73,7 +71,7 @@ class ImagesViewModel: ViewModel(), KoinComponent {
                 woodType = woodTypes[0]
             }
 
-            if (unprocessedImages.isNotEmpty()) {
+            if (unprocessedImages.isEmpty()) {
                 woodVolume = woodVolumes.sum()
             }
 
@@ -100,14 +98,4 @@ class ImagesViewModel: ViewModel(), KoinComponent {
         return ArrayList(sessionIdList.distinct())
     }
 
-    private suspend fun updateLocalCache() {
-        val cachedImageItemIdsNotToDownload = dataClient.local.cache.getAllTimestamps()
-        if (cachedImageItemIdsNotToDownload.isEmpty()) {
-            cachedImageItemIdsNotToDownload.add(0)
-        }
-        val cachedImageItemsToSave = dataClient.fireBase.downloadImageItems(cachedImageItemIdsNotToDownload)
-        for (cachedImageItem in cachedImageItemsToSave) {
-            dataClient.local.cache.add(cachedImageItem)
-        }
-    }
 }

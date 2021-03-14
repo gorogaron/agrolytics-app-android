@@ -14,13 +14,13 @@ import java.nio.ByteBuffer
 class TypeConverter {
 
     @TypeConverter
-    fun bitmapToByteArray(bitmap : Bitmap): ByteArray {
-        return ImageUtils.getBytes(bitmap)
+    fun bitmapToByteArray(bitmap : Bitmap?): ByteArray? {
+        return if (bitmap != null) ImageUtils.getBytes(bitmap) else null
     }
 
     @TypeConverter
-    fun byteArrayToBitmap(byteArray: ByteArray) : Bitmap {
-        return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+    fun byteArrayToBitmap(byteArray: ByteArray?) : Bitmap? {
+        return if (byteArray != null) BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size) else null
     }
 
     @TypeConverter

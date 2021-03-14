@@ -110,7 +110,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
         mainFab.setOnClickListener { fabHandler() }
 
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        viewModel.getLastMeasurementItems()
+        viewModel.getLastMeasurementItems(true)
         viewModel.lastMeasurementItems.observe(this, Observer {
             if (viewModel.lastMeasurementItems.value != null) {
                 nested_scrollview.visibility = View.VISIBLE
@@ -325,7 +325,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
     override fun onResume() {
         super.onResume()
         updateLocation()
-        viewModel.getLastMeasurementItems()
+        viewModel.getLastMeasurementItems(false)
     }
 
     override fun onPause() {

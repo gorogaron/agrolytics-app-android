@@ -4,9 +4,11 @@ import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.agrolytics.agrolytics_android.R
+import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.data.local.tables.BaseImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
@@ -16,11 +18,19 @@ import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.utils.Util.Companion.getFormattedDateTime
 import com.github.chrisbanes.photoview.PhotoView
 import kotlinx.android.synthetic.main.recycler_view_measurement_item.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.jetbrains.anko.toast
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import kotlin.collections.ArrayList
 
 class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : ArrayList<BaseImageItem>) : RecyclerView.Adapter<SessionRecyclerViewAdapter.SessionViewHolder>() {
 
-    inner class SessionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    inner class SessionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, KoinComponent {
+        private val dataClient: DataClient by inject()
         var imageView = itemView.image
         var volumeTextView = itemView.volume_text
         var dateTextView = itemView.date_text
@@ -36,17 +46,44 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
             builder.setView(view)
             val dialog = builder.create()
 
+            val clickedImageItem = itemList[bindingAdapterPosition]
             view.findViewById<PhotoView>(R.id.image).apply {
-                setImageBitmap(when (itemList[bindingAdapterPosition].getItemType()) {
-                    ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> ((itemList[bindingAdapterPosition]) as CachedImageItem).image
-                    ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> ((itemList[bindingAdapterPosition]) as ProcessedImageItem).image
-                    ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> ((itemList[bindingAdapterPosition]) as UnprocessedImageItem).image
+                setImageBitmap(when (clickedImageItem.getItemType()) {
+                    ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> (clickedImageItem as CachedImageItem).image
+                    ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> (clickedImageItem as ProcessedImageItem).image
+                    ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> (clickedImageItem as UnprocessedImageItem).image
                 })
             }
             view.findViewById<ImageView>(R.id.btn_delete).setOnClickListener {
                 val childView = activity.layoutInflater.inflate(R.layout.confirm_delete, null)
                 activity.mContentView.addView(childView)
-                dialog.dismiss()
+                activity.findViewById<Button>(R.id.confirm_delete_btn).setOnClickListener {
+                    GlobalScope.launch(Dispatchers.IO) {
+                        when (clickedImageItem.getItemType()) {
+                            ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> {
+                                dataClient.local.cache.delete(clickedImageItem as CachedImageItem)
+                                dataClient.fireBase.fireStore.deleteImage(clickedImageItem.firestoreId)
+                                dataClient.fireBase.storage.deleteImage(clickedImageItem.imageUrl)
+                            }
+                            ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> {
+                                dataClient.local.processed.delete(clickedImageItem as ProcessedImageItem)
+                            }
+                            ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> {
+                                dataClient.local.unprocessed.delete(clickedImageItem as UnprocessedImageItem)
+                            }
+                        }
+                        withContext(Dispatchers.Main){
+                            activity.toast("Kép törölve")
+                            activity.mContentView.removeView(childView)
+                            dialog.dismiss()
+                        }
+                    }
+                }
+                activity.findViewById<Button>(R.id.cancel_delete_btn).setOnClickListener {
+                    activity.mContentView.removeView(childView)
+                    dialog.show()
+                }
+                dialog.hide()
             }
             dialog.window!!.setBackgroundDrawableResource(R.drawable.bg_white_round)
             dialog.show()

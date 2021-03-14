@@ -1,9 +1,6 @@
 package com.agrolytics.agrolytics_android.data.local.dao
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
 
 @Dao
@@ -19,7 +16,7 @@ interface CachedImageItemDao {
     fun getAllSessionIds(): List<Long>
 
     @Query("SELECT timestamp FROM cached_images")
-    fun getAllTimestamps(): ArrayList<Long>
+    fun getAllTimestamps(): List<Long>
 
     @Insert
     fun add(cachedImageItem: CachedImageItem)
@@ -38,4 +35,7 @@ interface CachedImageItemDao {
 
     @Query("DELETE FROM cached_images")
     fun deleteAll()
+
+    @Update
+    fun update(cachedImageItem: CachedImageItem)
 }

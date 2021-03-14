@@ -8,6 +8,8 @@ import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 
 class FireBaseDataClient: KoinComponent {
@@ -41,9 +43,11 @@ class FireBaseDataClient: KoinComponent {
             woodType = processedImageItem.woodType,
             woodLength = processedImageItem.woodLength,
             woodVolume = processedImageItem.woodVolume,
-            location = processedImageItem.location
+            location = processedImageItem.location,
+            firestoreId = ""
         )
-        val firestoreId = fireStore.uploadToFireStore(firestoreImageItem)
+        firestoreImageItem.firestoreId = fireStore.uploadToFireStore(firestoreImageItem)
+
         val cachedImageItem = CachedImageItem(
             timestamp = firestoreImageItem.timestamp,
             sessionId = firestoreImageItem.sessionId,
@@ -57,6 +61,7 @@ class FireBaseDataClient: KoinComponent {
             woodLength = firestoreImageItem.woodLength,
             woodVolume = firestoreImageItem.woodVolume,
             location = firestoreImageItem.location!!,
+            firestoreId = firestoreImageItem.firestoreId,
             image = processedImageItem.image
         )
         return cachedImageItem
@@ -87,9 +92,11 @@ class FireBaseDataClient: KoinComponent {
                     woodLength = firestoreItem.woodLength,
                     woodVolume = firestoreItem.woodVolume,
                     location = firestoreItem.location!!,
-                    image = image
+                    image = image,
+                    firestoreId = firestoreItem.firestoreId
             ))
         }
         return cachedImageItems
     }
+
 }

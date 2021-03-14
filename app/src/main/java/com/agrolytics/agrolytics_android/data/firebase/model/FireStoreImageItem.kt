@@ -14,8 +14,8 @@ data class FireStoreImageItem(
     val woodType: String? = null,
     val woodLength: Double,
     val woodVolume: Double,
-    val location: GeoPoint? = null
-
+    val location: GeoPoint? = null,
+    var firestoreId: String
 ) {
     fun toHashMap() : HashMap<String, Any?> {
         return hashMapOf(
@@ -29,7 +29,7 @@ data class FireStoreImageItem(
             FireStoreImagesField.IMAGE_THUMBNAIL_URL.tag to this.thumbnailUrl,
             FireStoreImagesField.WOOD_TYPE.tag to this.woodType,
             FireStoreImagesField.WOOD_LENGTH.tag to this.woodLength,
-            FireStoreImagesField.WOOD_VOLUME.tag to this.woodLength,
+            FireStoreImagesField.WOOD_VOLUME.tag to this.woodVolume,
             FireStoreImagesField.LOCATION.tag to this.location
             )
     }

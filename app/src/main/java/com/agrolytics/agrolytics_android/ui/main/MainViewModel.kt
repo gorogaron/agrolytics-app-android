@@ -22,7 +22,10 @@ class MainViewModel : ViewModel(), KoinComponent {
     var lastMeasurementItems = MutableLiveData<ArrayList<BaseImageItem>>()
     var lastSessionId = MutableLiveData<Long>()
 
-    fun getLastMeasurementItems() = viewModelScope.launch(Dispatchers.IO) {
+    fun getLastMeasurementItems(updateCache : Boolean) = viewModelScope.launch(Dispatchers.IO) {
+        if (updateCache) {
+            updateLocalCache()
+        }
         val imageItemList = ArrayList<BaseImageItem>()
         val latestId = getSessionIdList().max()
 
@@ -31,6 +34,13 @@ class MainViewModel : ViewModel(), KoinComponent {
             val cachedImages = dataClient.local.cache.getBySessionId(latestId)
             val processedImages = dataClient.local.processed.getBySessionId(latestId)
             val unprocessedImages = dataClient.local.unprocessed.getBySessionId(latestId)
+
+            //Ha valamelyik cached itemhez nincs letöltve a kép, akkor töltsük le. Ez akkor fordulhat elő, ha az
+            //utolsó sessiont az updateLocalCache-el szedtük le firebase-ről.
+            for (cachedImage in cachedImages) {
+                cachedImage.image = dataClient.fireBase.storage.downloadImage(cachedImage.imageUrl)
+                dataClient.local.cache.update(cachedImage)
+            }
 
             imageItemList.addAll(cachedImages)
             imageItemList.addAll(processedImages)
@@ -61,5 +71,18 @@ class MainViewModel : ViewModel(), KoinComponent {
         sessionIdList.addAll(sessionIdListProcessed)
         sessionIdList.addAll(sessionIdListUnprocessed)
         return ArrayList(sessionIdList.distinct())
+    }
+
+    /**Letölti a userhez tartozó összes itemet firestore-ból, és minden sessionhöz az első képet*/
+    private suspend fun updateLocalCache() {
+        var cachedImageItemIdsNotToDownload = dataClient.local.cache.getAllTimestamps()
+        if (cachedImageItemIdsNotToDownload.isEmpty()) {
+            //Ha üres a lista, töltsük fel 1 dummy ID-val, hogy lefusson jól a query
+            cachedImageItemIdsNotToDownload = listOf(0)
+        }
+        val cachedImageItemsToSave = dataClient.fireBase.downloadImageItems(cachedImageItemIdsNotToDownload)
+        for (cachedImageItem in cachedImageItemsToSave) {
+            dataClient.local.cache.add(cachedImageItem)
+        }
     }
 }

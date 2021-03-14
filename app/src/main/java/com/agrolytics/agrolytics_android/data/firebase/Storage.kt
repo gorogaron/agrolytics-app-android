@@ -63,6 +63,14 @@ class Storage {
         throw Exception()
     }
 
+    //TODO: Ha nincs net, ez a végtelenségig blokkolni fog...
+    suspend fun deleteImage(imageUrl: String) : Boolean = suspendCoroutine {cont->
+        val imageRef = storage?.getReferenceFromUrl(imageUrl)
+        imageRef?.delete()
+            ?.addOnSuccessListener { cont.resume(true) }
+            ?.addOnFailureListener { cont.resume(false) }
+    }
+
     fun downloadImage(imageUrl: String?)
     : Bitmap? {
         val url = URL(imageUrl)
