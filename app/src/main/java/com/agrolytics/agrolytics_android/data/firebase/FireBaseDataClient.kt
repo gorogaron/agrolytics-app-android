@@ -3,6 +3,7 @@ package com.agrolytics.agrolytics_android.data.firebase
 import android.graphics.Bitmap
 import com.agrolytics.agrolytics_android.data.firebase.model.FireBaseStorageItem
 import com.agrolytics.agrolytics_android.data.firebase.model.FireStoreImageItem
+import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import org.koin.core.component.KoinComponent
@@ -17,7 +18,7 @@ class FireBaseDataClient: KoinComponent {
     val fireStore = FireStore()
 
     suspend fun uploadProcessedImageItem(processedImageItem: ProcessedImageItem)
-    : String {
+    : CachedImageItem {
         val fireBaseStorageItem = FireBaseStorageItem(
             forestryName = sessionManager.forestryName,
             maskedImage = processedImageItem.image,
@@ -42,6 +43,23 @@ class FireBaseDataClient: KoinComponent {
             woodVolume = processedImageItem.woodVolume,
             location = processedImageItem.location
         )
-        return fireStore.uploadToFireStore(firestoreImageItem)
+        val firestoreId = fireStore.uploadToFireStore(firestoreImageItem)
+        val cachedImageItem = CachedImageItem(
+            timestamp = firestoreImageItem.timestamp,
+            sessionId = firestoreImageItem.sessionId,
+            forestryId = firestoreImageItem.forestryId,
+            leaderId = firestoreImageItem.leaderId,
+            userId = firestoreImageItem.userId,
+            userRole = firestoreImageItem.userRole,
+            imageUrl = firestoreImageItem.imageUrl,
+            thumbUrl = firestoreImageItem.thumbnailUrl,
+            woodType = firestoreImageItem.woodType!!,
+            woodLength = firestoreImageItem.woodLength,
+            woodVolume = firestoreImageItem.woodVolume,
+            location = firestoreImageItem.location!!,
+            firestoreId = firestoreId,
+            image = processedImageItem.image
+        )
+        return cachedImageItem
     }
 }

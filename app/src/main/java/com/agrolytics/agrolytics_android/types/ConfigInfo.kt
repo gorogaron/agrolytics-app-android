@@ -17,6 +17,7 @@ object ConfigInfo {
 	const val METHOD = "method"
 	const val UPLOAD_RESPONSE = "upload_response"
 	const val MAP_BOX_KEY = "pk.eyJ1IjoidGhlMDExMWRlbW9wcm9qZWN0IiwiYSI6ImNqeXVlaDdiNTBlMjUzaW9iYXpwN21lazIifQ.UT3O8C9YAocVt-zvExjbAQ"
+	const val PROCESSED_IMAGE_ITEM_SESSION_ID = "processed_image_item_session_id"
 
 	/**Firebase login result codes**/
 	enum class LOGIN {

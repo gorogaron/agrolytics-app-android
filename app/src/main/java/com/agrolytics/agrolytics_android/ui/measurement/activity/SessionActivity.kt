@@ -57,6 +57,7 @@ class SessionActivity : BaseActivity() {
         MeasurementManager.currentSessionId = 0
         MeasurementManager.recentlyAddedItemTimestamps.clear()
         setResult(Activity.RESULT_OK)
+        // Background task indítása
         finish()
     }
 
