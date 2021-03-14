@@ -32,6 +32,7 @@ class LoginActivity: BaseActivity(), LoginScreen {
         auth = FirebaseAuth.getInstance()
 
         presenter.addView(this)
+        presenter.activity = this
         presenter.addInjections(arrayListOf(sessionManager, dataClient, auth, appServer))
         
         // TODO: Blocking LoginActivity until checkUserLoggedInState() finished

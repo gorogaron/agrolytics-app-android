@@ -36,6 +36,9 @@ class FireStore: KoinComponent {
     ): List<FireStoreImageItem> {
         val firestoreImageItems = ArrayList<FireStoreImageItem>()
         return suspendCoroutine { cont ->
+            if (timestamps.size == 0) {
+                timestamps
+            }
             firestore.collection(FireStoreCollection.IMAGES.tag)
                 .whereEqualTo(FireStoreImagesField.USER_ID.tag, sessionManager.userId)
                 .whereNotIn(FireStoreImagesField.TIMESTAMP.tag, timestamps)

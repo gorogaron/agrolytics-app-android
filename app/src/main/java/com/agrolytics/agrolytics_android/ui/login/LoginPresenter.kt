@@ -22,6 +22,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
 
     private lateinit var userDocument : DocumentSnapshot
     private lateinit var forestryDocument : DocumentSnapshot
+    lateinit var activity: LoginActivity
 
     companion object {
         private const val TAG = "LoginPresenter"
@@ -29,7 +30,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
 
     suspend fun login(email: String, password: String) : ConfigInfo.LOGIN {
         var signInResultCode = ConfigInfo.LOGIN.NO_INTERNET
-        if ((context as LoginActivity).isInternetAvailable) {
+        if ((activity).isInternetAvailable) {
             try {
                 signInResultCode = signInFirebaseUser(email, password)
                 when (signInResultCode) {

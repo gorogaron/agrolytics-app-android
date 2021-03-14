@@ -21,6 +21,9 @@ class ImagesViewModel: ViewModel(), KoinComponent {
     var sessionItems = MutableLiveData<List<SessionItem>>()
 
     fun getSessionItems() = viewModelScope.launch(Dispatchers.IO) {
+        // Cache frissítése
+        updateLocalCache()
+
         val sessionIds = getSessionIdList()
         val sessionItemList = ArrayList<SessionItem>()
 
