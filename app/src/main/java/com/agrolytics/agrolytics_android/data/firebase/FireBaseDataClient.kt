@@ -68,7 +68,11 @@ class FireBaseDataClient: KoinComponent {
         val firestoreItems = fireStore.downloadFromFireStore(timestamps)
         for (firestoreItem in firestoreItems) {
             val imageUrl = firestoreItem.imageUrl
-            val image = storage.downloadImage(imageUrl)
+            val image: Bitmap? = if (firestoreItem.sessionId == firestoreItem.timestamp) {
+                storage.downloadImage(imageUrl)
+            } else {
+                null
+            }
             cachedImageItems.add(
                 CachedImageItem(
                     timestamp = firestoreItem.timestamp,
@@ -83,7 +87,7 @@ class FireBaseDataClient: KoinComponent {
                     woodLength = firestoreItem.woodLength,
                     woodVolume = firestoreItem.woodVolume,
                     location = firestoreItem.location!!,
-                    image = image!!
+                    image = image
             ))
         }
         return cachedImageItems

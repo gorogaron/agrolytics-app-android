@@ -35,12 +35,10 @@ class FireStore: KoinComponent {
         timestamps: List<Long>
     ): List<FireStoreImageItem> {
         val firestoreImageItems = ArrayList<FireStoreImageItem>()
-        var sessionIds = ArrayList<Long>()
         return suspendCoroutine { cont ->
             firestore.collection(FireStoreCollection.IMAGES.tag)
                 .whereEqualTo(FireStoreImagesField.USER_ID.tag, sessionManager.userId)
                 .whereNotIn(FireStoreImagesField.TIMESTAMP.tag, timestamps)
-                .orderBy(FireStoreImagesField.TIMESTAMP.tag, Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener { documents ->
                     for (document in documents) {
@@ -59,18 +57,8 @@ class FireStore: KoinComponent {
                             woodLength = data[FireStoreImagesField.WOOD_LENGTH.tag] as Double,
                             location = data[FireStoreImagesField.LOCATION.tag] as GeoPoint
                         )
-                        sessionIds.add(firestoreImageItem.sessionId)
                         firestoreImageItems.add(firestoreImageItem)
                     }
-
-                    // Következő 5 session letöltéséhez szükséges infók
-                    sessionIds = if (sessionIds.distinct().size >= 5) {
-                        sessionIds.distinct().subList(0, 5) as ArrayList<Long>
-                    } else {
-                        sessionIds.distinct() as ArrayList<Long>
-                    }
-                    firestoreImageItems.filter{ it.sessionId in sessionIds }
-
                     cont.resume(firestoreImageItems)
                 }
                 .addOnFailureListener { exception ->

@@ -21,7 +21,7 @@ data class CachedImageItem (
     @ColumnInfo(name = "wood_length") var woodLength: Double,
     @ColumnInfo(name = "wood_volume") var woodVolume: Double,
     @ColumnInfo(name = "location") var location: GeoPoint,
-    @ColumnInfo(name = "image") var image: Bitmap
+    @ColumnInfo(name = "image") var image: Bitmap?
 ) : BaseImageItem {
 
     override fun getItemType(): ConfigInfo.IMAGE_ITEM_TYPE {
