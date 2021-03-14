@@ -1,15 +1,10 @@
 package com.agrolytics.agrolytics_android.ui.measurement.utils
 
-import android.app.Activity
 import android.app.AlertDialog
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.local.tables.BaseImageItem
@@ -18,7 +13,6 @@ import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
-import com.agrolytics.agrolytics_android.ui.measurement.activity.SessionActivity
 import com.agrolytics.agrolytics_android.utils.Util.Companion.getFormattedDateTime
 import com.github.chrisbanes.photoview.PhotoView
 import kotlinx.android.synthetic.main.recycler_view_measurement_item.view.*
@@ -70,17 +64,27 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
 
     override fun onBindViewHolder(holder: SessionViewHolder, position: Int) {
         val imageItem = itemList[position]
-        if (imageItem.getItemType() == ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED) {
-            val processedImageItem = imageItem as ProcessedImageItem
-            holder.imageView.setImageBitmap(processedImageItem.image)
-            holder.volumeTextView.text = processedImageItem.woodVolume.toString()
-            holder.dateTextView.text = getFormattedDateTime(processedImageItem.timestamp)
-        }
-        else if (imageItem.getItemType() == ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED) {
-            val unprocessedImageItem = imageItem as UnprocessedImageItem
-            holder.imageView.setImageBitmap(unprocessedImageItem.image)
-            holder.volumeTextView.text = "Mérésre vár"
-            holder.dateTextView.text = getFormattedDateTime(unprocessedImageItem.timestamp)
+        when (imageItem.getItemType()) {
+            ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> {
+                val processedImageItem = imageItem as ProcessedImageItem
+                holder.imageView.setImageBitmap(processedImageItem.image)
+                holder.volumeTextView.text = processedImageItem.woodVolume.toString()
+                holder.dateTextView.text = getFormattedDateTime(processedImageItem.timestamp)
+            }
+
+            ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> {
+                val cachedImageItem = imageItem as CachedImageItem
+                holder.imageView.setImageBitmap(cachedImageItem.image)
+                holder.volumeTextView.text = cachedImageItem.woodVolume.toString()
+                holder.dateTextView.text = getFormattedDateTime(cachedImageItem.timestamp)
+            }
+
+            ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> {
+                val unprocessedImageItem = imageItem as UnprocessedImageItem
+                holder.imageView.setImageBitmap(unprocessedImageItem.image)
+                holder.volumeTextView.text = "Mérésre vár"
+                holder.dateTextView.text = getFormattedDateTime(unprocessedImageItem.timestamp)
+            }
         }
     }
 }

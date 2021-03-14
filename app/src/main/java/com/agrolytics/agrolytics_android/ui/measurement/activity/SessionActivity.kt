@@ -3,12 +3,17 @@ package com.agrolytics.agrolytics_android.ui.measurement.activity
 import android.app.Activity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.data.local.tables.BaseImageItem
+import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.utils.SessionRecyclerViewAdapter
+import com.agrolytics.agrolytics_android.ui.measurement.utils.UploadWorker
 import kotlinx.android.synthetic.main.activity_session.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -19,6 +24,7 @@ class SessionActivity : BaseActivity() {
     private val dataClient : DataClient by inject()
     lateinit var recyclerViewAdapter : SessionRecyclerViewAdapter
     lateinit var recyclerViewLayoutManager : LinearLayoutManager
+    private val workManager = WorkManager.getInstance(application)
 
     companion object {
         var sessionId : Long = 0
@@ -46,18 +52,30 @@ class SessionActivity : BaseActivity() {
     private fun getAllLocalImagesInSession() : ArrayList<BaseImageItem>?{
         val processedImageItemsInSession = dataClient.local.processed.getBySessionId(sessionId)
         val unprocessedImageItemsInSession = dataClient.local.unprocessed.getBySessionId(sessionId)
+        val cachedImageItemsInSession = dataClient.local.cache.getBySessionId(sessionId)
 
         val imageItemList = ArrayList<BaseImageItem>(processedImageItemsInSession)
         imageItemList.addAll(unprocessedImageItemsInSession)
+        imageItemList.addAll(cachedImageItemsInSession)
 
         return imageItemList
     }
 
     private fun saveBtnClicked() {
+        // Background task indítása
+        val inputData = Data.Builder()
+            .putLong(ConfigInfo.PROCESSED_IMAGE_ITEM_SESSION_ID, MeasurementManager.currentSessionId)
+            .build()
+
+        val uploadRequest = OneTimeWorkRequestBuilder<UploadWorker>()
+            .setInputData(inputData)
+            .build()
+
+        workManager.enqueue(uploadRequest)
+
         MeasurementManager.currentSessionId = 0
         MeasurementManager.recentlyAddedItemTimestamps.clear()
         setResult(Activity.RESULT_OK)
-        // Background task indítása
         finish()
     }
 

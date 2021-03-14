@@ -22,7 +22,6 @@ val appModule = module {
     single { SessionActivity() }
 
     // Presenter
-    factory { ApproveMeasurementPresenter() }
     factory { LoginPresenter(androidContext()) }
     factory {
         RodSelectorPresenter(

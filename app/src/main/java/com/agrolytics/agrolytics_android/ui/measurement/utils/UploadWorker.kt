@@ -20,7 +20,7 @@ class UploadWorker(
     val dataClient: DataClient by inject()
 
     override suspend fun doWork(): Result {
-        applicationContext
+
         return try {
             // ProcessedImageItem feltöltése Firebase-re ha van internet
             val processedImageItemSessionId = inputData.getLong(PROCESSED_IMAGE_ITEM_SESSION_ID, 0)
