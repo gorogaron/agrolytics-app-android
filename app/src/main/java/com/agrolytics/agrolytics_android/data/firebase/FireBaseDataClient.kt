@@ -63,10 +63,10 @@ class FireBaseDataClient: KoinComponent {
         return cachedImageItem
     }
 
-    suspend fun downloadImageItems(sessionIds: List<Long>)
+    suspend fun downloadImageItems(timestamps: List<Long>)
     : List<CachedImageItem> {
         val cachedImageItems = ArrayList<CachedImageItem>()
-        val (firestoreItems, firestoreIds) = fireStore.downloadFromFireStore(sessionIds)
+        val (firestoreItems, firestoreIds) = fireStore.downloadFromFireStore(timestamps)
         for (i in firestoreItems.indices) {
             val imageUrl = firestoreItems[i].imageUrl
             val image = storage.downloadImage(imageUrl)

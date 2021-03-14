@@ -1,18 +1,16 @@
 package com.agrolytics.agrolytics_android.ui.images
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.ui.images.recyclerview.SessionItem
-import com.agrolytics.agrolytics_android.utils.SessionManager
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import kotlinx.coroutines.Dispatchers as Dispatchers
 
 
 @KoinApiExtension
@@ -100,7 +98,7 @@ class ImagesViewModel: ViewModel(), KoinComponent {
     }
 
     private suspend fun updateLocalCache() {
-        val cachedImageItemIdsNotToDownload = dataClient.local.cache.getAllSessionIds()
+        val cachedImageItemIdsNotToDownload = dataClient.local.cache.getAllTimestamps()
         val cachedImageItemsToSave = dataClient.fireBase.downloadImageItems(cachedImageItemIdsNotToDownload)
         for (cachedImageItem in cachedImageItemsToSave) {
             dataClient.local.cache.add(cachedImageItem)

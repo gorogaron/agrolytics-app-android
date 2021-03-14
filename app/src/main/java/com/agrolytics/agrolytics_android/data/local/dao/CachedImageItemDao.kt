@@ -18,6 +18,9 @@ interface CachedImageItemDao {
     @Query("SELECT DISTINCT session_id FROM cached_images")
     fun getAllSessionIds(): List<Long>
 
+    @Query("SELECT timestamp FROM cached_images")
+    fun getAllTimestamps(): List<Long>
+
     @Insert
     fun add(cachedImageItem: CachedImageItem)
 
