@@ -5,6 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.agrolytics.agrolytics_android.data.DataClient
+import com.agrolytics.agrolytics_android.data.local.tables.BaseImageItem
+import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
+import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
+import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.images.recyclerview.SessionItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,30 +42,29 @@ class ImagesViewModel: ViewModel(), KoinComponent {
             val woodTypes = ArrayList<String>()
 
             // Egy adott session-höz lekérdezzük az összes típusú item-eket
-            val cachedImages = dataClient.local.cache.getBySessionId(sessionId)
-            val processedImages = dataClient.local.processed.getBySessionId(sessionId)
-            val unprocessedImages = dataClient.local.unprocessed.getBySessionId(sessionId)
+            val imageItems = mutableListOf<BaseImageItem>()
+            var sessionContainsUnprocessedImageItem = false
+            imageItems.addAll(dataClient.local.cache.getBySessionId(sessionId))
+            imageItems.addAll(dataClient.local.processed.getBySessionId(sessionId))
+            imageItems.addAll(dataClient.local.unprocessed.getBySessionId(sessionId))
 
-            //TODO: Mi van ha a session legelső képét kitöröltük?
-            for (cachedImage in cachedImages) {
-                woodLengths.add(cachedImage.woodLength)
-                woodTypes.add(cachedImage.woodType)
-                woodVolumes.add(cachedImage.woodVolume)
-                if (cachedImage.timestamp == sessionId) sessionImage = cachedImage.image
+            for (imageItem in imageItems) {
+                woodLengths.add(imageItem.woodLength)
+                woodTypes.add(imageItem.woodType)
+
+                if (imageItem.getItemType() == ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED) {
+                    woodVolumes.add((imageItem as ProcessedImageItem).woodVolume)
+                }
+                else if (imageItem.getItemType() == ConfigInfo.IMAGE_ITEM_TYPE.CACHED) {
+                    woodVolumes.add((imageItem as CachedImageItem).woodVolume)
+                }
+                else {
+                    sessionContainsUnprocessedImageItem = true
+                }
             }
 
-            for (processedImage in processedImages) {
-                woodLengths.add(processedImage.woodLength)
-                woodTypes.add(processedImage.woodType)
-                woodVolumes.add(processedImage.woodVolume)
-                if (processedImage.timestamp == sessionId) sessionImage = processedImage.image
-            }
-
-            for (unprocessedImage in unprocessedImages) {
-                woodLengths.add(unprocessedImage.woodLength)
-                woodTypes.add(unprocessedImage.woodType)
-                if (unprocessedImage.timestamp == sessionId) sessionImage = unprocessedImage.image
-            }
+            /**Kiszűrjük azokat az itemeket ahol az image null, és ezek közül megkeressük a legrégebbit*/
+            sessionImage = imageItems.filter { it.image != null }.minBy { it.timestamp }!!.image
 
             if (woodLengths.distinct().size == 1) {
                 woodLength = woodLengths[0]
@@ -71,7 +74,7 @@ class ImagesViewModel: ViewModel(), KoinComponent {
                 woodType = woodTypes[0]
             }
 
-            if (unprocessedImages.isEmpty()) {
+            if (!sessionContainsUnprocessedImageItem) {
                 woodVolume = woodVolumes.sum()
             }
 

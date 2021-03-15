@@ -119,7 +119,7 @@ class RodSelectorActivity : BaseActivity(){
 	}
 
 	private fun measureOffline(unprocessedImageItem: UnprocessedImageItem){
-		MeasurementManager.startOfflineMeasurement(unprocessedImageItem.image)
+		MeasurementManager.startOfflineMeasurement(unprocessedImageItem.image!!)
 		showToast("measureOffline - to be implemented")
 	}
 

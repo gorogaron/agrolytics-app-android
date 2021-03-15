@@ -9,12 +9,12 @@ import com.google.firebase.firestore.GeoPoint
 
 @Entity(tableName = "processed_images")
 data class ProcessedImageItem(
-    @PrimaryKey(autoGenerate = false) var timestamp: Long,
-    @ColumnInfo(name = "session_id") var sessionId: Long,
-    @ColumnInfo(name = "image") var image: Bitmap,
-    @ColumnInfo(name = "wood_type") var woodType: String,
-    @ColumnInfo(name = "wood_length") var woodLength: Double,
-    @ColumnInfo(name = "location") var location : GeoPoint,
+    @PrimaryKey(autoGenerate = false) override var timestamp: Long,
+    @ColumnInfo(name = "session_id") override var sessionId: Long,
+    @ColumnInfo(name = "image") override var image: Bitmap?,
+    @ColumnInfo(name = "wood_type") override var woodType: String,
+    @ColumnInfo(name = "wood_length") override var woodLength: Double,
+    @ColumnInfo(name = "location") override var location : GeoPoint,
     @ColumnInfo(name = "wood_volume") var woodVolume: Double
 ) : BaseImageItem {
 

@@ -9,20 +9,20 @@ import com.google.firebase.firestore.GeoPoint
 
 @Entity(tableName = "cached_images")
 data class CachedImageItem (
-    @PrimaryKey(autoGenerate = false) var timestamp: Long,
-    @ColumnInfo(name = "session_id") var sessionId: Long,
+    @PrimaryKey(autoGenerate = false) override var timestamp: Long,
+    @ColumnInfo(name = "session_id") override var sessionId: Long,
+    @ColumnInfo(name = "image") override var image: Bitmap?,
+    @ColumnInfo(name = "wood_type") override var woodType: String,
+    @ColumnInfo(name = "wood_length") override var woodLength: Double,
+    @ColumnInfo(name = "location") override var location: GeoPoint,
     @ColumnInfo(name = "forestry_id") var forestryId: String,
     @ColumnInfo(name = "leader_id") var leaderId: String?,
     @ColumnInfo(name = "user_id") var userId: String,
     @ColumnInfo(name = "user_role") var userRole: String,
     @ColumnInfo(name = "image_url") var imageUrl: String,
     @ColumnInfo(name = "thumb_url") var thumbUrl: String,
-    @ColumnInfo(name = "wood_type") var woodType: String,
-    @ColumnInfo(name = "wood_length") var woodLength: Double,
     @ColumnInfo(name = "wood_volume") var woodVolume: Double,
-    @ColumnInfo(name = "location") var location: GeoPoint,
-    @ColumnInfo(name = "firestore_id") var firestoreId: String,
-    @ColumnInfo(name = "image") var image: Bitmap?
+    @ColumnInfo(name = "firestore_id") var firestoreId: String
 ) : BaseImageItem {
 
     override fun getItemType(): ConfigInfo.IMAGE_ITEM_TYPE {

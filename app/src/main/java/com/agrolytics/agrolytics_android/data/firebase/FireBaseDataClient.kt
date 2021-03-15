@@ -23,7 +23,7 @@ class FireBaseDataClient: KoinComponent {
     : CachedImageItem {
         val fireBaseStorageItem = FireBaseStorageItem(
             forestryName = sessionManager.forestryName,
-            maskedImage = processedImageItem.image,
+            maskedImage = processedImageItem.image!!,
             maskedImageThumbnail = Bitmap.createScaledBitmap(
                 processedImageItem.image,
                 64,
