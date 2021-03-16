@@ -197,13 +197,13 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
             R.id.browseFab -> MeasurementManager.startNewMeasurementSession(this, MeasurementManager.ImagePickerID.ID_BROWSER)
 
             R.id.menu_frame -> drawer_layout.openDrawer(GravityCompat.START)
-            R.id.rod_frame -> openActivity(MenuItem.ROD)
+            R.id.rod_frame -> showParameterSettingsWindow(this, sessionManager, ::blur)
             R.id.images_frame -> openActivity(MenuItem.IMAGES)
-            R.id.gps_frame -> openActivity(MenuItem.MAP)
+            R.id.map_frame -> openActivity(MenuItem.MAP)
 
             R.id.container_profile -> {/*TODO*/}
-            R.id.container_impressum -> openActivity(MenuItem.INFO)
             R.id.container_guide -> openActivity(MenuItem.GUIDE)
+            R.id.container_impressum -> openActivity(MenuItem.INFO)
             R.id.container_logout -> signOut()
 
             R.id.show_full_session -> MeasurementManager.showSession(this, viewModel.lastSessionId.value)
@@ -218,7 +218,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
             MenuItem.GUIDE -> startActivity(GuideActivity::class.java, Bundle(), true)
             MenuItem.IMAGES -> startActivity(ImagesActivity::class.java, Bundle(), true)
             MenuItem.MAP -> startActivity(MapActivity::class.java, Bundle(), true)
-            MenuItem.ROD -> showParameterSettingsWindow(this, sessionManager, ::blur)
             MenuItem.MAIN -> startActivity(MainActivity::class.java, Bundle(), true)
         }
         drawer_layout.closeDrawers()
@@ -307,7 +306,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
             yellow_bg.animate().alpha(0f).duration = 0
         }
         else {
-            yellow_bg.animate().alpha(0.95f).duration = 250
+            yellow_bg.animate().alpha(0.5f).duration = 250
             Blurry.with(this)
                 .radius(iRadius)
                 .sampling(8)

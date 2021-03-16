@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
+import androidx.core.content.ContextCompat
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
 import com.agrolytics.agrolytics_android.ui.measurement.activity.SessionActivity
@@ -90,6 +91,7 @@ class Util {
             dialog.window!!.setBackgroundDrawableResource(R.drawable.bg_white_round)
             dialog.window.setDimAmount(0.0f)
             dialog.show()
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(context, R.color.darkGrey))
         }
 
     }
