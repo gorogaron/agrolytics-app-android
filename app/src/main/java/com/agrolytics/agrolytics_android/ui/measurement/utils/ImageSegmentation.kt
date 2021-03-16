@@ -11,10 +11,13 @@ import java.nio.channels.FileChannel
 
 object ImageSegmentation {
 
+    var modelFileName = "deeplabv3_640_480.tflite"
+    lateinit var model: Interpreter
     lateinit var assetManager: AssetManager
 
     fun init(iAssetManager : AssetManager) {
         assetManager = iAssetManager
+        model = Interpreter(loadModelFile(modelFileName))
     }
 
     fun segment(
@@ -38,8 +41,7 @@ object ImageSegmentation {
     private fun predict(
         floatMatrix: Array<Array<Array<FloatArray>>>
     ) : Array<Array<Array<FloatArray>>> {
-        
-        val model = Interpreter(loadModelFile("deeplabv3_640_480.tflite"))
+
         val output = Array(1) { Array(480) { Array(640) { FloatArray(2) } } }
 
         model.run(floatMatrix, output)
