@@ -102,11 +102,81 @@
         </RelativeLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/container_after_selection_offline_declined"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/image"
+            android:layout_marginTop="24dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tv_inaccurate"
+                android:layout_width="290dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="24dp"
+                android:textAlignment="center"
+                android:textColor="@color/darkGrey"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/roboto_bold"
+                android:text="Pontatlan mérés." />
+
+            <Button
+                android:id="@+id/btn_new_offline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_inaccurate"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@drawable/bg_dialog_button_clickable"
+                android:padding="12dp"
+                android:text="Új kép"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textColor="@color/darkGrey"/>
+
+            <Button
+                android:id="@+id/btn_show_session_offline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btn_new_offline"
+                android:background="@drawable/bg_dialog_button_clickable"
+                android:padding="12dp"
+                android:text="Munkamenet áttekintése"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textColor="@color/darkGrey"
+                android:backgroundTint="@color/yellow"/>
+
+            <Button
+                android:id="@+id/btn_save_for_later"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btn_show_session_offline"
+                android:background="@drawable/bg_dialog_button_clickable"
+                android:padding="12dp"
+                android:text="Mentés online feldolgozásra"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                android:textColor="@color/darkGrey"
+                android:backgroundTint="@color/yellow"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container_after_selection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/image"
-            android:layout_marginTop="24dp">
+            android:layout_marginTop="24dp"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/tv_result"
@@ -117,7 +187,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="24dp"
                 android:textAlignment="center"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/darkGrey"
                 android:textSize="38sp"
                 android:textStyle="bold"
                 app:fontFamily="sans-serif"
@@ -143,7 +213,7 @@
                 android:layout_marginTop="16dp"
                 app:layout_constraintTop_toBottomOf="@id/tv_sum"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/btn_show_session"
+                app:layout_constraintEnd_toEndOf="parent"
                 android:background="@drawable/bg_dialog_button_clickable"
                 android:padding="12dp"
                 android:text="Új kép"
@@ -155,8 +225,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                app:layout_constraintTop_toBottomOf="@id/tv_sum"
-                app:layout_constraintStart_toEndOf="@id/btn_new"
+                app:layout_constraintTop_toBottomOf="@id/btn_new"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:background="@drawable/bg_dialog_button_clickable"
                 android:padding="12dp"

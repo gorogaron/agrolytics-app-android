@@ -20,18 +20,6 @@ data class UnprocessedImageItem(
 ) : BaseImageItem
 {
 
-    fun toProcessedImageItem(maskedImage : Bitmap, volume : Double) : ProcessedImageItem{
-        return ProcessedImageItem(
-            sessionId = sessionId,
-            image = maskedImage,
-            woodType = woodType,
-            woodLength = woodLength,
-            woodVolume = volume,
-            location = location,
-            timestamp = timestamp
-        )
-    }
-
     override fun getItemType(): ConfigInfo.IMAGE_ITEM_TYPE {
         return ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED
     }

@@ -4,18 +4,23 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import org.koin.android.ext.android.inject
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
+import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo.IMAGE_BROWSE
 import com.agrolytics.agrolytics_android.types.ConfigInfo.IMAGE_CAPTURE
 import com.agrolytics.agrolytics_android.types.ConfigInfo.SESSION
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
+import com.google.firebase.database.collection.LLRBNode
 import kotlinx.android.synthetic.main.activity_upload_finished.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
+import org.jetbrains.anko.uiThread
 
 
 class ApproveMeasurementActivity : BaseActivity() {
@@ -30,8 +35,22 @@ class ApproveMeasurementActivity : BaseActivity() {
 		btn_decline.setOnClickListener{ onDeclineClicked() }
 		btn_accept.setOnClickListener{ onAcceptClicked() }
 
+		/**Új kép, munkamenet áttekintése*/
 		btn_new.setOnClickListener { newImage() }
 		btn_show_session.setOnClickListener { MeasurementManager.showSession(this, MeasurementManager.currentSessionId) }
+
+		/**Új kép, munkamenet áttekintése, mentés későbbre*/
+		btn_new_offline.setOnClickListener { newImage() }
+		btn_show_session_offline.setOnClickListener { MeasurementManager.showSession(this, MeasurementManager.currentSessionId) }
+		btn_save_for_later.setOnClickListener { doAsync {
+			dataClient.local.unprocessed.add(unprocessedImageItem)
+			MeasurementManager.recentlyAddedItemTimestamps.add(unprocessedImageItem.timestamp)
+			uiThread {
+				btn_save_for_later.visibility = View.GONE
+				btn_save_for_later.isClickable = false
+				toast("A kép mentésre került.")
+			}
+		} }
 
 		image.setImageBitmap(processedImageItem.image)
 	}
@@ -39,10 +58,16 @@ class ApproveMeasurementActivity : BaseActivity() {
 	private fun onDeclineClicked() {
 		when (method){
 			"online" -> {
-				//TODO: Új mérés vagy session áttekintése?
+				//Új mérés vagy session áttekintése?
+				container_selection.animate().alpha(0f).duration = 300
+				container_after_selection.visibility = View.VISIBLE
+				container_selection.visibility = View.GONE
 			}
 			"offline" -> {
-				//TODO: Szeretnéd később online megpróbálni?
+				//Szeretnéd később online megpróbálni?
+				container_selection.animate().alpha(0f).duration = 300
+				container_after_selection_offline_declined.visibility = View.VISIBLE
+				container_selection.visibility = View.GONE
 			}
 		}
 	}
@@ -75,8 +100,9 @@ class ApproveMeasurementActivity : BaseActivity() {
 		}
 	}
 
-	companion object Result {
+	companion object InputParameters {
 	    lateinit var processedImageItem : ProcessedImageItem
+		lateinit var unprocessedImageItem : UnprocessedImageItem
 		lateinit var method : String
 	}
 }

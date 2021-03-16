@@ -3,6 +3,7 @@ package com.agrolytics.agrolytics_android.ui.measurement.presenter
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.ui.base.BasePresenter
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
@@ -52,16 +53,10 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
                     if (response.isSuccessful) {
                         val maskImg = response.body()!!.toBitmap()
                         val (maskedImg, numOfWoodPixels) = ImageUtils.drawMaskOnInputImage(bitmap, maskImg)
-                        val volume = MeasurementUtils.calculateWoodVolume(
-                            numOfWoodPixels,
-                            unprocessedImageItem.rodLength,
-                            unprocessedImageItem.rodLengthPixel,
-                            unprocessedImageItem.woodLength
-                        ).round(2)
+                        val processedImageItem = ProcessedImageItem(unprocessedImageItem, numOfWoodPixels, maskedImg)
 
-                        val processedImageItem = unprocessedImageItem.toProcessedImageItem(maskedImg, volume)
                         activity.hideLoading()
-                        MeasurementManager.startApproveMeasurementActivity(activity, processedImageItem, "online")
+                        MeasurementManager.startApproveMeasurementActivity(activity, processedImageItem, unprocessedImageItem,"online")
                         activity.finish()
                         RodSelectorActivity.correspondingCropperActivity!!.finish()
                         RodSelectorActivity.correspondingCropperActivity = null
@@ -77,12 +72,6 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
                 }
             }
         }
-    }
-
-
-    private fun startOfflineDetection(unprocessedImageItem: UnprocessedImageItem){
-        //TODO: segmentor = ImageSegmentation()
-        //      val (mask, numOfPixels) = segmentor.segment(inputImg)
     }
 
 }

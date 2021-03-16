@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
+import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.network.AppServer
 import com.agrolytics.agrolytics_android.network.model.ImageUploadRequest
 import com.agrolytics.agrolytics_android.network.model.ImageUploadResponse
@@ -100,9 +101,10 @@ object MeasurementManager : KoinComponent{
         callingActivity.startActivityForResult(intent, ConfigInfo.ROD_SELECTOR)
     }
 
-    fun startApproveMeasurementActivity(callingActivity : BaseActivity, processedImageItem: ProcessedImageItem, method: String) {
+    fun startApproveMeasurementActivity(callingActivity : BaseActivity, processedImageItem: ProcessedImageItem, unprocessedImageItem: UnprocessedImageItem, method: String) {
         ApproveMeasurementActivity.method = method
         ApproveMeasurementActivity.processedImageItem = processedImageItem
+        ApproveMeasurementActivity.unprocessedImageItem = unprocessedImageItem
         val intent = Intent(callingActivity, ApproveMeasurementActivity::class.java)
         callingActivity.startActivity(intent)
     }
@@ -112,8 +114,11 @@ object MeasurementManager : KoinComponent{
         return appServer.uploadImage(request)
     }
 
-    fun startOfflineMeasurement(bitmap : Bitmap) : Pair<Bitmap, Int> {
-        return ImageSegmentation.segment(bitmap)
+    fun startOfflineMeasurement(unprocessedImageItem : UnprocessedImageItem) : ProcessedImageItem {
+        val (mask, numOfWoodPixels) = ImageSegmentation.segment(unprocessedImageItem.image!!)
+        //TODO: drawMaskOnInputImage és ImageSegmentation.segment egyesítése
+        val (maskedImg, _) = ImageUtils.drawMaskOnInputImage(unprocessedImageItem.image!!, mask)
+        return ProcessedImageItem(unprocessedImageItem, numOfWoodPixels, maskedImg)
     }
 
     private fun createImageUploadRequest(bitmap: Bitmap?): ImageUploadRequest {

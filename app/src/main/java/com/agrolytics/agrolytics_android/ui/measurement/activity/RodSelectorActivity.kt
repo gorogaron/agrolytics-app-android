@@ -12,14 +12,21 @@ import androidx.core.content.ContextCompat
 import com.agrolytics.agrolytics_android.AgrolyticsApp
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
+import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.network.AppServer
 import com.agrolytics.agrolytics_android.ui.measurement.presenter.RodSelectorPresenter
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
+import com.agrolytics.agrolytics_android.utils.MeasurementUtils
 import com.agrolytics.agrolytics_android.utils.SessionManager
+import com.agrolytics.agrolytics_android.utils.Util.Companion.round
 import kotlinx.android.synthetic.main.activity_rod_selector.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
@@ -119,8 +126,17 @@ class RodSelectorActivity : BaseActivity(){
 	}
 
 	private fun measureOffline(unprocessedImageItem: UnprocessedImageItem){
-		MeasurementManager.startOfflineMeasurement(unprocessedImageItem.image!!)
-		showToast("measureOffline - to be implemented")
+		showLoading()
+		GlobalScope.launch {
+			val processedImageItem = MeasurementManager.startOfflineMeasurement(unprocessedImageItem)
+			MeasurementManager.startApproveMeasurementActivity(this@RodSelectorActivity, processedImageItem, unprocessedImageItem, "offline")
+			finish()
+			correspondingCropperActivity!!.finish()
+			correspondingCropperActivity = null
+			withContext(Dispatchers.Main) {
+				hideLoading()
+			}
+		}
 	}
 
 	companion object {
