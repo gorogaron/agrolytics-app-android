@@ -68,8 +68,11 @@ class FireBaseDataClient: KoinComponent {
     suspend fun downloadImageItems(timestamps: List<Long>): List<CachedImageItem> {
         val cachedImageItems = ArrayList<CachedImageItem>()
         val firestoreItems = fireStore.downloadFromFireStore(timestamps)
+        val timestampsBySessionIds = firestoreItems.groupByTo(HashMap(), {it.sessionId}, {it.timestamp})
         for (firestoreItem in firestoreItems) {
-            val image: Bitmap? = if (firestoreItem.sessionId == firestoreItem.timestamp) {
+            val timestampsOfSession = timestampsBySessionIds[firestoreItem.sessionId] as List<Long>
+            val minTimestampOfSession = timestampsOfSession.min()
+            val image: Bitmap? = if (firestoreItem.timestamp == minTimestampOfSession) {
                 storage.downloadImage(sessionManager.forestryName, sessionManager.userId, firestoreItem.timestamp)
             } else {
                 null
