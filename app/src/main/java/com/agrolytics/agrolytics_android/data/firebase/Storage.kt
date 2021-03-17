@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import com.agrolytics.agrolytics_android.data.firebase.model.FireBaseStorageItem
+import com.agrolytics.agrolytics_android.data.firebase.model.ImageDirectory
 import com.agrolytics.agrolytics_android.data.local.TypeConverter
 import com.agrolytics.agrolytics_android.utils.ImageUtils
 import com.agrolytics.agrolytics_android.utils.SessionManager
@@ -29,52 +30,33 @@ class Storage {
         storage = FirebaseStorage.getInstance(url)
     }
 
-    suspend fun uploadToFireBaseStorage(
-        fireBaseStorageItem: FireBaseStorageItem,
-        imageName : String
-    ): Pair<String, String> {
+    suspend fun uploadToFireBaseStorage(fireBaseStorageItem: FireBaseStorageItem) {
 
         // Referenciák
         val maskRef = storage?.reference?.child(
-            "${fireBaseStorageItem.forestryName}/masked/$imageName"
+            "${fireBaseStorageItem.forestryName}/masked/${fireBaseStorageItem.imageName}"
         )
         val thumbRef = storage?.reference?.child(
-            "${fireBaseStorageItem.forestryName}/thumbnail/$imageName"
+            "${fireBaseStorageItem.forestryName}/thumbnail/${fireBaseStorageItem.imageName}"
         )
 
         // Képek konvertálása bytearray-re
         val maskBytes = ImageUtils.getBytes(fireBaseStorageItem.maskedImage)
         val thumbBytes = ImageUtils.getBytes(fireBaseStorageItem.maskedImageThumbnail)
 
-        // Thumbnailek feltöltése
-        var maskUri: Uri?
-        var thumbUri: Uri?
-        try {
-            maskUri = uploadImageToStorage(maskRef!!, maskBytes)
-            thumbUri = uploadImageToStorage(thumbRef!!, thumbBytes)
-        }
-        catch (e: Exception) {
-            // TODO: Handle Exception better
-            maskUri = null
-            thumbUri = null
-        }
-        if (maskUri != null && thumbUri != null) {
-            return Pair(maskUri.toString(), thumbUri.toString())
-
-        }
-        throw Exception()
+        uploadImageToStorage(maskRef!!, maskBytes)
+        uploadImageToStorage(thumbRef!!, thumbBytes)
     }
 
     //TODO: Ha nincs net, ez a végtelenségig blokkolni fog...
-    suspend fun deleteImage(imageUrl: String) : Boolean = suspendCoroutine {cont->
-        val imageRef = storage?.getReferenceFromUrl(imageUrl)
-        imageRef?.delete()
+    suspend fun deleteImage(forestryName : String, userId : String, timestamp : Long, directory: ImageDirectory) : Boolean = suspendCoroutine {cont->
+        val pathReference = storage?.reference?.child("$forestryName/${directory.tag}/${userId}_$timestamp")
+        pathReference?.delete()
             ?.addOnSuccessListener { cont.resume(true) }
             ?.addOnFailureListener { cont.resume(false) }
     }
 
-    suspend fun downloadImage(forestryName : String, userId : String, timestamp : Long)
-    : Bitmap? = suspendCoroutine { cont ->
+    suspend fun downloadImage(forestryName : String, userId : String, timestamp : Long): Bitmap? = suspendCoroutine { cont ->
         val pathReference = storage?.reference?.child("$forestryName/masked/${userId}_$timestamp")
         pathReference?.getBytes(Long.MAX_VALUE)
             ?.addOnSuccessListener {
@@ -85,24 +67,15 @@ class Storage {
             }
     }
 
-    private suspend fun uploadImageToStorage(
-        reference: StorageReference,
-        bytes: ByteArray
-    )
-            : Uri = suspendCoroutine { cont ->
+    private suspend fun uploadImageToStorage(reference: StorageReference, bytes: ByteArray) : Boolean = suspendCoroutine { cont ->
         reference.putBytes(bytes)
-            .addOnSuccessListener { task ->
+            .addOnSuccessListener {
                 val metadata = StorageMetadata.Builder()
                     .setCacheControl("max-age=604800")
                     .build()
                 reference.updateMetadata(metadata)
                     .addOnSuccessListener {
-                        task.storage.downloadUrl
-                            .addOnSuccessListener { uri ->
-                                cont.resume(uri)
-                            }.addOnFailureListener {
-                                cont.resumeWithException(it)
-                            }
+                        cont.resume(true)
                     }.addOnFailureListener{
                         cont.resumeWithException(it)
                     }

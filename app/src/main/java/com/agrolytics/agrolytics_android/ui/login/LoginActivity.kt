@@ -98,6 +98,11 @@ class LoginActivity: BaseActivity(), LoginScreen {
         finish()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        hideLoading()
+    }
+
     override fun onBackPressed() {
         finish()
         exitProcess(0)

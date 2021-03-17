@@ -31,9 +31,7 @@ class FireStore: KoinComponent {
             }
     }
 
-    suspend fun downloadFromFireStore(
-        timestamps: List<Long>
-    ): List<FireStoreImageItem> {
+    suspend fun downloadFromFireStore(timestamps: List<Long>): List<FireStoreImageItem> {
         val firestoreImageItems = ArrayList<FireStoreImageItem>()
         return suspendCoroutine { cont ->
             firestore.collection(FireStoreCollection.IMAGES.tag)
@@ -50,8 +48,6 @@ class FireStore: KoinComponent {
                             leaderId = data[FireStoreImagesField.LEADER_ID.tag] as String,
                             userId = data[FireStoreImagesField.USER_ID.tag] as String,
                             userRole = data[FireStoreImagesField.USER_ROLE.tag] as String,
-                            imageUrl = data[FireStoreImagesField.IMAGE_URL.tag] as String,
-                            thumbnailUrl = data[FireStoreImagesField.IMAGE_THUMBNAIL_URL.tag] as String,
                             woodType = data[FireStoreImagesField.WOOD_TYPE.tag] as String,
                             woodVolume = data[FireStoreImagesField.WOOD_VOLUME.tag] as Double,
                             woodLength = data[FireStoreImagesField.WOOD_LENGTH.tag] as Double,

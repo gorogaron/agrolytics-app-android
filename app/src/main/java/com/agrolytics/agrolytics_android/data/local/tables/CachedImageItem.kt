@@ -19,8 +19,6 @@ data class CachedImageItem (
     @ColumnInfo(name = "leader_id") var leaderId: String?,
     @ColumnInfo(name = "user_id") var userId: String,
     @ColumnInfo(name = "user_role") var userRole: String,
-    @ColumnInfo(name = "image_url") var imageUrl: String,
-    @ColumnInfo(name = "thumb_url") var thumbUrl: String,
     @ColumnInfo(name = "wood_volume") var woodVolume: Double,
     @ColumnInfo(name = "firestore_id") var firestoreId: String
 ) : BaseImageItem {

@@ -10,12 +10,14 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
+import com.agrolytics.agrolytics_android.data.firebase.model.ImageDirectory
 import com.agrolytics.agrolytics_android.data.local.tables.BaseImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
+import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.agrolytics.agrolytics_android.utils.Util.Companion.getFormattedDateTime
 import com.github.chrisbanes.photoview.PhotoView
 import kotlinx.android.synthetic.main.recycler_view_measurement_item.view.*
@@ -31,6 +33,7 @@ import kotlin.collections.ArrayList
 class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : ArrayList<BaseImageItem>) : RecyclerView.Adapter<SessionRecyclerViewAdapter.SessionViewHolder>(), KoinComponent {
 
     private val dataClient: DataClient by inject()
+    private val sessionManager: SessionManager by inject()
 
     inner class SessionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         var imageView = itemView.image
@@ -106,7 +109,8 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
                     ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> {
                         dataClient.local.cache.delete(imageItem as CachedImageItem)
                         dataClient.fireBase.fireStore.deleteImage(imageItem.firestoreId)
-                        dataClient.fireBase.storage.deleteImage(imageItem.imageUrl)
+                        dataClient.fireBase.storage.deleteImage(sessionManager.forestryName, sessionManager.userId, imageItem.timestamp, ImageDirectory.MASKED)
+                        dataClient.fireBase.storage.deleteImage(sessionManager.forestryName, sessionManager.userId, imageItem.timestamp, ImageDirectory.THUMBNAIL)
                     }
                     ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> {
                         dataClient.local.processed.delete(imageItem as ProcessedImageItem)

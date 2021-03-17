@@ -28,11 +28,11 @@ class FireBaseDataClient: KoinComponent {
                 processedImageItem.image,
                 64,
                 48,
-                true)
+                true),
+            imageName = "${sessionManager.userId}_${processedImageItem.timestamp}"
         )
 
-        val imageName = "${sessionManager.userId}_${processedImageItem.timestamp}"
-        val (imageUrl, thumbUrl) = storage.uploadToFireBaseStorage(fireBaseStorageItem, imageName)
+        storage.uploadToFireBaseStorage(fireBaseStorageItem)
         val firestoreImageItem = FireStoreImageItem(
             timestamp = processedImageItem.timestamp,
             sessionId = processedImageItem.sessionId,
@@ -40,8 +40,6 @@ class FireBaseDataClient: KoinComponent {
             leaderId = sessionManager.leaderId,
             userId = sessionManager.userId,
             userRole = sessionManager.userRole,
-            imageUrl = imageUrl,
-            thumbnailUrl = thumbUrl,
             woodType = processedImageItem.woodType,
             woodLength = processedImageItem.woodLength,
             woodVolume = processedImageItem.woodVolume,
@@ -57,8 +55,6 @@ class FireBaseDataClient: KoinComponent {
             leaderId = firestoreImageItem.leaderId,
             userId = firestoreImageItem.userId,
             userRole = firestoreImageItem.userRole,
-            imageUrl = firestoreImageItem.imageUrl,
-            thumbUrl = firestoreImageItem.thumbnailUrl,
             woodType = firestoreImageItem.woodType!!,
             woodLength = firestoreImageItem.woodLength,
             woodVolume = firestoreImageItem.woodVolume,
@@ -69,8 +65,7 @@ class FireBaseDataClient: KoinComponent {
         return cachedImageItem
     }
 
-    suspend fun downloadImageItems(timestamps: List<Long>)
-    : List<CachedImageItem> {
+    suspend fun downloadImageItems(timestamps: List<Long>): List<CachedImageItem> {
         val cachedImageItems = ArrayList<CachedImageItem>()
         val firestoreItems = fireStore.downloadFromFireStore(timestamps)
         for (firestoreItem in firestoreItems) {
@@ -87,8 +82,6 @@ class FireBaseDataClient: KoinComponent {
                     leaderId = firestoreItem.leaderId,
                     userId = firestoreItem.userId,
                     userRole = firestoreItem.userRole,
-                    imageUrl = firestoreItem.imageUrl,
-                    thumbUrl = firestoreItem.thumbnailUrl,
                     woodType = firestoreItem.woodType!!,
                     woodLength = firestoreItem.woodLength,
                     woodVolume = firestoreItem.woodVolume,
