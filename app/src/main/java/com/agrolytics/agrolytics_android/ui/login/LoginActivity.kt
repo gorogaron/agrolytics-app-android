@@ -3,6 +3,7 @@ package com.agrolytics.agrolytics_android.ui.login
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import androidx.lifecycle.lifecycleScope
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
@@ -34,16 +35,22 @@ class LoginActivity: BaseActivity(), LoginScreen {
         presenter.addView(this)
         presenter.activity = this
         presenter.addInjections(arrayListOf(sessionManager, dataClient, auth, appServer))
-        
-        // TODO: Blocking LoginActivity until checkUserLoggedInState() finished
-        checkUserLoggedInState()
 
+        showLoading()
         setContentView(R.layout.activity_login)
         setLoginButtonBackground()
         btn_login.setOnClickListener {
             loginUser()
         }
         setEditTextListeners()
+
+        lifecycleScope.launch(Dispatchers.Main){
+            var autoLoginResult: Boolean
+            withContext(Dispatchers.IO) {
+                autoLoginResult = checkUserLoggedInState()
+            }
+            if (autoLoginResult) loginSuccess() else hideLoading()
+        }
     }
 
     private fun loginUser() {
@@ -76,15 +83,14 @@ class LoginActivity: BaseActivity(), LoginScreen {
         }
     }
 
-    private fun checkUserLoggedInState() {
+    private suspend fun checkUserLoggedInState() : Boolean {
         if (auth.currentUser != null) {
-            GlobalScope.launch(Dispatchers.IO) {
-                when (presenter.checkLicence()) {
-                    ConfigInfo.LOGIN.SUCCESS -> loginSuccess()
-                    else -> {}
-                }
+            return when (presenter.checkLicence()) {
+                ConfigInfo.LOGIN.SUCCESS -> true
+                else -> false
             }
         }
+        return false
     }
 
     override fun loginSuccess() {

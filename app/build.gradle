@@ -138,8 +138,9 @@ dependencies {
     //Blurry
     implementation 'jp.wasabeef:blurry:4.0.0'
 
-    // Lifecycle ViewModel
+    // viewModelScope and lifecycleScope
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.0"
 
     // Zoomable imageview
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
