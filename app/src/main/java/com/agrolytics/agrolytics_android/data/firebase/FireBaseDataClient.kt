@@ -30,7 +30,9 @@ class FireBaseDataClient: KoinComponent {
                 48,
                 true)
         )
-        val (imageUrl, thumbUrl) = storage.uploadToFireBaseStorage(fireBaseStorageItem)
+
+        val imageName = "${sessionManager.userId}_${processedImageItem.timestamp}"
+        val (imageUrl, thumbUrl) = storage.uploadToFireBaseStorage(fireBaseStorageItem, imageName)
         val firestoreImageItem = FireStoreImageItem(
             timestamp = processedImageItem.timestamp,
             sessionId = processedImageItem.sessionId,
@@ -72,9 +74,8 @@ class FireBaseDataClient: KoinComponent {
         val cachedImageItems = ArrayList<CachedImageItem>()
         val firestoreItems = fireStore.downloadFromFireStore(timestamps)
         for (firestoreItem in firestoreItems) {
-            val imageUrl = firestoreItem.imageUrl
             val image: Bitmap? = if (firestoreItem.sessionId == firestoreItem.timestamp) {
-                storage.downloadImage(imageUrl)
+                storage.downloadImage(sessionManager.forestryName, sessionManager.userId, firestoreItem.timestamp)
             } else {
                 null
             }

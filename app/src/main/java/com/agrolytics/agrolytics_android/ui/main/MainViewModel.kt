@@ -9,6 +9,7 @@ import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo
+import com.agrolytics.agrolytics_android.utils.SessionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
@@ -18,6 +19,7 @@ import org.koin.core.component.inject
 @KoinApiExtension
 class MainViewModel : ViewModel(), KoinComponent {
     private val dataClient : DataClient by inject()
+    private val sessionManager : SessionManager by inject()
 
     var lastMeasurementItems = MutableLiveData<ArrayList<BaseImageItem>>()
     var lastSessionId = MutableLiveData<Long>()
@@ -38,8 +40,10 @@ class MainViewModel : ViewModel(), KoinComponent {
             //Ha valamelyik cached itemhez nincs letöltve a kép, akkor töltsük le. Ez akkor fordulhat elő, ha az
             //utolsó sessiont az updateLocalCache-el szedtük le firebase-ről.
             for (cachedImage in cachedImages) {
-                cachedImage.image = dataClient.fireBase.storage.downloadImage(cachedImage.imageUrl)
-                dataClient.local.cache.update(cachedImage)
+                if (cachedImage.image == null) {
+                    cachedImage.image = dataClient.fireBase.storage.downloadImage(sessionManager.forestryName, cachedImage.userId, cachedImage.timestamp)
+                    dataClient.local.cache.update(cachedImage)
+                }
             }
 
             imageItemList.addAll(cachedImages)

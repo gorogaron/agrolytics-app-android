@@ -4,7 +4,9 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import com.agrolytics.agrolytics_android.data.firebase.model.FireBaseStorageItem
+import com.agrolytics.agrolytics_android.data.local.TypeConverter
 import com.agrolytics.agrolytics_android.utils.ImageUtils
+import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
 import com.google.firebase.storage.StorageReference
@@ -28,9 +30,9 @@ class Storage {
     }
 
     suspend fun uploadToFireBaseStorage(
-        fireBaseStorageItem: FireBaseStorageItem
+        fireBaseStorageItem: FireBaseStorageItem,
+        imageName : String
     ): Pair<String, String> {
-        val imageName = LocalDateTime.now().toString()
 
         // Referenciák
         val maskRef = storage?.reference?.child(
@@ -71,14 +73,16 @@ class Storage {
             ?.addOnFailureListener { cont.resume(false) }
     }
 
-    fun downloadImage(imageUrl: String?)
-    : Bitmap? {
-        val url = URL(imageUrl)
-        val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
-        connection.setDoInput(true)
-        connection.connect()
-        val input: InputStream = connection.getInputStream()
-        return BitmapFactory.decodeStream(input)
+    suspend fun downloadImage(forestryName : String, userId : String, timestamp : Long)
+    : Bitmap? = suspendCoroutine { cont ->
+        val pathReference = storage?.reference?.child("$forestryName/masked/${userId}_$timestamp")
+        pathReference?.getBytes(Long.MAX_VALUE)
+            ?.addOnSuccessListener {
+                cont.resume(BitmapFactory.decodeByteArray(it, 0, it.size))
+            }
+            ?.addOnFailureListener {
+                cont.resumeWithException(it)
+            }
     }
 
     private suspend fun uploadImageToStorage(
