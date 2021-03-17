@@ -27,11 +27,9 @@ class MainViewModel : ViewModel(), KoinComponent {
 
     fun getLastMeasurementItems(updateCache : Boolean) = viewModelScope.launch(Dispatchers.IO) {
         if (updateCache) {
-            Log.d("TEMP", "Caching started")
             updateLocalCache()
-            Log.d("TEMP", "Caching finished")
         }
-        Log.d("TEMP", "Local queries started")
+
         val imageItemList = ArrayList<BaseImageItem>()
         val latestId = getSessionIdList().max()
 
