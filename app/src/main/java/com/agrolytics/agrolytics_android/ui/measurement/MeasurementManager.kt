@@ -91,12 +91,15 @@ object MeasurementManager : KoinComponent{
         callingActivity.startActivity(intent)
     }
 
-    fun startRodSelectorActivity(callingActivity : CropperActivity, croppedImgBitmap: Bitmap) {
-        val cropImgUri = ImageUtils.createTempFileFromBitmap(Bitmap.createScaledBitmap(croppedImgBitmap, 640, 480, true))
+    fun startRodSelectorActivity(callingActivity : CropperActivity, croppedImgBlackBg: Bitmap, croppedImgBlurredBg: Bitmap) {
+        /**A fekete hátterű képet fogjuk feldolgozni*/
+        val croppedImgBlackBgUri = ImageUtils.createTempFileFromBitmap(Bitmap.createScaledBitmap(croppedImgBlackBg, 640, 480, true))
         //TODO: Handle if temporary file could not have been created
         val intent = Intent(callingActivity, RodSelectorActivity::class.java)
-        intent.putExtra(ConfigInfo.CROPPED_RESIZED_IMG_PATH, cropImgUri!!.path)
-        RodSelectorActivity.bitmap = croppedImgBitmap
+        intent.putExtra(ConfigInfo.CROPPED_RESIZED_IMG_PATH, croppedImgBlackBgUri!!.path)
+
+        /**Az elmosott hátterű képet fogjuk megjeleníteni*/
+        RodSelectorActivity.croppedImageBlurredBg = croppedImgBlurredBg
         RodSelectorActivity.correspondingCropperActivity = callingActivity
         callingActivity.startActivityForResult(intent, ConfigInfo.ROD_SELECTOR)
     }

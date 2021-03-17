@@ -3,6 +3,7 @@ package com.agrolytics.agrolytics_android.ui.measurement.presenter
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.ui.base.BasePresenter
@@ -26,14 +27,14 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
         this.activity = activity
     }
 
-    fun uploadImage(bitmap: Bitmap, rodLength: Double, rodLengthPixels: Double) {
+    fun uploadImage(rodLength: Double, rodLengthPixels: Double) {
         if (Util.lat == null || Util.lat == null) {
             Util.lat = 0.0
             Util.long = 0.0
         }
         val unprocessedImageItem = UnprocessedImageItem(
             sessionId = MeasurementManager.currentSessionId,
-            image = bitmap,
+            image = Bitmap.createScaledBitmap(RodSelectorActivity.croppedImageBlurredBg!!, 640, 480, true),
             woodType = sessionManager?.woodType!!,
             woodLength = sessionManager?.woodLength!!.toDouble(),
             location = GeoPoint(Util.lat!!, Util.long!!),
@@ -49,10 +50,11 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
             activity.showLoading()
             GlobalScope.launch(Dispatchers.Main) {
                 try {
-                    val response = MeasurementManager.startOnlineMeasurement(bitmap)
+                    val response = MeasurementManager.startOnlineMeasurement(RodSelectorActivity.croppedResizedImageBlackBg!!)
                     if (response.isSuccessful) {
                         val maskImg = response.body()!!.toBitmap()
-                        val (maskedImg, numOfWoodPixels) = ImageUtils.drawMaskOnInputImage(bitmap, maskImg)
+                        val resizedImageToDraw = Bitmap.createScaledBitmap(RodSelectorActivity.croppedImageBlurredBg!!, 640, 480, true)
+                        val (maskedImg, numOfWoodPixels) = ImageUtils.drawMaskOnInputImage(resizedImageToDraw, maskImg)
                         val processedImageItem = ProcessedImageItem(unprocessedImageItem, numOfWoodPixels, maskedImg)
 
                         activity.hideLoading()

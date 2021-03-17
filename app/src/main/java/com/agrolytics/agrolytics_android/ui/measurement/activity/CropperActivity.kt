@@ -51,18 +51,21 @@ class CropperActivity: BaseActivity(), View.OnClickListener {
     }
 
     private fun cropImg(){
-        val croppedImg : Bitmap?
-        if (rectangle_cropper_view.visibility == View.VISIBLE){
-            croppedImg = rectangle_cropper_view.getCroppedImage()
+        var croppedImgBlackBg: Bitmap?
+        var croppedImgBlurredBg: Bitmap?
+        if (rectangle_cropper_view.visibility == View.VISIBLE) {
+            /**Téglalap kijelölésnél nincs különbség a küldendő és megjelenítendő képek közt*/
+            croppedImgBlackBg = rectangle_cropper_view.croppedImage
+            croppedImgBlurredBg = croppedImgBlackBg
         }
-        else{
-            //TODO: Send finalImgBlackBackground to server, draw mask on finalImgBlurredBackground. On rodSelector screen, show finalImgBlurredBackground
-            val (finalImgBlackBackground, finalImgBlurredBackground) = poly_cropper_view.crop()
-            croppedImg = finalImgBlurredBackground
+        else {
+            poly_cropper_view.crop().let {
+                croppedImgBlackBg = it.first
+                croppedImgBlurredBg = it.second
+            }
         }
-        if (croppedImg != null)
-        {
-            MeasurementManager.startRodSelectorActivity(this, croppedImg)
+        if (croppedImgBlackBg != null && croppedImgBlurredBg != null) {
+            MeasurementManager.startRodSelectorActivity(this, croppedImgBlackBg!!, croppedImgBlurredBg!!)
         }
         else {
             toast("Jelöljön ki megfelelő területet a képen.")

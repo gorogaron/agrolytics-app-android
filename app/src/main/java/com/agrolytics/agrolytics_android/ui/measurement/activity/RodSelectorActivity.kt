@@ -9,19 +9,15 @@ import android.view.LayoutInflater
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import com.agrolytics.agrolytics_android.AgrolyticsApp
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
-import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.network.AppServer
 import com.agrolytics.agrolytics_android.ui.measurement.presenter.RodSelectorPresenter
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
-import com.agrolytics.agrolytics_android.utils.MeasurementUtils
 import com.agrolytics.agrolytics_android.utils.SessionManager
-import com.agrolytics.agrolytics_android.utils.Util.Companion.round
 import kotlinx.android.synthetic.main.activity_rod_selector.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -38,7 +34,6 @@ class RodSelectorActivity : BaseActivity(){
 	private val dataClient: DataClient by inject()
 	private val sessionManager: SessionManager by inject()
 
-	var path: String? = null
 	var rodLength = 1.0
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,17 +44,15 @@ class RodSelectorActivity : BaseActivity(){
 		presenter.setActivity(this)
 
 		intent.getStringExtra(ConfigInfo.CROPPED_RESIZED_IMG_PATH)?.let {
-			this.path = it
+			croppedResizedImageBlackBg = BitmapFactory.decodeFile(it)
 		}
 
 		btn_next.setOnClickListener {
 			val rodLengthPixel = rod_selector_canvas.getRodLengthPixels_640_480()
-			val defaultBitmap = BitmapFactory.decodeFile(path)
-			val resizedBitmap = Bitmap.createScaledBitmap(defaultBitmap, 640, 480, true)
-			presenter.uploadImage(resizedBitmap, rodLength, rodLengthPixel)
+			presenter.uploadImage(rodLength, rodLengthPixel)
 		}
 		btn_back.setOnClickListener{onBackPressed()}
-		rod_selector_canvas.setImage(bitmap!!)
+		rod_selector_canvas.setImage(croppedImageBlurredBg!!)
 	}
 
 	fun showOnlineMeasurementErrorDialog(unprocessedImageItem: UnprocessedImageItem){
@@ -140,8 +133,9 @@ class RodSelectorActivity : BaseActivity(){
 	}
 
 	companion object {
-		var bitmap: Bitmap? = null
 		var correspondingCropperActivity : CropperActivity? = null
+		var croppedResizedImageBlackBg: Bitmap? = null
+		var croppedImageBlurredBg: Bitmap? = null
 	}
 
 }
