@@ -65,9 +65,9 @@ class FireBaseDataClient: KoinComponent {
         return cachedImageItem
     }
 
-    suspend fun downloadImageItems(timestamps: List<Long>): List<CachedImageItem> {
+    suspend fun downloadImageItemsAfterTimestamp(timestamp : Long): List<CachedImageItem> {
         val cachedImageItems = ArrayList<CachedImageItem>()
-        val firestoreItems = fireStore.downloadFromFireStore(timestamps)
+        val firestoreItems = fireStore.downloadFromFireStoreAfterTimestamp(timestamp)
         val timestampsBySessionIds = firestoreItems.groupByTo(HashMap(), {it.sessionId}, {it.timestamp})
         for (firestoreItem in firestoreItems) {
             val timestampsOfSession = timestampsBySessionIds[firestoreItem.sessionId] as List<Long>

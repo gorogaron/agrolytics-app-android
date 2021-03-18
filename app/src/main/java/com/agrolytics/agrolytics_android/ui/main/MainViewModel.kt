@@ -81,12 +81,13 @@ class MainViewModel : ViewModel(), KoinComponent {
 
     /**Letölti a userhez tartozó összes itemet firestore-ból, és minden sessionhöz az első képet*/
     private suspend fun updateLocalCache() {
-        var cachedImageItemIdsNotToDownload = dataClient.local.cache.getAllTimestamps()
-        if (cachedImageItemIdsNotToDownload.isEmpty()) {
-            //Ha üres a lista, töltsük fel 1 dummy ID-val, hogy lefusson jól a query
-            cachedImageItemIdsNotToDownload = listOf(0)
+        var cachedImageItemTimestamps = dataClient.local.cache.getAllTimestamps()
+        if (cachedImageItemTimestamps.isEmpty()) {
+            cachedImageItemTimestamps = listOf(0)
         }
-        val cachedImageItemsToSave = dataClient.fireBase.downloadImageItems(cachedImageItemIdsNotToDownload)
+        val latestCachedItemTimestamp = cachedImageItemTimestamps.max()!!
+
+        val cachedImageItemsToSave = dataClient.fireBase.downloadImageItemsAfterTimestamp(latestCachedItemTimestamp)
         for (cachedImageItem in cachedImageItemsToSave) {
             dataClient.local.cache.add(cachedImageItem)
         }

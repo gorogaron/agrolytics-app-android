@@ -31,12 +31,12 @@ class FireStore: KoinComponent {
             }
     }
 
-    suspend fun downloadFromFireStore(timestamps: List<Long>): List<FireStoreImageItem> {
+    suspend fun downloadFromFireStoreAfterTimestamp(timestamp: Long): List<FireStoreImageItem> {
         val firestoreImageItems = ArrayList<FireStoreImageItem>()
         return suspendCoroutine { cont ->
             firestore.collection(FireStoreCollection.IMAGES.tag)
                 .whereEqualTo(FireStoreImagesField.USER_ID.tag, sessionManager.userId)
-                .whereNotIn(FireStoreImagesField.TIMESTAMP.tag, timestamps)
+                .whereGreaterThan(FireStoreImagesField.TIMESTAMP.tag, timestamp)
                 .get()
                 .addOnSuccessListener { documents ->
                     for (document in documents) {
