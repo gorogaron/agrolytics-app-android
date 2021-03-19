@@ -18,8 +18,6 @@ enum class FireStoreImagesField(var tag: String) {
     LEADER_ID("leader_id"),
     USER_ID("user_id"),
     USER_ROLE("user_role"),
-    IMAGE_URL("image_url"),
-    IMAGE_THUMBNAIL_URL("thumb_url"),
     WOOD_TYPE("wood_type"),
     WOOD_LENGTH("wood_length"),
     WOOD_VOLUME("wood_volume"),

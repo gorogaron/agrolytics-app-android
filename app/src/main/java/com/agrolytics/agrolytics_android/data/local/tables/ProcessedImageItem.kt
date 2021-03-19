@@ -21,9 +21,13 @@ data class ProcessedImageItem(
 ) : BaseImageItem {
 
     constructor(unprocessedImageItem : UnprocessedImageItem, numOfWoodPixels : Int, maskedImage : Bitmap): this(
-        //Primary konstruktor hívása dummy paraméterekkel. TODO: jobb módszert kellene erre keresni
-        0, 0, null, "",
-        0.0, GeoPoint(0.0,0.0), 0.0)
+        unprocessedImageItem.timestamp,
+        unprocessedImageItem.sessionId,
+        null,
+        unprocessedImageItem.woodType,
+        unprocessedImageItem.woodLength,
+        unprocessedImageItem.location,
+        0.0)
     {
         val volume = MeasurementUtils.calculateWoodVolume(
             numOfWoodPixels,
@@ -31,13 +35,8 @@ data class ProcessedImageItem(
             unprocessedImageItem.rodLengthPixel,
             unprocessedImageItem.woodLength
         ).round(2)
-        this.sessionId = unprocessedImageItem.sessionId
         this.image = maskedImage
-        this.woodType = unprocessedImageItem.woodType
-        this.woodLength = unprocessedImageItem.woodLength
         this.woodVolume = volume
-        this.location = unprocessedImageItem.location
-        this.timestamp = unprocessedImageItem.timestamp
     }
 
     override fun getItemType(): ConfigInfo.IMAGE_ITEM_TYPE {

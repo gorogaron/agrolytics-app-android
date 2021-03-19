@@ -18,6 +18,9 @@ interface CachedImageItemDao {
     @Query("SELECT timestamp FROM cached_images")
     fun getAllTimestamps(): List<Long>
 
+    @Query("SELECT MAX(timestamp) FROM cached_images")
+    fun getLatestTimestamp(): Long
+
     @Insert
     fun add(cachedImageItem: CachedImageItem)
 

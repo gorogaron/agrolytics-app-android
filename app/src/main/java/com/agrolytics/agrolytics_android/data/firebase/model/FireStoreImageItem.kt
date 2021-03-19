@@ -1,6 +1,7 @@
 package com.agrolytics.agrolytics_android.data.firebase.model
 
 import com.google.firebase.firestore.GeoPoint
+import com.google.firebase.firestore.QueryDocumentSnapshot
 
 data class FireStoreImageItem(
     val timestamp: Long,
@@ -15,6 +16,21 @@ data class FireStoreImageItem(
     val location: GeoPoint? = null,
     var firestoreId: String
 ) {
+
+    constructor(document : QueryDocumentSnapshot) : this(
+        timestamp = document.data[FireStoreImagesField.TIMESTAMP.tag] as Long,
+        sessionId = document.data[FireStoreImagesField.SESSION_ID.tag] as Long,
+        forestryId = document.data[FireStoreImagesField.FORESTRY_ID.tag] as String,
+        leaderId = document.data[FireStoreImagesField.LEADER_ID.tag] as String,
+        userId = document.data[FireStoreImagesField.USER_ID.tag] as String,
+        userRole = document.data[FireStoreImagesField.USER_ROLE.tag] as String,
+        woodType = document.data[FireStoreImagesField.WOOD_TYPE.tag] as String,
+        woodVolume = document.data[FireStoreImagesField.WOOD_VOLUME.tag] as Double,
+        woodLength = document.data[FireStoreImagesField.WOOD_VOLUME.tag] as Double,
+        location = document.data[FireStoreImagesField.LOCATION.tag] as GeoPoint,
+        firestoreId = document.id
+    )
+
     fun toHashMap() : HashMap<String, Any?> {
         return hashMapOf(
             FireStoreImagesField.TIMESTAMP.tag to this.timestamp,

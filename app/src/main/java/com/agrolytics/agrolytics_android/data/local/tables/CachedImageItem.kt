@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.agrolytics.agrolytics_android.data.firebase.model.FireStoreImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.google.firebase.firestore.GeoPoint
 
@@ -22,6 +23,21 @@ data class CachedImageItem (
     @ColumnInfo(name = "wood_volume") var woodVolume: Double,
     @ColumnInfo(name = "firestore_id") var firestoreId: String
 ) : BaseImageItem {
+
+    constructor(firestoreItem: FireStoreImageItem) : this(
+        timestamp = firestoreItem.timestamp,
+        sessionId = firestoreItem.sessionId,
+        forestryId = firestoreItem.forestryId,
+        leaderId = firestoreItem.leaderId,
+        userId = firestoreItem.userId,
+        userRole = firestoreItem.userRole,
+        woodType = firestoreItem.woodType!!,
+        woodLength = firestoreItem.woodLength,
+        woodVolume = firestoreItem.woodVolume,
+        location = firestoreItem.location!!,
+        image = null,
+        firestoreId = firestoreItem.firestoreId
+    )
 
     override fun getItemType(): ConfigInfo.IMAGE_ITEM_TYPE {
         return ConfigInfo.IMAGE_ITEM_TYPE.CACHED

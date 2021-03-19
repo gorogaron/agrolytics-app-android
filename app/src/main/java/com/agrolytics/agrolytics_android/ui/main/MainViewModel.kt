@@ -1,6 +1,5 @@
 package com.agrolytics.agrolytics_android.ui.main
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +11,7 @@ import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
 import org.koin.core.component.KoinComponent
@@ -25,10 +25,7 @@ class MainViewModel : ViewModel(), KoinComponent {
     var lastMeasurementItems = MutableLiveData<ArrayList<BaseImageItem>>()
     var lastSessionId = MutableLiveData<Long>()
 
-    fun getLastMeasurementItems(updateCache : Boolean) = viewModelScope.launch(Dispatchers.IO) {
-        if (updateCache) {
-            updateLocalCache()
-        }
+    fun getLastMeasurementItems() = viewModelScope.launch(Dispatchers.IO) {
 
         val imageItemList = ArrayList<BaseImageItem>()
         val latestId = getSessionIdList().max()
@@ -66,6 +63,24 @@ class MainViewModel : ViewModel(), KoinComponent {
         }
     }
 
+    fun listenForFirebaseUpdates() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val latestCachedTimestamp = dataClient.local.cache.getLatestTimestamp()
+            val firestoreImageItemFlow = dataClient.fireBase.fireStore.listenForAddedItems(latestCachedTimestamp)
+            firestoreImageItemFlow.collect {
+                for (fireStoreImageItem in it) {
+                    val cachedImageItem = CachedImageItem(fireStoreImageItem)
+                    dataClient.local.cache.add(cachedImageItem)
+                }
+                getLastMeasurementItems()
+            }
+        }
+    }
+
+    fun stopFirebaseUpdateListener() {
+        dataClient.fireBase.fireStore.stopListeners()
+    }
+
     //TODO: Ezt használjuk az ImagesViewModel-ben is, vigyük át egy helyre
     private fun getSessionIdList() : ArrayList<Long> {
         val sessionIdListUnprocessed = dataClient.local.unprocessed.getAllSessionIds()
@@ -79,17 +94,4 @@ class MainViewModel : ViewModel(), KoinComponent {
         return ArrayList(sessionIdList.distinct())
     }
 
-    /**Letölti a userhez tartozó összes itemet firestore-ból, és minden sessionhöz az első képet*/
-    private suspend fun updateLocalCache() {
-        var cachedImageItemTimestamps = dataClient.local.cache.getAllTimestamps()
-        if (cachedImageItemTimestamps.isEmpty()) {
-            cachedImageItemTimestamps = listOf(0)
-        }
-        val latestCachedItemTimestamp = cachedImageItemTimestamps.max()!!
-
-        val cachedImageItemsToSave = dataClient.fireBase.downloadImageItemsAfterTimestamp(latestCachedItemTimestamp)
-        for (cachedImageItem in cachedImageItemsToSave) {
-            dataClient.local.cache.add(cachedImageItem)
-        }
-    }
 }

@@ -5,8 +5,13 @@ import com.agrolytics.agrolytics_android.data.firebase.model.FireStoreCollection
 import com.agrolytics.agrolytics_android.data.firebase.model.FireStoreImageItem
 import com.agrolytics.agrolytics_android.data.firebase.model.FireStoreImagesField
 import com.agrolytics.agrolytics_android.utils.SessionManager
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.coroutines.resume
@@ -18,6 +23,7 @@ class FireStore: KoinComponent {
     private val sessionManager: SessionManager by inject()
 
     var firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private lateinit var fireStoreUpdateListener : ListenerRegistration
 
     suspend fun uploadToFireStore(
         fireStoreImageItem: FireStoreImageItem
@@ -97,5 +103,34 @@ class FireStore: KoinComponent {
         imageRef.delete()
             .addOnSuccessListener { cont.resume(true) }
             .addOnFailureListener { cont.resume(false) }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun listenForAddedItems(timestamp: Long) = callbackFlow {
+        fireStoreUpdateListener = firestore.collection(FireStoreCollection.IMAGES.tag)
+            .whereGreaterThan(FireStoreImagesField.TIMESTAMP.tag, timestamp)
+            .whereEqualTo(FireStoreImagesField.USER_ID.tag, sessionManager.userId)
+            .addSnapshotListener{ snapshots, e ->
+                val firestoreImageItems = ArrayList<FireStoreImageItem>()
+                for (documentChange in snapshots!!.documentChanges) {
+                    when (documentChange.type) {
+                        DocumentChange.Type.ADDED -> {
+                            firestoreImageItems.add(FireStoreImageItem(documentChange.document))
+                        }
+                        DocumentChange.Type.REMOVED -> {
+                            /**TODO: Ha fut az app és egy másik kliens töröl egy képet, akkor azt itt megkapjuk, nem kell lekérdezni a delted_images listenerben.*/
+                        }
+                        DocumentChange.Type.MODIFIED -> {
+                            /**Ilyen elvileg nem történhet, adatot a szerveren nem tudunk módosítani*/
+                        }
+                    }
+                }
+                offer(firestoreImageItems)
+            }
+        awaitClose{ fireStoreUpdateListener.remove() }
+    }
+
+    fun stopListeners() {
+        fireStoreUpdateListener.remove()
     }
 }

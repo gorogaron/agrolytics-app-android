@@ -39,6 +39,7 @@ import jp.wasabeef.blurry.Blurry
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.recycler_view
 import kotlinx.android.synthetic.main.nav_bar.*
+import kotlinx.coroutines.flow.flow
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
@@ -110,7 +111,8 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
         mainFab.setOnClickListener { fabHandler() }
 
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        viewModel.getLastMeasurementItems(true)
+        viewModel.listenForFirebaseUpdates()
+        viewModel.getLastMeasurementItems()
         viewModel.lastMeasurementItems.observe(this, Observer {
             if (viewModel.lastMeasurementItems.value != null) {
                 nested_scrollview.visibility = View.VISIBLE
@@ -324,7 +326,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
     override fun onResume() {
         super.onResume()
         updateLocation()
-        viewModel.getLastMeasurementItems(false)
+        viewModel.getLastMeasurementItems()
     }
 
     override fun onPause() {
@@ -333,6 +335,11 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
         {
             closeFab()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.stopFirebaseUpdateListener()
     }
 
 }
