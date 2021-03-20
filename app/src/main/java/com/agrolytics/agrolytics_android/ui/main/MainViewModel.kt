@@ -11,6 +11,7 @@ import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
@@ -36,8 +37,7 @@ class MainViewModel : ViewModel(), KoinComponent {
             val processedImages = dataClient.local.processed.getBySessionId(latestId)
             val unprocessedImages = dataClient.local.unprocessed.getBySessionId(latestId)
 
-            //Ha valamelyik cached itemhez nincs letöltve a kép, akkor töltsük le. Ez akkor fordulhat elő, ha az
-            //utolsó sessiont az updateLocalCache-el szedtük le firebase-ről.
+            //Ha valamelyik cached itemhez nincs letöltve a kép, akkor töltsük le.
             for (cachedImage in cachedImages) {
                 if (cachedImage.image == null) {
                     cachedImage.image = dataClient.fireBase.storage.downloadImage(sessionManager.forestryName, cachedImage.userId, cachedImage.timestamp)

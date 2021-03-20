@@ -10,6 +10,8 @@ import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.images.recyclerview.SessionItem
+import com.agrolytics.agrolytics_android.utils.SessionManager
+import com.agrolytics.agrolytics_android.utils.Util.Companion.round
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
@@ -21,6 +23,7 @@ import org.koin.core.component.inject
 class ImagesViewModel: ViewModel(), KoinComponent {
 
     private val dataClient: DataClient by inject()
+    private val sessionManager: SessionManager by inject()
 
     var sessionItems = MutableLiveData<List<SessionItem>>()
 
@@ -34,7 +37,7 @@ class ImagesViewModel: ViewModel(), KoinComponent {
             var woodLength = -1.0
             var woodVolume = -1.0
             var woodType = ""
-            var sessionImage = Bitmap.createBitmap(640, 480, Bitmap.Config.ARGB_8888)
+            var sessionThumbnailImageItem : BaseImageItem
 
             // Kigyűjtött értékek listái
             val woodLengths = ArrayList<Double>()
@@ -63,8 +66,12 @@ class ImagesViewModel: ViewModel(), KoinComponent {
                 }
             }
 
-            /**Kiszűrjük azokat az itemeket ahol az image null, és ezek közül megkeressük a legrégebbit*/
-            sessionImage = imageItems.filter { it.image != null }.minBy { it.timestamp }!!.image
+            //Megkeressük a sessionben lévő legrégebbi itemet, és ha nincs letöltve a hozzá tartozó kép, letöltjük
+            sessionThumbnailImageItem = imageItems.minBy { it.timestamp }!!
+            if (sessionThumbnailImageItem.image == null) {
+                sessionThumbnailImageItem.image = dataClient.fireBase.storage.downloadImage(sessionManager.forestryName, sessionManager.userId, sessionThumbnailImageItem.timestamp)
+                dataClient.local.cache.update(sessionThumbnailImageItem as CachedImageItem) //Csak cachedImageItemnél lehet olyan, hogy image=null
+            }
 
             if (woodLengths.distinct().size == 1) {
                 woodLength = woodLengths[0]
@@ -82,9 +89,9 @@ class ImagesViewModel: ViewModel(), KoinComponent {
             sessionItemList.add(SessionItem(
                 woodLength = woodLength,
                 woodType = woodType,
-                woodVolume = woodVolume,
+                woodVolume = woodVolume.round(2),
                 timestamp = sessionId,
-                sessionImage = sessionImage))
+                sessionImage = sessionThumbnailImageItem.image!!))
         }
         sessionItems.postValue(sessionItemList)
     }

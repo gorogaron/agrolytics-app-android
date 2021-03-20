@@ -26,7 +26,7 @@ data class FireStoreImageItem(
         userRole = document.data[FireStoreImagesField.USER_ROLE.tag] as String,
         woodType = document.data[FireStoreImagesField.WOOD_TYPE.tag] as String,
         woodVolume = document.data[FireStoreImagesField.WOOD_VOLUME.tag] as Double,
-        woodLength = document.data[FireStoreImagesField.WOOD_VOLUME.tag] as Double,
+        woodLength = document.data[FireStoreImagesField.WOOD_LENGTH.tag] as Double,
         location = document.data[FireStoreImagesField.LOCATION.tag] as GeoPoint,
         firestoreId = document.id
     )

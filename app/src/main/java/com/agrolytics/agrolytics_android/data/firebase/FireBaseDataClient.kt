@@ -8,8 +8,6 @@ import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 
 class FireBaseDataClient: KoinComponent {
@@ -25,7 +23,7 @@ class FireBaseDataClient: KoinComponent {
             forestryName = sessionManager.forestryName,
             maskedImage = processedImageItem.image!!,
             maskedImageThumbnail = Bitmap.createScaledBitmap(
-                processedImageItem.image,
+                processedImageItem.image!!,
                 64,
                 48,
                 true),
@@ -48,7 +46,7 @@ class FireBaseDataClient: KoinComponent {
         )
         firestoreImageItem.firestoreId = fireStore.uploadToFireStore(firestoreImageItem)
 
-        val cachedImageItem = CachedImageItem(
+        return CachedImageItem(
             timestamp = firestoreImageItem.timestamp,
             sessionId = firestoreImageItem.sessionId,
             forestryId = firestoreImageItem.forestryId,
@@ -62,38 +60,5 @@ class FireBaseDataClient: KoinComponent {
             firestoreId = firestoreImageItem.firestoreId,
             image = processedImageItem.image
         )
-        return cachedImageItem
     }
-
-    suspend fun downloadImageItemsAfterTimestamp(timestamp : Long): List<CachedImageItem> {
-        val cachedImageItems = ArrayList<CachedImageItem>()
-        val firestoreItems = fireStore.downloadFromFireStoreAfterTimestamp(timestamp)
-        val timestampsBySessionIds = firestoreItems.groupByTo(HashMap(), {it.sessionId}, {it.timestamp})
-        for (firestoreItem in firestoreItems) {
-            val timestampsOfSession = timestampsBySessionIds[firestoreItem.sessionId] as List<Long>
-            val minTimestampOfSession = timestampsOfSession.min()
-            val image: Bitmap? = if (firestoreItem.timestamp == minTimestampOfSession) {
-                storage.downloadImage(sessionManager.forestryName, sessionManager.userId, firestoreItem.timestamp)
-            } else {
-                null
-            }
-            cachedImageItems.add(
-                CachedImageItem(
-                    timestamp = firestoreItem.timestamp,
-                    sessionId = firestoreItem.sessionId,
-                    forestryId = firestoreItem.forestryId,
-                    leaderId = firestoreItem.leaderId,
-                    userId = firestoreItem.userId,
-                    userRole = firestoreItem.userRole,
-                    woodType = firestoreItem.woodType!!,
-                    woodLength = firestoreItem.woodLength,
-                    woodVolume = firestoreItem.woodVolume,
-                    location = firestoreItem.location!!,
-                    image = image,
-                    firestoreId = firestoreItem.firestoreId
-            ))
-        }
-        return cachedImageItems
-    }
-
 }
