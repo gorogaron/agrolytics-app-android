@@ -1,5 +1,6 @@
 package com.agrolytics.agrolytics_android.ui.main
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -64,13 +65,27 @@ class MainViewModel : ViewModel(), KoinComponent {
     }
 
     fun listenForFirebaseUpdates() {
+        /**Újonnan hozzáadot itemek lekérdezése és feldolgozása*/
         viewModelScope.launch(Dispatchers.IO) {
             val latestCachedTimestamp = dataClient.local.cache.getLatestTimestamp()
-            val firestoreImageItemFlow = dataClient.fireBase.fireStore.listenForAddedItems(latestCachedTimestamp)
-            firestoreImageItemFlow.collect {
+            val addedFirestoreImageItemFlow =
+                dataClient.fireBase.fireStore.listenForAddedItems(latestCachedTimestamp)
+                addedFirestoreImageItemFlow.collect {
+                    for (fireStoreImageItem in it) {
+                        val cachedImageItem = CachedImageItem(fireStoreImageItem)
+                        dataClient.local.cache.add(cachedImageItem)
+                    }
+                getLastMeasurementItems()
+            }
+        }
+
+        /**Törölt itemek lekérdezése és feldolgozása*/
+        viewModelScope.launch(Dispatchers.IO) {
+            val deletedFirestoreImageItemFlow = dataClient.fireBase.fireStore.listenForDeletedItems()
+            deletedFirestoreImageItemFlow.collect {
                 for (fireStoreImageItem in it) {
-                    val cachedImageItem = CachedImageItem(fireStoreImageItem)
-                    dataClient.local.cache.add(cachedImageItem)
+                    val cachedImageItem = dataClient.local.cache.getByTimestamp(fireStoreImageItem.timestamp)
+                    if (cachedImageItem != null) dataClient.local.cache.delete(cachedImageItem)
                 }
                 getLastMeasurementItems()
             }

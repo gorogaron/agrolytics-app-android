@@ -21,6 +21,12 @@ interface CachedImageItemDao {
     @Query("SELECT MAX(timestamp) FROM cached_images")
     fun getLatestTimestamp(): Long
 
+    @Query("SELECT * FROM cached_images WHERE firestore_id LIKE :firestoreId")
+    fun getByFirestoreId(firestoreId : String): CachedImageItem?
+
+    @Query("SELECT * FROM cached_images WHERE timestamp LIKE :timestamp")
+    fun getByTimestamp(timestamp: Long): CachedImageItem?
+
     @Insert
     fun add(cachedImageItem: CachedImageItem)
 

@@ -2,6 +2,7 @@ package com.agrolytics.agrolytics_android.data.firebase
 
 import android.graphics.Bitmap
 import com.agrolytics.agrolytics_android.data.firebase.model.FireBaseStorageItem
+import com.agrolytics.agrolytics_android.data.firebase.model.FireStoreCollection
 import com.agrolytics.agrolytics_android.data.firebase.model.FireStoreImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
@@ -44,7 +45,7 @@ class FireBaseDataClient: KoinComponent {
             location = processedImageItem.location,
             firestoreId = ""
         )
-        firestoreImageItem.firestoreId = fireStore.uploadToFireStore(firestoreImageItem)
+        firestoreImageItem.firestoreId = fireStore.upload(firestoreImageItem, FireStoreCollection.IMAGES)
 
         return CachedImageItem(
             timestamp = firestoreImageItem.timestamp,

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.agrolytics.agrolytics_android.R
@@ -15,6 +16,9 @@ import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.utils.SessionRecyclerViewAdapter
 import com.agrolytics.agrolytics_android.ui.measurement.utils.UploadWorker
 import kotlinx.android.synthetic.main.activity_session.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
@@ -62,16 +66,23 @@ class SessionActivity : BaseActivity() {
     }
 
     private fun saveBtnClicked() {
-        // Background task indítása
-        val inputData = Data.Builder()
-            .putLong(ConfigInfo.PROCESSED_IMAGE_ITEM_SESSION_ID, MeasurementManager.currentSessionId)
-            .build()
 
-        val uploadRequest = OneTimeWorkRequestBuilder<UploadWorker>()
-            .setInputData(inputData)
-            .build()
+        // Background task indítása a processedImageItemek feltöltéséhez
+        GlobalScope.launch(Dispatchers.IO) {
+            val processedImageItemsInSession = dataClient.local.processed.getBySessionId(sessionId)
+            for (processedImageItem in processedImageItemsInSession) {
+                val inputData = Data.Builder()
+                    .putLong(ConfigInfo.PROCESSED_IMAGE_ITEM_TIMESTAMP, processedImageItem.timestamp)
+                    .build()
 
-        workManager.enqueue(uploadRequest)
+                val uploadRequest = OneTimeWorkRequestBuilder<UploadWorker>()
+                    .addTag(processedImageItem.timestamp.toString())
+                    .setInputData(inputData)
+                    .build()
+
+                workManager.enqueueUniqueWork(processedImageItem.timestamp.toString(), ExistingWorkPolicy.KEEP, uploadRequest)
+            }
+        }
 
         MeasurementManager.currentSessionId = 0
         MeasurementManager.recentlyAddedItemTimestamps.clear()

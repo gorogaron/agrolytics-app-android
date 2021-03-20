@@ -17,7 +17,8 @@ object ConfigInfo {
 	const val METHOD = "method"
 	const val UPLOAD_RESPONSE = "upload_response"
 	const val MAP_BOX_KEY = "pk.eyJ1IjoidGhlMDExMWRlbW9wcm9qZWN0IiwiYSI6ImNqeXVlaDdiNTBlMjUzaW9iYXpwN21lazIifQ.UT3O8C9YAocVt-zvExjbAQ"
-	const val PROCESSED_IMAGE_ITEM_SESSION_ID = "processed_image_item_session_id"
+	const val PROCESSED_IMAGE_ITEM_TIMESTAMP = "processed_image_item_timestamp"
+	const val CACHED_IMAGE_ITEM_FIRESTORE_ID = "cached_image_item_firestore_id"
 
 	/**Firebase login result codes**/
 	enum class LOGIN {
@@ -35,5 +36,13 @@ object ConfigInfo {
 		CACHED,
 		PROCESSED,
 		UNPROCESSED
+	}
+
+	enum class IMAGE_ITEM_STATE {
+		UNDEFINED,
+		UPLOADED,
+		READY_TO_UPLOAD,
+		BEING_UPLOADED,
+		WAITING_FOR_PROCESSING
 	}
 }

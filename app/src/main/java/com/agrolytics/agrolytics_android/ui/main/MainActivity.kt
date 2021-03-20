@@ -45,6 +45,7 @@ import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
 import org.koin.core.component.KoinApiExtension
+import org.koin.core.component.bind
 import kotlin.system.exitProcess
 
 
@@ -114,16 +115,22 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
         viewModel.listenForFirebaseUpdates()
         viewModel.getLastMeasurementItems()
         viewModel.lastMeasurementItems.observe(this, Observer {
-            if (viewModel.lastMeasurementItems.value != null) {
+            if (viewModel.lastMeasurementItems.value != null && viewModel.lastMeasurementItems.value!!.size > 0) {
                 nested_scrollview.visibility = View.VISIBLE
                 session_add.visibility = View.VISIBLE
                 session_location.visibility = View.VISIBLE
                 no_measurement_text.visibility = View.GONE
                 val lastMeasurementItems = ArrayList(viewModel.lastMeasurementItems.value!!.take(3))
-                recyclerViewAdapter = SessionRecyclerViewAdapter(this@MainActivity, lastMeasurementItems)
-                recyclerViewLayoutManager = LinearLayoutManager(this@MainActivity)
-                recycler_view.layoutManager = recyclerViewLayoutManager
-                recycler_view.adapter = recyclerViewAdapter
+                if (!::recyclerViewAdapter.isInitialized) {
+                    recyclerViewAdapter = SessionRecyclerViewAdapter(this@MainActivity, lastMeasurementItems)
+                    recyclerViewLayoutManager = LinearLayoutManager(this@MainActivity)
+                    recycler_view.layoutManager = recyclerViewLayoutManager
+                    recycler_view.adapter = recyclerViewAdapter
+                }
+                else {
+                    recyclerViewAdapter.itemList = lastMeasurementItems
+                    recyclerViewAdapter.notifyDataSetChanged()
+                }
             }
             else {
                 nested_scrollview.visibility = View.GONE
