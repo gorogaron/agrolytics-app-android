@@ -14,38 +14,33 @@ import com.agrolytics.agrolytics_android.utils.permissions.*
 
 object ImageObtainer {
 
-    lateinit var callingActivity : Activity
     lateinit var cameraImageUri : Uri
 
-    fun setActivity(activity: Activity) {
-        callingActivity = activity
-    }
-
     //TODO: Add location permission check before starting measurement
-    fun openGallery() {
+    fun openGallery(callingActivity : Activity) {
         if (callingActivity.storagePermGiven()) {
-            startImageBrowserActivity()
+            startImageBrowserActivity(callingActivity)
         } else {
-            val permissionCheckedListener = createPermissionCheckListener(::startImageBrowserActivity)
+            val permissionCheckedListener = createPermissionCheckListener(::startImageBrowserActivity, callingActivity)
             callingActivity.requestForAllPermissions(callingActivity, permissionCheckedListener)
         }
     }
 
-    fun openCamera() {
+    fun openCamera(callingActivity : Activity) {
         if (callingActivity.cameraPermGiven() && callingActivity.storagePermGiven()) {
-            startCameraActivity()
+            startCameraActivity(callingActivity)
         } else {
-            val permissionCheckedListener = createPermissionCheckListener(::startCameraActivity)
+            val permissionCheckedListener = createPermissionCheckListener(::startCameraActivity, callingActivity)
             callingActivity.requestForAllPermissions(callingActivity, permissionCheckedListener)
         }
     }
 
-    private fun startImageBrowserActivity() {
+    private fun startImageBrowserActivity(callingActivity : Activity) {
         val intent = Intent(Intent.ACTION_GET_CONTENT).setType("image/*")
         callingActivity.startActivityForResult(intent, ConfigInfo.IMAGE_BROWSE)
     }
 
-    private fun startCameraActivity() {
+    private fun startCameraActivity(callingActivity : Activity) {
         val values = ContentValues()
         values.put(MediaStore.Images.Media.TITLE, "CameraImage")
         cameraImageUri = callingActivity.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)!!

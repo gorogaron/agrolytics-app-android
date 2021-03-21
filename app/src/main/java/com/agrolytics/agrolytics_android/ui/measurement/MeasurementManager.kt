@@ -76,12 +76,11 @@ object MeasurementManager : KoinComponent{
         val currentTimeStamp = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
         sessionManager.measurementStartTimestamp = currentTimeStamp
 
-        ImageObtainer.setActivity(callingActivity)
         if (imagePickerID == ImagePickerID.ID_CAMERA){
-            ImageObtainer.openCamera()
+            ImageObtainer.openCamera(callingActivity)
         }
         else if (imagePickerID == ImagePickerID.ID_BROWSER){
-            ImageObtainer.openGallery()
+            ImageObtainer.openGallery(callingActivity)
         }
     }
 
@@ -164,5 +163,9 @@ object MeasurementManager : KoinComponent{
             cancelListener)
     }
 
+    fun clearMeasurementSession(){
+        currentSessionId = 0
+        recentlyAddedItemTimestamps.clear()
+    }
 
 }

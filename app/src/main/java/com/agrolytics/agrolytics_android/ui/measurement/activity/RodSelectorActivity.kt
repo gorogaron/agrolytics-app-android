@@ -1,11 +1,13 @@
 package com.agrolytics.agrolytics_android.ui.measurement.activity
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -24,6 +26,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
 
@@ -34,6 +37,8 @@ class RodSelectorActivity : BaseActivity(){
 	private val dataClient: DataClient by inject()
 	private val sessionManager: SessionManager by inject()
 
+	var unprocessedImageItem: UnprocessedImageItem? = null
+	var unprocessedImageItemSaved = false
 	var rodLength = 1.0
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,67 +60,98 @@ class RodSelectorActivity : BaseActivity(){
 		rod_selector_canvas.setImage(croppedImageBlurredBg!!)
 	}
 
-	fun showOnlineMeasurementErrorDialog(unprocessedImageItem: UnprocessedImageItem){
+	fun showOnlineMeasurementErrorDialog(){
 		val builder = AlertDialog.Builder(this)
 		builder.setTitle("Hiba")
-		//builder.setCancelable(true)
+		builder.setCancelable(false)
 		val view = LayoutInflater.from(this).inflate(R.layout.dialog_online_measurement_error, null, false)
 		builder.setView(view)
 		val dialog = builder.create()
 
 		/**Set text for included layout elements (buttons)*/
-		view.findViewById<ConstraintLayout>(R.id.button_1).apply {
-			findViewById<TextView>(R.id.buttonText).text = "Kép mentése későbbi feldolgozásra"
-			setOnClickListener {
-				findViewById<TextView>(R.id.buttonText).setTextColor(ContextCompat.getColor(this@RodSelectorActivity, R.color.mediumGrey))
-				saveForLater(unprocessedImageItem)
-				it.isEnabled = false
-			}
-		}
-		view.findViewById<ConstraintLayout>(R.id.button_2).apply {
-			findViewById<TextView>(R.id.buttonText).text = "Új kép"
-			setOnClickListener {
-				newImage()
-				dialog.dismiss()
-			}
-		}
-		view.findViewById<ConstraintLayout>(R.id.button_3).apply {
-			findViewById<TextView>(R.id.buttonText).text = "Munkamenet áttekintése"
-			setOnClickListener {
-				showCurrentSession()
-			}
-		}
-		view.findViewById<ConstraintLayout>(R.id.button_4).apply {
-			findViewById<TextView>(R.id.buttonText).text = "Offline mérés"
-			setOnClickListener {
-				measureOffline(unprocessedImageItem)
-				dialog.dismiss()
-			}
-		}
+		setupSaveForLaterButton(view, dialog)
+		setupNewImageButton(view, dialog)
+		setupShowCurrentSessionButton(view, dialog)
+		setupMeasureOfflineButton(view, dialog, unprocessedImageItem != null)
+
 
 		dialog.window!!.setBackgroundDrawableResource(R.drawable.bg_white_round)
 		dialog.show()
 	}
 
-	private fun saveForLater(unprocessedImageItem: UnprocessedImageItem){
+	private fun setupSaveForLaterButton(view : View, dialog: AlertDialog){
+		view.findViewById<ConstraintLayout>(R.id.button_1).apply {
+			findViewById<TextView>(R.id.buttonText).text = "Kép mentése későbbi feldolgozásra"
+			if (unprocessedImageItem == null) {
+				findViewById<TextView>(R.id.buttonText).setTextColor(ContextCompat.getColor(this@RodSelectorActivity, R.color.mediumGrey))
+				this.isEnabled = false
+			}
+			else {
+				setOnClickListener {
+					findViewById<TextView>(R.id.buttonText).setTextColor(ContextCompat.getColor(this@RodSelectorActivity, R.color.mediumGrey))
+					it.isEnabled = false
+					setupMeasureOfflineButton(view, dialog, false)
+					saveForLater()
+				}
+			}
+		}
+	}
+
+	private fun setupNewImageButton(view : View, dialog: AlertDialog) {
+		view.findViewById<ConstraintLayout>(R.id.button_2).apply {
+			findViewById<TextView>(R.id.buttonText).text = "Új kép"
+			setOnClickListener {
+				MeasurementManager.addNewMeasurementForSession(this@RodSelectorActivity, MeasurementManager.currentSessionId)
+				dialog.dismiss()
+			}
+		}
+	}
+
+	private fun setupShowCurrentSessionButton(view: View, dialog: AlertDialog) {
+		view.findViewById<ConstraintLayout>(R.id.button_3).apply {
+			findViewById<TextView>(R.id.buttonText).text = "Munkamenet áttekintése"
+			setOnClickListener {
+				MeasurementManager.showSession(this@RodSelectorActivity, MeasurementManager.currentSessionId)
+				dialog.dismiss()
+			}
+		}
+	}
+
+	private fun setupMeasureOfflineButton(view: View, dialog: AlertDialog, clickable : Boolean) {
+		view.findViewById<ConstraintLayout>(R.id.button_4).apply {
+			findViewById<TextView>(R.id.buttonText).text = "Offline mérés"
+			if (!clickable) {
+				findViewById<TextView>(R.id.buttonText).setTextColor(ContextCompat.getColor(this@RodSelectorActivity, R.color.mediumGrey))
+				this.isEnabled = false
+			}
+			else {
+				setOnClickListener {
+					measureOffline(unprocessedImageItem!!)
+					dialog.dismiss()
+				}
+			}
+		}
+	}
+
+	private fun saveForLater(){
 		doAsync {
-			dataClient.local.unprocessed.add(unprocessedImageItem)
-			MeasurementManager.recentlyAddedItemTimestamps.add(unprocessedImageItem.timestamp)
+			dataClient.local.unprocessed.add(unprocessedImageItem!!)
+			MeasurementManager.recentlyAddedItemTimestamps.add(unprocessedImageItem!!.timestamp)
+			unprocessedImageItem = null
+			unprocessedImageItemSaved = true
 			uiThread { showToast("A kép mentésre került.") }
 		}
 	}
 
-	private fun newImage(){
-		MeasurementManager.addNewMeasurementForSession(this, MeasurementManager.currentSessionId)
-	}
-
 	override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
 		super.onActivityResult(requestCode, resultCode, intent)
-		finish()
-	}
-
-	private fun showCurrentSession(){
-		MeasurementManager.showSession(this, MeasurementManager.currentSessionId)
+		if (resultCode == Activity.RESULT_OK ) {
+			finish()
+		}
+		if (resultCode == Activity.RESULT_CANCELED && requestCode == ConfigInfo.SESSION) {
+			//A sessionactivity-ben "vissza" gombot nyomtunk
+			showOnlineMeasurementErrorDialog()
+		}
 	}
 
 	private fun measureOffline(unprocessedImageItem: UnprocessedImageItem){

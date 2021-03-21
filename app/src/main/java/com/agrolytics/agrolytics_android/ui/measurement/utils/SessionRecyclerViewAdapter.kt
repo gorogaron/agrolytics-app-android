@@ -108,7 +108,7 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
                 holder.volumeTextView.text = cachedImageItem.woodVolume.toString()
             }
             ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> {
-                holder.volumeTextView.text = "Mérésre vár"
+                holder.volumeTextView.text = "Ismeretlen"
             }
         }
 

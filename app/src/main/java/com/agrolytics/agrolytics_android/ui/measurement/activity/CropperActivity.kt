@@ -72,6 +72,13 @@ class CropperActivity: BaseActivity(), View.OnClickListener {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
+        if (resultCode == Activity.RESULT_OK ) {
+            finish()
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         poly_cropper_view.resetFinalImages()

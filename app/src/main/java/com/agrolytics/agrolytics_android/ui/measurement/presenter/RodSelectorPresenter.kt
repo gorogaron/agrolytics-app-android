@@ -32,19 +32,11 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
             Util.lat = 0.0
             Util.long = 0.0
         }
-        val unprocessedImageItem = UnprocessedImageItem(
-            sessionId = MeasurementManager.currentSessionId,
-            image = Bitmap.createScaledBitmap(RodSelectorActivity.croppedImageBlurredBg!!, 640, 480, true),
-            woodType = sessionManager?.woodType!!,
-            woodLength = sessionManager?.woodLength!!.toDouble(),
-            location = GeoPoint(Util.lat!!, Util.long!!),
-            rodLength = rodLength,
-            rodLengthPixel = rodLengthPixels.round(2),
-            timestamp = sessionManager?.measurementStartTimestamp!!
-        )
+
+        activity.unprocessedImageItem = createUnprocessedImageItem(rodLength, rodLengthPixels)
 
         if (!activity.isInternetAvailable) {
-            activity.showOnlineMeasurementErrorDialog(unprocessedImageItem)
+            activity.showOnlineMeasurementErrorDialog()
         }
         else {
             activity.showLoading()
@@ -55,25 +47,38 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
                         val maskImg = response.body()!!.toBitmap()
                         val resizedImageToDraw = Bitmap.createScaledBitmap(RodSelectorActivity.croppedImageBlurredBg!!, 640, 480, true)
                         val (maskedImg, numOfWoodPixels) = ImageUtils.drawMaskOnInputImage(resizedImageToDraw, maskImg)
-                        val processedImageItem = ProcessedImageItem(unprocessedImageItem, numOfWoodPixels, maskedImg)
+                        val processedImageItem = ProcessedImageItem(activity.unprocessedImageItem!!, numOfWoodPixels, maskedImg)
 
                         activity.hideLoading()
-                        MeasurementManager.startApproveMeasurementActivity(activity, processedImageItem, unprocessedImageItem,"online")
+                        MeasurementManager.startApproveMeasurementActivity(activity, processedImageItem, activity.unprocessedImageItem!!,"online")
                         activity.finish()
                         RodSelectorActivity.correspondingCropperActivity!!.finish()
                         RodSelectorActivity.correspondingCropperActivity = null
 
                     } else {
                         activity.hideLoading()
-                        activity.showOnlineMeasurementErrorDialog(unprocessedImageItem)
+                        activity.showOnlineMeasurementErrorDialog()
                     }
                 }
                 catch (e : Exception){
                     activity.hideLoading()
-                    activity.showOnlineMeasurementErrorDialog(unprocessedImageItem)
+                    activity.showOnlineMeasurementErrorDialog()
                 }
             }
         }
+    }
+
+    private fun createUnprocessedImageItem(rodLength: Double, rodLengthPixels: Double) : UnprocessedImageItem {
+        return UnprocessedImageItem(
+            sessionId = MeasurementManager.currentSessionId,
+            image = Bitmap.createScaledBitmap(RodSelectorActivity.croppedImageBlurredBg!!, 640, 480, true),
+            woodType = sessionManager?.woodType!!,
+            woodLength = sessionManager?.woodLength!!.toDouble(),
+            location = GeoPoint(Util.lat!!, Util.long!!),
+            rodLength = rodLength,
+            rodLengthPixel = rodLengthPixels.round(2),
+            timestamp = sessionManager?.measurementStartTimestamp!!
+        )
     }
 
 }

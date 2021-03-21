@@ -50,14 +50,14 @@ fun Activity.requestForAllPermissions(activity: Activity, listener : MultiplePer
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.CAMERA
-        ).withListener(listener ?: createPermissionCheckListener()).check()
+        ).withListener(listener ?: createPermissionCheckListener(null, activity)).check()
 }
 
-fun createPermissionCheckListener(onPermissionCheckedAction : (() -> Unit)? = null) : MultiplePermissionsListener{
+fun createPermissionCheckListener(onPermissionCheckedAction : ((Activity) -> Unit)? = null, callingActivity: Activity) : MultiplePermissionsListener{
     return object : MultiplePermissionsListener {
         override fun onPermissionsChecked(report: MultiplePermissionsReport) {
             if (onPermissionCheckedAction != null){
-                onPermissionCheckedAction()
+                onPermissionCheckedAction(callingActivity)
             }
         }
 

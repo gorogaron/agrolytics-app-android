@@ -1,6 +1,7 @@
 package com.agrolytics.agrolytics_android.ui.measurement.activity
 
 import android.app.Activity
+import android.icu.util.Measure
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.Data
@@ -19,6 +20,7 @@ import kotlinx.android.synthetic.main.activity_session.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
@@ -66,29 +68,74 @@ class SessionActivity : BaseActivity() {
     }
 
     private fun saveBtnClicked() {
+        if (MeasurementManager.recentlyAddedItemTimestamps.isNotEmpty()){
+            GlobalScope.launch(Dispatchers.IO) {
+                val sessionContainsUnprocessedImages = sessionContainsUnprocessedImages()
 
-        // Background task indítása a processedImageItemek feltöltéséhez
-        GlobalScope.launch(Dispatchers.IO) {
-            val processedImageItemsInSession = dataClient.local.processed.getBySessionId(sessionId)
-            for (processedImageItem in processedImageItemsInSession) {
-                val inputData = Data.Builder()
-                    .putLong(ConfigInfo.PROCESSED_IMAGE_ITEM_TIMESTAMP, processedImageItem.timestamp)
-                    .build()
-
-                val uploadRequest = OneTimeWorkRequestBuilder<UploadWorker>()
-                    .addTag(processedImageItem.timestamp.toString())
-                    .setInputData(inputData)
-                    .build()
-
-                workManager.enqueueUniqueWork(processedImageItem.timestamp.toString(), ExistingWorkPolicy.KEEP, uploadRequest)
+                if (!sessionContainsUnprocessedImages) {
+                    // Background task indítása a processedImageItemek feltöltéséhez
+                    startUploadWorker()
+                    finishWithClear()
+                }
+                else {
+                    showUnprocessedAlertDialog()
+                }
             }
         }
+        else {
+            finishWithClear()
+        }
+    }
 
-        MeasurementManager.currentSessionId = 0
-        MeasurementManager.recentlyAddedItemTimestamps.clear()
+    private fun startUploadWorker() {
+        val processedImageItemsInSession = dataClient.local.processed.getBySessionId(sessionId)
+        for (processedImageItem in processedImageItemsInSession) {
+            val inputData = Data.Builder()
+                .putLong(ConfigInfo.PROCESSED_IMAGE_ITEM_TIMESTAMP, processedImageItem.timestamp)
+                .build()
+
+            val uploadRequest = OneTimeWorkRequestBuilder<UploadWorker>()
+                .addTag(processedImageItem.timestamp.toString())
+                .setInputData(inputData)
+                .build()
+
+            workManager.enqueueUniqueWork(processedImageItem.timestamp.toString(), ExistingWorkPolicy.KEEP, uploadRequest)
+        }
+    }
+
+    private suspend fun showUnprocessedAlertDialog() {
+        val exitListener = {
+            finishWithClear()
+        }
+
+        val cancelListener = {
+            //Ne csináljunk semmit, csak zárjuk be a popup window-t
+        }
+
+        withContext(Dispatchers.Main) {
+            show2OptionDialog(
+                "A méréscsoport tartalmaz még nem feldolgozott elemeket. A ${MeasurementManager.recentlyAddedItemTimestamps.size}" +
+                        "újonnan hozzáadott mérés feltöltése akkor kezdődik meg, ha a csoportban minden mérés fel lett dolgozva.",
+                "Kilépés",
+                "Mégse",
+                exitListener,
+                cancelListener)
+        }
+    }
+
+    private suspend fun sessionContainsUnprocessedImages() : Boolean {
+        withContext(Dispatchers.Main) { showLoading() }
+        val cachedImageItemList = dataClient.local.unprocessed.getBySessionId(sessionId)
+        withContext(Dispatchers.Main) { hideLoading() }
+        return cachedImageItemList.isNotEmpty()
+    }
+
+    private fun finishWithClear() {
+        MeasurementManager.clearMeasurementSession()
         setResult(Activity.RESULT_OK)
         finish()
     }
+
 
     override fun onBackPressed() {
         finish()
