@@ -7,11 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.agrolytics.agrolytics_android.R
+import com.agrolytics.agrolytics_android.ui.base.BaseActivity
+import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.utils.Util.Companion.getFormattedDateTime
 import kotlinx.android.synthetic.main.recycler_view_session_item.view.*
 import kotlin.collections.ArrayList
 
-class ImagesRecyclerViewAdapter(var activity : Activity, var itemList : ArrayList<SessionItem>) : RecyclerView.Adapter<ImagesRecyclerViewAdapter.SessionViewHolder>() {
+class ImagesRecyclerViewAdapter(var activity : BaseActivity, var itemList : ArrayList<SessionItem>) : RecyclerView.Adapter<ImagesRecyclerViewAdapter.SessionViewHolder>() {
 
     inner class SessionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         var lengthTextView = itemView.length_value
@@ -25,7 +27,8 @@ class ImagesRecyclerViewAdapter(var activity : Activity, var itemList : ArrayLis
         }
 
         override fun onClick(v: View?) {
-            Log.d("CLICK", "$bindingAdapterPosition")
+            val sessionIdToShow = itemList[bindingAdapterPosition].sessionId
+            MeasurementManager.showSession(activity, sessionIdToShow)
         }
     }
 
@@ -43,7 +46,7 @@ class ImagesRecyclerViewAdapter(var activity : Activity, var itemList : ArrayLis
         holder.lengthTextView.text = if (sessionItem.woodLength > 0) sessionItem.woodLength.toString() else "Változó"
         holder.typeTextView.text = if (sessionItem.woodType != "") sessionItem.woodType else "Változó"
         holder.volumeTextView.text = if (sessionItem.woodVolume > 0) sessionItem.woodVolume.toString() else "Nincs kész"
-        holder.dateTextView.text = getFormattedDateTime(sessionItem.timestamp)
+        holder.dateTextView.text = getFormattedDateTime(sessionItem.sessionId)
         holder.sessionImage.setImageBitmap(sessionItem.sessionImage)
     }
 }

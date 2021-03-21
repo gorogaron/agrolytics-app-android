@@ -1,6 +1,5 @@
 package com.agrolytics.agrolytics_android.ui.images
 
-import android.graphics.Bitmap
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -90,7 +89,7 @@ class ImagesViewModel: ViewModel(), KoinComponent {
                 woodLength = woodLength,
                 woodType = woodType,
                 woodVolume = woodVolume.round(2),
-                timestamp = sessionId,
+                sessionId = sessionId,
                 sessionImage = sessionThumbnailImageItem.image!!))
         }
         sessionItems.postValue(sessionItemList)
