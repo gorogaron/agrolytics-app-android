@@ -29,13 +29,11 @@ import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.agrolytics.agrolytics_android.utils.Util.Companion.getFormattedDateTime
 import com.github.chrisbanes.photoview.PhotoView
 import kotlinx.android.synthetic.main.recycler_view_measurement_item.view.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.bind
 import org.koin.core.component.inject
 import kotlin.collections.ArrayList
 
@@ -45,10 +43,37 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
     private val workManager = WorkManager.getInstance(activity.application)
     private lateinit var itemStateList : ArrayList<ConfigInfo.IMAGE_ITEM_STATE>
 
+    private val stateUpdateObserver = object : RecyclerView.AdapterDataObserver() {
+        override fun onChanged() {
+            super.onChanged()
+            itemStateList = ArrayList()
+            for ((index, imageItem) in itemList.withIndex()) {
+                when (imageItem.getItemType()) {
+                    ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> itemStateList.add(ConfigInfo.IMAGE_ITEM_STATE.UPLOADED)
+                    ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> itemStateList.add(ConfigInfo.IMAGE_ITEM_STATE.WAITING_FOR_PROCESSING)
+                    ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> {
+                        itemStateList.add(ConfigInfo.IMAGE_ITEM_STATE.UNDEFINED)
+
+                        //Coroutine indítása UI szálon, mert observereket nem lehet háttérszálon kezelni
+                        GlobalScope.launch(Dispatchers.Main) {
+                            startObserverForProcessedImageItem(imageItem, index)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    init {
+        registerAdapterDataObserver(stateUpdateObserver)
+        stateUpdateObserver.onChanged()
+    }
+
     inner class SessionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         var imageView = itemView.image
         var volumeTextView = itemView.volume_text
         var dateTextView = itemView.date_text
+        var stateTextView = itemView.state
 
         init {
             itemView.setOnClickListener(this)
@@ -56,41 +81,13 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
 
         override fun onClick(v: View?) {
             val clickedImageItem = itemList[bindingAdapterPosition]
-            showImageItemDetails(clickedImageItem)
+            showImageItemDetails(clickedImageItem, bindingAdapterPosition)
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.recycler_view_measurement_item, parent, false)
-        initStateList()
         return SessionViewHolder(view)
-    }
-
-    private fun initStateList() {
-        itemStateList = ArrayList(itemList.size)
-        for ((index, imageItem) in itemList.withIndex()) {
-            when (imageItem.getItemType()) {
-                ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> itemStateList[index] = ConfigInfo.IMAGE_ITEM_STATE.UPLOADED
-                ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> itemStateList[index] = ConfigInfo.IMAGE_ITEM_STATE.WAITING_FOR_PROCESSING
-                ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> {
-                    val workManager = WorkManager.getInstance(activity.application)
-                    workManager.getWorkInfosByTagLiveData(imageItem.timestamp.toString()).observe(activity, Observer { listOfWorkInfo ->
-                        if (listOfWorkInfo.isNullOrEmpty()) {
-                            itemStateList[index] = ConfigInfo.IMAGE_ITEM_STATE.READY_TO_UPLOAD
-                            return@Observer
-                        }
-
-                        val workInfo = listOfWorkInfo[0]    //Csak egy worker létezik a timestamp-pel
-                        if (workInfo.state.isFinished) {
-                            itemStateList[index] = ConfigInfo.IMAGE_ITEM_STATE.UPLOADED
-                            doAsync { itemList[index] = dataClient.local.cache.getByTimestamp(imageItem.timestamp)!! }
-                        } else {
-                            itemStateList[index] = ConfigInfo.IMAGE_ITEM_STATE.BEING_UPLOADED
-                        }
-                    })
-                }
-            }
-        }
     }
 
     override fun getItemCount(): Int {
@@ -114,9 +111,17 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
                 holder.volumeTextView.text = "Mérésre vár"
             }
         }
+
+        holder.stateTextView.text = when(itemStateList[position]) {
+            ConfigInfo.IMAGE_ITEM_STATE.BEING_UPLOADED -> {"Feltöltés alatt"}
+            ConfigInfo.IMAGE_ITEM_STATE.READY_TO_UPLOAD -> {"Feltöltésre kész"}
+            ConfigInfo.IMAGE_ITEM_STATE.UPLOADED -> {"Feltöltve"}
+            ConfigInfo.IMAGE_ITEM_STATE.WAITING_FOR_PROCESSING -> {"Feldolgozásra vár"}
+            ConfigInfo.IMAGE_ITEM_STATE.UNDEFINED -> {"Állapot lekérdezés alatt..."}
+        }
     }
 
-    fun showImageItemDetails(imageItem: BaseImageItem) {
+    fun showImageItemDetails(imageItem: BaseImageItem, index: Int) {
         val builder = AlertDialog.Builder(activity)
         builder.setCancelable(true)
         val view = LayoutInflater.from(activity).inflate(R.layout.dialog_image_item, null, false)
@@ -124,7 +129,15 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
         val dialog = builder.create()
 
         view.findViewById<PhotoView>(R.id.image).setImageBitmap(imageItem.image)
-        view.findViewById<ImageView>(R.id.btn_delete).setOnClickListener{showDeleteConfirmation(dialog, imageItem)}
+        view.findViewById<ImageView>(R.id.btn_delete).setOnClickListener{
+            if (itemStateList[index] == ConfigInfo.IMAGE_ITEM_STATE.BEING_UPLOADED ||
+                itemStateList[index] == ConfigInfo.IMAGE_ITEM_STATE.UNDEFINED) {
+                activity.toast("Feltöltés alatt lévő kép nem törölhető.")
+            }
+            else {
+                showDeleteConfirmation(dialog, imageItem)
+            }
+        }
         dialog.window!!.setBackgroundDrawableResource(R.drawable.bg_white_round)
         dialog.show()
     }
@@ -168,5 +181,28 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
             parentDialog.show()
         }
         parentDialog.hide()
+    }
+
+    fun startObserverForProcessedImageItem(imageItem : BaseImageItem, index : Int) {
+        workManager.getWorkInfosByTagLiveData(imageItem.timestamp.toString()).removeObservers(activity)
+        workManager.getWorkInfosByTagLiveData(imageItem.timestamp.toString()).observe(activity, Observer { listOfWorkInfo ->
+            if (listOfWorkInfo.isNullOrEmpty()) {
+                itemStateList[index] = ConfigInfo.IMAGE_ITEM_STATE.READY_TO_UPLOAD
+                notifyItemChanged(index)
+                return@Observer
+            }
+
+            val workInfo = listOfWorkInfo[0]    //Csak egy worker létezik a timestamp-pel
+            if (workInfo.state.isFinished) {
+                itemStateList[index] = ConfigInfo.IMAGE_ITEM_STATE.UPLOADED
+                doAsync {
+                    itemList[index] =
+                        dataClient.local.cache.getByTimestamp(imageItem.timestamp)!!
+                }
+            } else {
+                itemStateList[index] = ConfigInfo.IMAGE_ITEM_STATE.BEING_UPLOADED
+            }
+            notifyItemChanged(index)
+        })
     }
 }
