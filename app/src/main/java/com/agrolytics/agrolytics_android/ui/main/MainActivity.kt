@@ -18,6 +18,7 @@ import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.agrolytics.agrolytics_android.AgrolyticsApp
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
@@ -110,10 +111,12 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
         })
 
         mainFab.setOnClickListener { fabHandler() }
-
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.listenForFirebaseUpdates()
         viewModel.getLastMeasurementItems()
+        AgrolyticsApp.firebaseUpdates.observe(this, Observer {
+            viewModel.getLastMeasurementItems()
+        })
         viewModel.lastMeasurementItems.observe(this, Observer {
             if (viewModel.lastMeasurementItems.value != null && viewModel.lastMeasurementItems.value!!.size > 0) {
                 nested_scrollview.visibility = View.VISIBLE

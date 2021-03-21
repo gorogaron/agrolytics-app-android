@@ -3,17 +3,22 @@ package com.agrolytics.agrolytics_android.ui.measurement.activity
 import android.app.Activity
 import android.icu.util.Measure
 import android.os.Bundle
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.agrolytics.agrolytics_android.AgrolyticsApp
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.data.local.tables.BaseImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
+import com.agrolytics.agrolytics_android.ui.main.MainViewModel
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
+import com.agrolytics.agrolytics_android.ui.measurement.presenter.SessionViewModel
 import com.agrolytics.agrolytics_android.ui.measurement.utils.SessionRecyclerViewAdapter
 import com.agrolytics.agrolytics_android.ui.measurement.utils.UploadWorker
 import kotlinx.android.synthetic.main.activity_session.*
@@ -24,6 +29,7 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
+import org.koin.core.component.KoinApiExtension
 
 class SessionActivity : BaseActivity() {
 
@@ -36,36 +42,33 @@ class SessionActivity : BaseActivity() {
         var sessionId : Long = 0
     }
 
+    @KoinApiExtension
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_session)
 
         save.setOnClickListener{ saveBtnClicked() }
 
-        doAsync {
+        val viewModel = ViewModelProvider(this).get(SessionViewModel::class.java)
+        viewModel.getAllLocalImagesInSession(sessionId)
+        AgrolyticsApp.firebaseUpdates.observe(this, Observer {
+            viewModel.getAllLocalImagesInSession(sessionId)
+        })
 
-            val imageItemList = getAllLocalImagesInSession()
-            recyclerViewAdapter = SessionRecyclerViewAdapter(this@SessionActivity, imageItemList!!)
-            recyclerViewLayoutManager = LinearLayoutManager(this@SessionActivity)
-
-            uiThread {
+        viewModel.imageItemsInSession.observe(this, Observer {
+            if (!::recyclerViewAdapter.isInitialized) {
+                recyclerViewAdapter = SessionRecyclerViewAdapter(this@SessionActivity, it)
+                recyclerViewLayoutManager = LinearLayoutManager(this@SessionActivity)
                 recycler_view.layoutManager = recyclerViewLayoutManager
                 recycler_view.adapter = recyclerViewAdapter
             }
-        }
+            else {
+                recyclerViewAdapter.itemList = it
+            }
+            recyclerViewAdapter.notifyDataSetChanged()
+        })
     }
 
-    private fun getAllLocalImagesInSession() : ArrayList<BaseImageItem>?{
-        val processedImageItemsInSession = dataClient.local.processed.getBySessionId(sessionId)
-        val unprocessedImageItemsInSession = dataClient.local.unprocessed.getBySessionId(sessionId)
-        val cachedImageItemsInSession = dataClient.local.cache.getBySessionId(sessionId)
-
-        val imageItemList = ArrayList<BaseImageItem>(processedImageItemsInSession)
-        imageItemList.addAll(unprocessedImageItemsInSession)
-        imageItemList.addAll(cachedImageItemsInSession)
-
-        return imageItemList
-    }
 
     private fun saveBtnClicked() {
         if (MeasurementManager.recentlyAddedItemTimestamps.isNotEmpty()){

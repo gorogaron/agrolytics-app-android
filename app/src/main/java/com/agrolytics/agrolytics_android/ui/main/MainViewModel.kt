@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.agrolytics.agrolytics_android.AgrolyticsApp
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.data.local.tables.BaseImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
@@ -75,7 +76,8 @@ class MainViewModel : ViewModel(), KoinComponent {
                         val cachedImageItem = CachedImageItem(fireStoreImageItem)
                         dataClient.local.cache.add(cachedImageItem)
                     }
-                getLastMeasurementItems()
+                    //Trigger observers
+                    AgrolyticsApp.firebaseUpdates.postValue(Unit)
             }
         }
 
@@ -87,7 +89,8 @@ class MainViewModel : ViewModel(), KoinComponent {
                     val cachedImageItem = dataClient.local.cache.getByTimestamp(fireStoreImageItem.timestamp)
                     if (cachedImageItem != null) dataClient.local.cache.delete(cachedImageItem)
                 }
-                getLastMeasurementItems()
+                //Trigger observers
+                AgrolyticsApp.firebaseUpdates.postValue(Unit)
             }
         }
     }

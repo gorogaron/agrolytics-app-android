@@ -2,8 +2,10 @@ package com.agrolytics.agrolytics_android
 
 import android.app.Application
 import android.os.Environment
+import androidx.lifecycle.MutableLiveData
 import com.agrolytics.agrolytics_android.koin.appModule
 import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageSegmentation
+import okhttp3.internal.notifyAll
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import java.io.File
@@ -12,10 +14,15 @@ import java.io.IOException
 
 class AgrolyticsApp: Application() {
 
+	companion object {
+		/**MainViewModel-ben triggereljük, amikor firebase-re érkezik vagy törlődik egy userhez tartozó item*/
+		//TODO: Jobb módszer keresése egy globális LiveData objektum kezelésére
+		val firebaseUpdates = MutableLiveData<Unit>()
+	}
+
 	override fun onCreate() {
 		super.onCreate()
 		ImageSegmentation.init(assets)
-
 		startKoin {
 			androidContext(this@AgrolyticsApp)
 			modules(appModule)

@@ -146,6 +146,7 @@ class RodSelectorActivity : BaseActivity(){
 	override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
 		super.onActivityResult(requestCode, resultCode, intent)
 		if (resultCode == Activity.RESULT_OK ) {
+			correspondingCropperActivity!!.finish()
 			finish()
 		}
 		if (resultCode == Activity.RESULT_CANCELED && requestCode == ConfigInfo.SESSION) {

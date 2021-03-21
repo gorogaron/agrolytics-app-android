@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import com.agrolytics.agrolytics_android.AgrolyticsApp
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
@@ -17,7 +18,7 @@ import org.koin.android.ext.android.inject
 import org.koin.core.component.KoinApiExtension
 
 
-class ImagesActivity: BaseActivity(), ImagesScreen {
+class ImagesActivity: BaseActivity() {
 
 	lateinit var recyclerViewAdapter : ImagesRecyclerViewAdapter
 	lateinit var recyclerViewLayoutManager : GridLayoutManager
@@ -31,13 +32,20 @@ class ImagesActivity: BaseActivity(), ImagesScreen {
 
 		val viewModel = ViewModelProvider(this).get(ImagesViewModel::class.java)
 		viewModel.getSessionItems()
-
+		AgrolyticsApp.firebaseUpdates.observe(this, Observer{
+			viewModel.getSessionItems()
+		})
 		viewModel.sessionItems.observe(this, Observer {
-			recyclerViewAdapter = ImagesRecyclerViewAdapter(this, ArrayList(it))
-			recyclerViewLayoutManager = GridLayoutManager(this, 2)
-
-			recycler_view.adapter = recyclerViewAdapter
-			recycler_view.layoutManager = recyclerViewLayoutManager
+			if (!::recyclerViewAdapter.isInitialized) {
+				recyclerViewAdapter = ImagesRecyclerViewAdapter(this, ArrayList(it))
+				recyclerViewLayoutManager = GridLayoutManager(this, 2)
+				recycler_view.adapter = recyclerViewAdapter
+				recycler_view.layoutManager = recyclerViewLayoutManager
+			}
+			else {
+				recyclerViewAdapter.itemList = ArrayList(it)
+			}
+			recyclerViewAdapter.notifyDataSetChanged()
 		})
 	}
 }
