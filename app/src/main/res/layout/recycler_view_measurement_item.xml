@@ -46,6 +46,20 @@
             android:layout_marginLeft="25dp"
             android:text="Volume"/>
 
+        <Button
+            android:id="@+id/upload_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/roundedImageView"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="25dp"
+            android:layout_marginLeft="25dp"
+            android:textSize="10sp"
+            android:fontFamily="@font/roboto_bold"
+            android:textColor="@color/darkGrey"
+            android:text="Feldolgozás"
+            android:visibility="gone"/>
+
         <TextView
             android:id="@+id/date_text"
             android:layout_width="wrap_content"
@@ -65,7 +79,7 @@
             android:fontFamily="@font/roboto"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="5dp"
+            android:layout_marginEnd="6dp"
             android:text="Állapot"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -235,15 +235,16 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
         drawer_layout.closeDrawers()
     }
 
-
-
+    
     private fun signOut() {
+        viewModel.stopFirebaseUpdateListener()
         FirebaseAuth.getInstance().signOut()
         sessionManager.clearSession()
         doAsync {
             dataClient.local.clearDatabase()
             uiThread {
                 startActivity(LoginActivity::class.java, Bundle(), false)
+                finish()
             }
         }
     }
