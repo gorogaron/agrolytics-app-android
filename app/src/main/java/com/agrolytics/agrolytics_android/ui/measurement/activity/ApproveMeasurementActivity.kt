@@ -4,10 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.core.content.ContextCompat
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
-import com.agrolytics.agrolytics_android.utils.SessionManager
 import org.koin.android.ext.android.inject
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
@@ -16,7 +14,6 @@ import com.agrolytics.agrolytics_android.types.ConfigInfo.IMAGE_BROWSE
 import com.agrolytics.agrolytics_android.types.ConfigInfo.IMAGE_CAPTURE
 import com.agrolytics.agrolytics_android.types.ConfigInfo.SESSION
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
-import com.google.firebase.database.collection.LLRBNode
 import kotlinx.android.synthetic.main.activity_upload_finished.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
@@ -25,7 +22,6 @@ import org.jetbrains.anko.uiThread
 
 class ApproveMeasurementActivity : BaseActivity() {
 
-	private val sessionManager: SessionManager by inject()
 	private val dataClient: DataClient by inject()
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +54,8 @@ class ApproveMeasurementActivity : BaseActivity() {
 	private fun onDeclineClicked() {
 		when (method){
 			"online" -> {
+				dataClient.local.unprocessed.delete(unprocessedImageItem) //Ez csak az utólagos feldolgozás miatt kell
+
 				//Új mérés vagy session áttekintése?
 				container_selection.animate().alpha(0f).duration = 300
 				container_after_selection.visibility = View.VISIBLE
@@ -79,6 +77,7 @@ class ApproveMeasurementActivity : BaseActivity() {
 		tv_result.text = processedImageItem.woodVolume.toString()
 		doAsync {
 			dataClient.local.processed.add(processedImageItem)
+			dataClient.local.unprocessed.delete(unprocessedImageItem) //Ez csak az utólagos feldolgozás miatt kell
 			MeasurementManager.recentlyAddedItemTimestamps.add(processedImageItem.timestamp)
 		}
 	}
@@ -88,7 +87,7 @@ class ApproveMeasurementActivity : BaseActivity() {
 	}
 
 	override fun onBackPressed() {
-		MeasurementManager.closeMeasurementDialog(this)
+		MeasurementManager.showCloseMeasurementConfirmationDialog(this)
 	}
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {

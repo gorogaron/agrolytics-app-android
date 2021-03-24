@@ -3,6 +3,7 @@ import android.content.Context
 import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.agrolytics.agrolytics_android.AgrolyticsApp
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.data.firebase.model.FireStoreImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo.CACHED_IMAGE_ITEM_FIRESTORE_ID
@@ -27,6 +28,7 @@ class DeleteWorker(
                 try {
                     dataClient.fireBase.fireStore.moveImageToDeletedCollection(FireStoreImageItem(cachedImageItem))
                     dataClient.local.cache.delete(cachedImageItem)
+                    AgrolyticsApp.databaseChanged.postValue(Unit)
                 }
                 catch (e: Exception) {
                     // TODO: Exception normális lekezelése.

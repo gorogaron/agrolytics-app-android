@@ -43,7 +43,7 @@ class SessionViewModel: ViewModel(), KoinComponent {
         val imageItemList = ArrayList<BaseImageItem>(processedImageItemsInSession)
         imageItemList.addAll(unprocessedImageItemsInSession)
         imageItemList.addAll(cachedImageItemsInSession)
-
+        imageItemList.sortByDescending { it.timestamp }
         imageItemsInSession.postValue(imageItemList)
     }
 

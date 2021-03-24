@@ -14,6 +14,7 @@ import com.agrolytics.agrolytics_android.ui.measurement.activity.RodSelectorActi
 import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
+import com.agrolytics.agrolytics_android.ui.main.MainActivity
 import com.agrolytics.agrolytics_android.ui.measurement.activity.ApproveMeasurementActivity
 import com.agrolytics.agrolytics_android.ui.measurement.activity.SessionActivity
 import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageSegmentation
@@ -107,6 +108,11 @@ object MeasurementManager : KoinComponent{
         ApproveMeasurementActivity.method = method
         ApproveMeasurementActivity.processedImageItem = processedImageItem
         ApproveMeasurementActivity.unprocessedImageItem = unprocessedImageItem
+        //Ez akkor igaz, ha utólagos feldolgozással indítjuk az approve activity-t
+        if (currentSessionId == 0L) {
+            if (callingActivity is SessionActivity) callingActivity.finish() //Az approve activityben csinálunk egy új példányt helyette
+            currentSessionId = processedImageItem.sessionId
+        }
         val intent = Intent(callingActivity, ApproveMeasurementActivity::class.java)
         callingActivity.startActivity(intent)
     }
@@ -137,7 +143,7 @@ object MeasurementManager : KoinComponent{
         }
     }
 
-    fun closeMeasurementDialog(callingActivity : BaseActivity){
+    fun showCloseMeasurementConfirmationDialog(callingActivity : BaseActivity){
         val exitListener = {
             for (imageItemTimestamps in recentlyAddedItemTimestamps) {
                 //cache-d item törlésére itt nincs szükség, mert itt a nem mentett képeket töröljük.
@@ -146,8 +152,7 @@ object MeasurementManager : KoinComponent{
                     dataClient.local.processed.deleteByTimestamp(imageItemTimestamps)
                 }
             }
-            recentlyAddedItemTimestamps.clear()
-            currentSessionId = 0
+            clearMeasurementSession()
             callingActivity.finish()
         }
 
@@ -155,12 +160,17 @@ object MeasurementManager : KoinComponent{
             //Ne csináljunk semmit, csak zárjuk be a popup window-t
         }
 
-        callingActivity.show2OptionDialog(
-            "Biztosan ki szeretne lépni mentés nélkül? ${recentlyAddedItemTimestamps.size} újonnan hozzáadott kép törlésre kerül.",
-            "Kilépés",
-            "Mégse",
-            exitListener,
-            cancelListener)
+        if (recentlyAddedItemTimestamps.isNotEmpty()) {
+            callingActivity.show2OptionDialog(
+                "Biztosan ki szeretne lépni mentés nélkül? ${recentlyAddedItemTimestamps.size} újonnan hozzáadott kép törlésre kerül.",
+                "Kilépés",
+                "Mégse",
+                exitListener,
+                cancelListener)
+        }
+        else {
+            exitListener()
+        }
     }
 
     fun clearMeasurementSession(){

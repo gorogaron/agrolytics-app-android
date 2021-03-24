@@ -17,7 +17,7 @@ class AgrolyticsApp: Application() {
 	companion object {
 		/**MainViewModel-ben triggereljük, amikor firebase-re érkezik vagy törlődik egy userhez tartozó item*/
 		//TODO: Jobb módszer keresése egy globális LiveData objektum kezelésére
-		val firebaseUpdates = MutableLiveData<Unit>()
+		val databaseChanged = MutableLiveData<Unit>()
 	}
 
 	override fun onCreate() {

@@ -10,9 +10,7 @@ import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_cropper.*
 import kotlinx.android.synthetic.main.activity_info.btn_back
 import android.provider.MediaStore
-import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
-import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
 import org.jetbrains.anko.toast
 
 
@@ -85,6 +83,6 @@ class CropperActivity: BaseActivity(), View.OnClickListener {
     }
 
     override fun onBackPressed() {
-        MeasurementManager.closeMeasurementDialog(this)
+        MeasurementManager.showCloseMeasurementConfirmationDialog(this)
     }
 }

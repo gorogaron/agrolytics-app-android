@@ -41,7 +41,7 @@
             android:textSize="25sp"
             android:fontFamily="@font/roboto_bold"
             app:layout_constraintStart_toEndOf="@id/roundedImageView"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/date_text"
             android:layout_marginTop="25dp"
             android:layout_marginLeft="25dp"
             android:text="Volume"/>
@@ -51,7 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/roundedImageView"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/date_text"
             android:layout_marginTop="25dp"
             android:layout_marginLeft="25dp"
             android:textSize="10sp"
@@ -66,8 +66,10 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:fontFamily="@font/roboto"
-            app:layout_constraintTop_toBottomOf="@id/volume_text"
-            app:layout_constraintStart_toStartOf="@id/volume_text"
+            app:layout_constraintTop_toTopOf="@id/roundedImageView"
+            app:layout_constraintBottom_toBottomOf="@id/roundedImageView"
+            app:layout_constraintStart_toEndOf="@id/roundedImageView"
+            android:layout_marginLeft="25dp"
             android:layout_marginTop="5dp"
             android:text="2021.02.20 21:39"/>
 

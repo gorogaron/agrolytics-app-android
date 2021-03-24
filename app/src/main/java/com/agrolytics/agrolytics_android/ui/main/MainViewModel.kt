@@ -1,6 +1,5 @@
 package com.agrolytics.agrolytics_android.ui.main
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,7 +12,6 @@ import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinApiExtension
@@ -51,7 +49,7 @@ class MainViewModel : ViewModel(), KoinComponent {
             imageItemList.addAll(processedImages)
             imageItemList.addAll(unprocessedImages)
 
-            imageItemList.sortBy {
+            imageItemList.sortByDescending {
                 when (it.getItemType()) {
                     ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> { (it as ProcessedImageItem).timestamp }
                     ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> { (it as UnprocessedImageItem).timestamp }
@@ -77,7 +75,7 @@ class MainViewModel : ViewModel(), KoinComponent {
                         dataClient.local.cache.add(cachedImageItem)
                     }
                     //Trigger observers
-                    AgrolyticsApp.firebaseUpdates.postValue(Unit)
+                    AgrolyticsApp.databaseChanged.postValue(Unit)
             }
         }
 
@@ -90,7 +88,7 @@ class MainViewModel : ViewModel(), KoinComponent {
                     if (cachedImageItem != null) dataClient.local.cache.delete(cachedImageItem)
                 }
                 //Trigger observers
-                AgrolyticsApp.firebaseUpdates.postValue(Unit)
+                AgrolyticsApp.databaseChanged.postValue(Unit)
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.agrolytics.agrolytics_android.ui.measurement.utils
 
 import android.app.AlertDialog
+import android.graphics.Bitmap
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,11 +11,14 @@ import android.widget.Button
 import android.widget.ImageView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Delete
 import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.agrolytics.agrolytics_android.AgrolyticsApp
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.data.firebase.model.ImageDirectory
@@ -25,6 +29,8 @@ import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
+import com.agrolytics.agrolytics_android.ui.measurement.activity.RodSelectorActivity
+import com.agrolytics.agrolytics_android.utils.ImageUtils
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.agrolytics.agrolytics_android.utils.Util.Companion.getFormattedDateTime
 import com.github.chrisbanes.photoview.PhotoView
@@ -74,6 +80,7 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
         var volumeTextView = itemView.volume_text
         var dateTextView = itemView.date_text
         var stateTextView = itemView.state
+        var uploadButton = itemView.upload_button
 
         init {
             itemView.setOnClickListener(this)
@@ -101,14 +108,22 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
         when (imageItem.getItemType()) {
             ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> {
                 val processedImageItem = imageItem as ProcessedImageItem
+                holder.volumeTextView.visibility = View.VISIBLE
+                holder.uploadButton.visibility = View.GONE
                 holder.volumeTextView.text = processedImageItem.woodVolume.toString()
             }
             ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> {
                 val cachedImageItem = imageItem as CachedImageItem
+                holder.volumeTextView.visibility = View.VISIBLE
+                holder.uploadButton.visibility = View.GONE
                 holder.volumeTextView.text = cachedImageItem.woodVolume.toString()
             }
             ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> {
-                holder.volumeTextView.text = "Ismeretlen"
+                holder.volumeTextView.visibility = View.GONE
+                holder.uploadButton.visibility = View.VISIBLE
+                holder.uploadButton.setOnClickListener {
+                    processUnprocessedImageItem(itemList[position] as UnprocessedImageItem)
+                }
             }
         }
 
@@ -118,6 +133,7 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
             ConfigInfo.IMAGE_ITEM_STATE.UPLOADED -> {"Feltöltve"}
             ConfigInfo.IMAGE_ITEM_STATE.WAITING_FOR_PROCESSING -> {"Feldolgozásra vár"}
             ConfigInfo.IMAGE_ITEM_STATE.UNDEFINED -> {"Állapot lekérdezés alatt..."}
+            ConfigInfo.IMAGE_ITEM_STATE.BEING_DELETED -> {"Törlés alatt"}
         }
     }
 
@@ -135,14 +151,14 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
                 activity.toast("Feltöltés alatt lévő kép nem törölhető.")
             }
             else {
-                showDeleteConfirmation(dialog, imageItem)
+                showDeleteConfirmation(dialog, imageItem, index)
             }
         }
         dialog.window!!.setBackgroundDrawableResource(R.drawable.bg_white_round)
         dialog.show()
     }
 
-    private fun showDeleteConfirmation(parentDialog: AlertDialog, imageItem : BaseImageItem) {
+    private fun showDeleteConfirmation(parentDialog: AlertDialog, imageItem : BaseImageItem, index: Int) {
         val childView = activity.layoutInflater.inflate(R.layout.confirm_delete, null)
         activity.mContentView.addView(childView)
         childView.layoutParams.height = MATCH_PARENT
@@ -156,9 +172,14 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
                             .build()
 
                         val uploadRequest = OneTimeWorkRequestBuilder<DeleteWorker>()
+                            .addTag("DELETE" + imageItem.timestamp.toString())
                             .setInputData(inputData)
                             .build()
-                        workManager.enqueue(uploadRequest)
+
+                        workManager.enqueueUniqueWork(imageItem.timestamp.toString(), ExistingWorkPolicy.KEEP, uploadRequest)
+                        withContext(Dispatchers.Main) {
+                            startObserverForDeletedImageItem(imageItem, index)
+                        }
                     }
                     ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> {
                         dataClient.local.processed.delete(imageItem as ProcessedImageItem)
@@ -168,9 +189,7 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
                     }
                 }
                 withContext(Dispatchers.Main){
-                    itemList.remove(imageItem)
-                    notifyDataSetChanged()
-                    activity.toast("Kép törölve")
+                    AgrolyticsApp.databaseChanged.postValue(Unit)
                     activity.mContentView.removeView(childView)
                     parentDialog.dismiss()
                 }
@@ -184,8 +203,8 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
     }
 
     fun startObserverForProcessedImageItem(imageItem : BaseImageItem, index : Int) {
-        workManager.getWorkInfosByTagLiveData(imageItem.timestamp.toString()).removeObservers(activity)
-        workManager.getWorkInfosByTagLiveData(imageItem.timestamp.toString()).observe(activity, Observer { listOfWorkInfo ->
+        workManager.getWorkInfosByTagLiveData("UPLOAD" + imageItem.timestamp.toString()).removeObservers(activity)
+        workManager.getWorkInfosByTagLiveData("UPLOAD" + imageItem.timestamp.toString()).observe(activity, Observer { listOfWorkInfo ->
             if (listOfWorkInfo.isNullOrEmpty()) {
                 itemStateList[index] = ConfigInfo.IMAGE_ITEM_STATE.READY_TO_UPLOAD
                 notifyItemChanged(index)
@@ -204,5 +223,50 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
             }
             notifyItemChanged(index)
         })
+    }
+
+    private fun startObserverForDeletedImageItem(imageItem : BaseImageItem, index : Int) {
+        workManager.getWorkInfosByTagLiveData("DELETE" + imageItem.timestamp.toString()).removeObservers(activity)
+        workManager.getWorkInfosByTagLiveData("DELETE" + imageItem.timestamp.toString()).observe(activity, Observer { listOfWorkInfo ->
+            if (listOfWorkInfo.isNullOrEmpty()) {
+                return@Observer
+            }
+
+            val workInfo = listOfWorkInfo[0]
+            if (workInfo.state.isFinished) {
+                //Végzett a törlés
+                itemList.removeAt(index)
+                itemStateList.removeAt(index)
+            } else {
+                itemStateList[index] = ConfigInfo.IMAGE_ITEM_STATE.BEING_DELETED
+            }
+            notifyItemChanged(index)
+        })
+    }
+
+    //TODO: Egyesítés a RodSelectorPresenter-ben lévő implementációval
+    private fun processUnprocessedImageItem(unprocessedImageItem: UnprocessedImageItem) {
+        activity.showLoading()
+        activity.lifecycleScope.launch(Dispatchers.Main) {
+            try {
+                val response = MeasurementManager.startOnlineMeasurement(unprocessedImageItem.image!!)
+                if (response.isSuccessful) {
+                    val maskImg = response.body()!!.toBitmap()
+                    val (maskedImg, numOfWoodPixels) = ImageUtils.drawMaskOnInputImage(unprocessedImageItem.image!!, maskImg)
+                    val processedImageItem = ProcessedImageItem(unprocessedImageItem, numOfWoodPixels, maskedImg)
+                    activity.hideLoading()
+                    MeasurementManager.startApproveMeasurementActivity(activity, processedImageItem, unprocessedImageItem,"online")
+                } else {
+                    //TODO: Normális exception kezelés
+                    activity.hideLoading()
+                    activity.toast("Hiba történt, próbáld újra.")
+                }
+            }
+            catch (e : Exception){
+                //TODO: Normális exception kezelés
+                activity.hideLoading()
+                activity.toast("Hiba történt, próbáld újra.")
+            }
+        }
     }
 }

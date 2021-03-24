@@ -8,7 +8,6 @@ import android.content.res.ColorStateList
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -40,13 +39,11 @@ import jp.wasabeef.blurry.Blurry
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.recycler_view
 import kotlinx.android.synthetic.main.nav_bar.*
-import kotlinx.coroutines.flow.flow
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
 import org.koin.core.component.KoinApiExtension
-import org.koin.core.component.bind
 import kotlin.system.exitProcess
 
 
@@ -114,7 +111,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.listenForFirebaseUpdates()
         viewModel.getLastMeasurementItems()
-        AgrolyticsApp.firebaseUpdates.observe(this, Observer {
+        AgrolyticsApp.databaseChanged.observe(this, Observer {
             viewModel.getLastMeasurementItems()
         })
         viewModel.lastMeasurementItems.observe(this, Observer {
@@ -235,7 +232,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
         drawer_layout.closeDrawers()
     }
 
-    
+
     private fun signOut() {
         viewModel.stopFirebaseUpdateListener()
         FirebaseAuth.getInstance().signOut()

@@ -92,6 +92,7 @@ class ImagesViewModel: ViewModel(), KoinComponent {
                 sessionId = sessionId,
                 sessionImage = sessionThumbnailImageItem.image!!))
         }
+        sessionItemList.sortByDescending { it.sessionId }
         sessionItems.postValue(sessionItemList)
     }
 

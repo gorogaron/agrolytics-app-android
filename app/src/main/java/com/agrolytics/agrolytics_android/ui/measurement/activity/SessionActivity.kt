@@ -1,7 +1,6 @@
 package com.agrolytics.agrolytics_android.ui.measurement.activity
 
 import android.app.Activity
-import android.icu.util.Measure
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -13,10 +12,8 @@ import androidx.work.WorkManager
 import com.agrolytics.agrolytics_android.AgrolyticsApp
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
-import com.agrolytics.agrolytics_android.data.local.tables.BaseImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
-import com.agrolytics.agrolytics_android.ui.main.MainViewModel
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.presenter.SessionViewModel
 import com.agrolytics.agrolytics_android.ui.measurement.utils.SessionRecyclerViewAdapter
@@ -26,8 +23,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
 import org.koin.core.component.KoinApiExtension
 
@@ -51,7 +46,7 @@ class SessionActivity : BaseActivity() {
 
         val viewModel = ViewModelProvider(this).get(SessionViewModel::class.java)
         viewModel.getAllLocalImagesInSession(sessionId)
-        AgrolyticsApp.firebaseUpdates.observe(this, Observer {
+        AgrolyticsApp.databaseChanged.observe(this, Observer {
             viewModel.getAllLocalImagesInSession(sessionId)
         })
 
@@ -71,22 +66,17 @@ class SessionActivity : BaseActivity() {
 
 
     private fun saveBtnClicked() {
-        if (MeasurementManager.recentlyAddedItemTimestamps.isNotEmpty()){
-            GlobalScope.launch(Dispatchers.IO) {
-                val sessionContainsUnprocessedImages = sessionContainsUnprocessedImages()
+        GlobalScope.launch(Dispatchers.IO) {
+            val sessionContainsUnprocessedImages = sessionContainsUnprocessedImages()
 
-                if (!sessionContainsUnprocessedImages) {
-                    // Background task indítása a processedImageItemek feltöltéséhez
-                    startUploadWorker()
-                    finishWithClear()
-                }
-                else {
-                    showUnprocessedAlertDialog()
-                }
+            if (!sessionContainsUnprocessedImages) {
+                // Background task indítása a processedImageItemek feltöltéséhez
+                startUploadWorker()
+                finishWithClear()
             }
-        }
-        else {
-            finishWithClear()
+            else {
+                showUnprocessedAlertDialog()
+            }
         }
     }
 
@@ -98,7 +88,7 @@ class SessionActivity : BaseActivity() {
                 .build()
 
             val uploadRequest = OneTimeWorkRequestBuilder<UploadWorker>()
-                .addTag(processedImageItem.timestamp.toString())
+                .addTag("UPLOAD" + processedImageItem.timestamp.toString())
                 .setInputData(inputData)
                 .build()
 
@@ -117,8 +107,8 @@ class SessionActivity : BaseActivity() {
 
         withContext(Dispatchers.Main) {
             show2OptionDialog(
-                "A méréscsoport tartalmaz még nem feldolgozott elemeket. A ${MeasurementManager.recentlyAddedItemTimestamps.size}" +
-                        "újonnan hozzáadott mérés feltöltése akkor kezdődik meg, ha a csoportban minden mérés fel lett dolgozva.",
+                "A méréscsoport tartalmaz még nem feldolgozott elemeket. A legutóbb hozzáadott mérések" +
+                        "feltöltése akkor kezdődik meg, ha a csoportban minden mérés fel lett dolgozva.",
                 "Kilépés",
                 "Mégse",
                 exitListener,
@@ -139,8 +129,8 @@ class SessionActivity : BaseActivity() {
         finish()
     }
 
-
     override fun onBackPressed() {
         finish()
     }
+
 }

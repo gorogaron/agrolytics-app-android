@@ -6,15 +6,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.agrolytics.agrolytics_android.AgrolyticsApp
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.ui.images.recyclerview.ImagesRecyclerViewAdapter
-import com.agrolytics.agrolytics_android.ui.images.recyclerview.SessionItem
-import com.agrolytics.agrolytics_android.utils.SessionManager
 import kotlinx.android.synthetic.main.activity_images.*
-import kotlinx.android.synthetic.main.activity_session.*
 import kotlinx.android.synthetic.main.activity_session.recycler_view
-import org.koin.android.ext.android.inject
 import org.koin.core.component.KoinApiExtension
 
 
@@ -32,7 +27,7 @@ class ImagesActivity: BaseActivity() {
 
 		val viewModel = ViewModelProvider(this).get(ImagesViewModel::class.java)
 		viewModel.getSessionItems()
-		AgrolyticsApp.firebaseUpdates.observe(this, Observer{
+		AgrolyticsApp.databaseChanged.observe(this, Observer{
 			viewModel.getSessionItems()
 		})
 		viewModel.sessionItems.observe(this, Observer {
