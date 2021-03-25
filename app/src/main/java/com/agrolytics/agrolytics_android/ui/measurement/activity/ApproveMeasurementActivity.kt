@@ -54,7 +54,7 @@ class ApproveMeasurementActivity : BaseActivity() {
 	private fun onDeclineClicked() {
 		when (method){
 			"online" -> {
-				dataClient.local.unprocessed.delete(unprocessedImageItem) //Ez csak az utólagos feldolgozás miatt kell
+				doAsync { dataClient.local.unprocessed.delete(unprocessedImageItem) } //Ez csak az utólagos feldolgozás miatt kell
 
 				//Új mérés vagy session áttekintése?
 				container_selection.animate().alpha(0f).duration = 300

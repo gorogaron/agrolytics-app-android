@@ -113,8 +113,10 @@ object MeasurementManager : KoinComponent{
             if (callingActivity is SessionActivity) callingActivity.finish() //Az approve activityben csinálunk egy új példányt helyette
             currentSessionId = processedImageItem.sessionId
         }
+        if (SessionActivity.correspondingApproveMeasurementActivity != null) { //Ha van korábbi approve activity megnyitva, azt zárjuk be
+            SessionActivity.correspondingApproveMeasurementActivity!!.finish()
+        }
         val intent = Intent(callingActivity, ApproveMeasurementActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         callingActivity.startActivity(intent)
     }
 

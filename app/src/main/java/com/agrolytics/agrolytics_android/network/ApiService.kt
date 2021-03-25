@@ -4,9 +4,12 @@ package com.agrolytics.agrolytics_android.network
 import com.agrolytics.agrolytics_android.BuildConfig
 import com.agrolytics.agrolytics_android.network.model.ImageUploadRequest
 import com.agrolytics.agrolytics_android.network.model.ImageUploadResponse
+import com.agrolytics.agrolytics_android.utils.SessionManager
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -20,16 +23,12 @@ interface ApiService {
 	@POST("ww/process_auth")
 	suspend fun uploadImage(@Body body: ImageUploadRequest): Response<ImageUploadResponse>
 
-	companion object Factory {
+	companion object Factory : KoinComponent{
 
-		var userToken: String? = null
+		private val sessionManager : SessionManager by inject()
 
 		private fun getBaseUrl(): String {
 			return BuildConfig.BASE_URL
-		}
-
-		fun updateUserToken (newToken: String?){
-			userToken = newToken
 		}
 
 		fun create(): ApiService {
@@ -41,7 +40,7 @@ interface ApiService {
 					)
 					.addHeader(
 						"Authorization",
-						"Bearer $userToken"
+						"Bearer ${sessionManager.userIdToken}"
 					)
 					.addHeader(
 						"Accept",

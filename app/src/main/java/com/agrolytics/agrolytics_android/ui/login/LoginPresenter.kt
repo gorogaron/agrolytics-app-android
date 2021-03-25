@@ -93,14 +93,13 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
         sessionManager?.forestryName = forestryDocument[FireStoreForestryField.NAME.tag] as String
         sessionManager?.forestryId = userDocument[FireStoreUserField.FORESTRY_ID.tag] as String
 
-        //Update user token. TODO: Move token to shared preferences
         updateUserToken()
     }
 
     private suspend fun updateUserToken() : Boolean = suspendCoroutine{
         auth?.currentUser?.getIdToken(false)
             ?.addOnSuccessListener { userToken ->
-                appServer?.updateApiService(userToken.token)
+                sessionManager?.userIdToken = userToken.token!!
                 it.resume(true)
             }
             ?.addOnFailureListener { e ->

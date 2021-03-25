@@ -252,20 +252,6 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
     private fun checkInternetAndGpsConnection() {
         if (isInternetAvailable) {
             wifi_icon.setImageResource(R.drawable.ic_wifi_on)
-
-            //This is needed to retrieve user token when during app startup
-            //auto-login was successful, but there was not internet connection.
-            //TODO: Check when else to update
-            if (appServer.getUserToken() == null){
-                val auth = FirebaseAuth.getInstance()
-                val currentUser = auth.currentUser
-                currentUser?.getIdToken(false)?.addOnSuccessListener { userToken ->
-                    appServer.updateApiService(userToken.token)
-                }?.addOnFailureListener {
-                    //TODO
-                }
-            }
-
         } else {
             wifi_icon.setImageResource(R.drawable.ic_wifi_off)
         }

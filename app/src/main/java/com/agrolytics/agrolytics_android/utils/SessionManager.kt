@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 class SessionManager(var context: Context) {
 
 	private val USER_ID = "user.id"
+	private val USER_ID_TOKEN = "user.id.token"
 	private val USER_LEADER_ID = "user.leader_id"
 	private val LICENCE_EXPIRATION_DATE = "user.expire_date"
 	private val USER_ROLE = "user.role"
@@ -24,6 +25,10 @@ class SessionManager(var context: Context) {
 	var userId: String
 		get() = sharedPreferences.getString(USER_ID, "")!!
 		set(userID) = sharedPreferences.edit().putString(USER_ID, userID).apply()
+
+	var userIdToken: String
+		get() = sharedPreferences.getString(USER_ID_TOKEN, "")!!
+		set(userIdToken) = sharedPreferences.edit().putString(USER_ID_TOKEN, userIdToken).apply()
 
 	var userEmail: String
 		get() = sharedPreferences.getString(USER_EMAIL, "")!!
@@ -73,6 +78,7 @@ class SessionManager(var context: Context) {
 			.remove(WOOD_TYPE)
 			.remove(USER_ROLE)
 			.remove(USER_ID)
+			.remove(USER_ID_TOKEN)
 			.remove(LICENCE_EXPIRATION_DATE)
 			.remove(USER_LEADER_ID)
 			.remove(USER_EMAIL)
