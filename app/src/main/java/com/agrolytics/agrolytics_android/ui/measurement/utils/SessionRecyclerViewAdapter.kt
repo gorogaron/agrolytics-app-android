@@ -200,8 +200,9 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
     }
 
     fun startObserverForProcessedImageItem(imageItem : BaseImageItem, index : Int) {
-        workManager.getWorkInfosByTagLiveData("UPLOAD" + imageItem.timestamp.toString()).removeObservers(activity)
-        workManager.getWorkInfosByTagLiveData("UPLOAD" + imageItem.timestamp.toString()).observe(activity, Observer { listOfWorkInfo ->
+        val workLiveData = workManager.getWorkInfosByTagLiveData("UPLOAD" + imageItem.timestamp.toString())
+        workLiveData.removeObservers(activity)
+        workLiveData.observe(activity, Observer { listOfWorkInfo ->
             if (listOfWorkInfo.isNullOrEmpty()) {
                 itemStateList[index] = ConfigInfo.IMAGE_ITEM_STATE.READY_TO_UPLOAD
                 notifyItemChanged(index)
@@ -210,6 +211,7 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
 
             val workInfo = listOfWorkInfo[0]    //Csak egy worker létezik a timestamp-pel
             if (workInfo.state.isFinished) {
+                workLiveData.removeObservers(activity)
                 itemStateList[index] = ConfigInfo.IMAGE_ITEM_STATE.UPLOADED
                 doAsync {
                     itemList[index] =
@@ -223,7 +225,8 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
     }
 
     private fun startObserverForDeletedImageItem(imageItem : BaseImageItem, index : Int) {
-        workManager.getWorkInfosByTagLiveData("DELETE" + imageItem.timestamp.toString()).observe(activity, Observer { listOfWorkInfo ->
+        val workLiveData = workManager.getWorkInfosByTagLiveData("DELETE" + imageItem.timestamp.toString())
+        workLiveData.observe(activity, Observer { listOfWorkInfo ->
             if (listOfWorkInfo.isNullOrEmpty()) {
                 return@Observer
             }
@@ -231,6 +234,7 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
             val workInfo = listOfWorkInfo[0]
             if (workInfo.state.isFinished) {
                 //Végzett a törlés, a viewModel észreveszi és frissít
+                workLiveData.removeObservers(activity)
             } else {
                 itemStateList[index] = ConfigInfo.IMAGE_ITEM_STATE.BEING_DELETED
                 notifyItemChanged(index)
