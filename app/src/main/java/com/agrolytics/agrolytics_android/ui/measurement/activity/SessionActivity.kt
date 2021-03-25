@@ -1,6 +1,7 @@
 package com.agrolytics.agrolytics_android.ui.measurement.activity
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -12,12 +13,16 @@ import androidx.work.WorkManager
 import com.agrolytics.agrolytics_android.AgrolyticsApp
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
+import com.agrolytics.agrolytics_android.data.local.tables.BaseImageItem
+import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
+import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.presenter.SessionViewModel
 import com.agrolytics.agrolytics_android.ui.measurement.utils.SessionRecyclerViewAdapter
 import com.agrolytics.agrolytics_android.ui.measurement.utils.UploadWorker
+import com.agrolytics.agrolytics_android.utils.Util.Companion.round
 import kotlinx.android.synthetic.main.activity_session.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -32,9 +37,11 @@ class SessionActivity : BaseActivity() {
     lateinit var recyclerViewAdapter : SessionRecyclerViewAdapter
     lateinit var recyclerViewLayoutManager : LinearLayoutManager
     private val workManager = WorkManager.getInstance(application)
+    private lateinit var viewModel : SessionViewModel
 
     companion object {
         var sessionId : Long = 0
+        var correspondingApproveMeasurementActivity : ApproveMeasurementActivity? = null
     }
 
     @KoinApiExtension
@@ -43,13 +50,13 @@ class SessionActivity : BaseActivity() {
         setContentView(R.layout.activity_session)
 
         save.setOnClickListener{ saveBtnClicked() }
+        add.setOnClickListener { MeasurementManager.addNewMeasurementForSession(this, sessionId) }
+        location.setOnClickListener { /**TODO*/ }
 
-        val viewModel = ViewModelProvider(this).get(SessionViewModel::class.java)
-        viewModel.getAllLocalImagesInSession(sessionId)
+        viewModel = ViewModelProvider(this).get(SessionViewModel::class.java)
         AgrolyticsApp.databaseChanged.observe(this, Observer {
             viewModel.getAllLocalImagesInSession(sessionId)
         })
-
         viewModel.imageItemsInSession.observe(this, Observer {
             if (!::recyclerViewAdapter.isInitialized) {
                 recyclerViewAdapter = SessionRecyclerViewAdapter(this@SessionActivity, it)
@@ -60,10 +67,22 @@ class SessionActivity : BaseActivity() {
             else {
                 recyclerViewAdapter.itemList = it
             }
+            sum_volume.text = calculateVolume(it)
             recyclerViewAdapter.notifyDataSetChanged()
         })
     }
 
+    private fun calculateVolume(imageItemList : ArrayList<BaseImageItem>) : String {
+        var sum = 0.0
+        for (imageItem in imageItemList) {
+            when (imageItem.getItemType()) {
+                ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> sum += (imageItem as ProcessedImageItem).woodVolume
+                ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> return "Nincs kész"
+                ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> sum += (imageItem as CachedImageItem).woodVolume
+            }
+        }
+        return sum.round(2).toString()
+    }
 
     private fun saveBtnClicked() {
         GlobalScope.launch(Dispatchers.IO) {
@@ -131,6 +150,25 @@ class SessionActivity : BaseActivity() {
 
     override fun onBackPressed() {
         finish()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getAllLocalImagesInSession(sessionId)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
+        if (resultCode == Activity.RESULT_OK ){
+            when (requestCode) {
+                ConfigInfo.IMAGE_CAPTURE, ConfigInfo.IMAGE_BROWSE -> {
+                    if (correspondingApproveMeasurementActivity != null) {
+                        correspondingApproveMeasurementActivity!!.finish()
+                    }
+                    finish()
+                }
+            }
+        }
     }
 
 }

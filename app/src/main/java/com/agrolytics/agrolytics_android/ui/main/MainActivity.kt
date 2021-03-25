@@ -3,7 +3,9 @@ package com.agrolytics.agrolytics_android.ui.main
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.location.Location
 import android.location.LocationManager
@@ -22,6 +24,7 @@ import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.network.AppServer
+import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.types.MenuItem
 import com.agrolytics.agrolytics_android.ui.guide.GuideActivity
 import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
@@ -350,4 +353,12 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
         viewModel.stopFirebaseUpdateListener()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
+        if (resultCode != RESULT_OK) {
+            if (requestCode == ConfigInfo.IMAGE_CAPTURE || requestCode == ConfigInfo.IMAGE_BROWSE) {
+                MeasurementManager.currentSessionId = 0
+            }
+        }
+    }
 }

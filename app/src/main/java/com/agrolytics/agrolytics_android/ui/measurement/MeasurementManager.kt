@@ -114,6 +114,7 @@ object MeasurementManager : KoinComponent{
             currentSessionId = processedImageItem.sessionId
         }
         val intent = Intent(callingActivity, ApproveMeasurementActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         callingActivity.startActivity(intent)
     }
 
@@ -138,7 +139,13 @@ object MeasurementManager : KoinComponent{
     fun showSession(callingActivity : BaseActivity, sessionId : Long?) {
         if (sessionId != null){
             SessionActivity.sessionId = sessionId
+
+            if (callingActivity is ApproveMeasurementActivity) {
+                SessionActivity.correspondingApproveMeasurementActivity = callingActivity
+            }
+
             val intent = Intent(callingActivity, SessionActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             callingActivity.startActivityForResult(intent, ConfigInfo.SESSION)
         }
     }

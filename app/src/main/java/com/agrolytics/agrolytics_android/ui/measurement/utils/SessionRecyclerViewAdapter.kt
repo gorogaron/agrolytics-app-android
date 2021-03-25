@@ -14,10 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Delete
-import androidx.work.Data
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
+import androidx.work.*
 import com.agrolytics.agrolytics_android.AgrolyticsApp
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
@@ -132,7 +129,7 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
             ConfigInfo.IMAGE_ITEM_STATE.READY_TO_UPLOAD -> {"Feltöltésre kész"}
             ConfigInfo.IMAGE_ITEM_STATE.UPLOADED -> {"Feltöltve"}
             ConfigInfo.IMAGE_ITEM_STATE.WAITING_FOR_PROCESSING -> {"Feldolgozásra vár"}
-            ConfigInfo.IMAGE_ITEM_STATE.UNDEFINED -> {"Állapot lekérdezés alatt..."}
+            ConfigInfo.IMAGE_ITEM_STATE.UNDEFINED -> {""}
             ConfigInfo.IMAGE_ITEM_STATE.BEING_DELETED -> {"Törlés alatt"}
         }
     }
@@ -226,7 +223,6 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
     }
 
     private fun startObserverForDeletedImageItem(imageItem : BaseImageItem, index : Int) {
-        workManager.getWorkInfosByTagLiveData("DELETE" + imageItem.timestamp.toString()).removeObservers(activity)
         workManager.getWorkInfosByTagLiveData("DELETE" + imageItem.timestamp.toString()).observe(activity, Observer { listOfWorkInfo ->
             if (listOfWorkInfo.isNullOrEmpty()) {
                 return@Observer
@@ -234,13 +230,11 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
 
             val workInfo = listOfWorkInfo[0]
             if (workInfo.state.isFinished) {
-                //Végzett a törlés
-                itemList.removeAt(index)
-                itemStateList.removeAt(index)
+                //Végzett a törlés, a viewModel észreveszi és frissít
             } else {
                 itemStateList[index] = ConfigInfo.IMAGE_ITEM_STATE.BEING_DELETED
+                notifyItemChanged(index)
             }
-            notifyItemChanged(index)
         })
     }
 
