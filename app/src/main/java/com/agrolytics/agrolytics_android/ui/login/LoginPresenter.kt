@@ -93,19 +93,6 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
         sessionManager?.forestryName = forestryDocument[FireStoreForestryField.NAME.tag] as String
         sessionManager?.forestryId = userDocument[FireStoreUserField.FORESTRY_ID.tag] as String
 
-        updateUserToken()
-    }
-
-    private suspend fun updateUserToken() : Boolean = suspendCoroutine{
-        auth?.currentUser?.getIdToken(false)
-            ?.addOnSuccessListener { userToken ->
-                sessionManager?.userIdToken = userToken.token!!
-                it.resume(true)
-            }
-            ?.addOnFailureListener { e ->
-                Log.d(TAG, "Error getting user token", e)
-                it.resume(false)
-            }
     }
 
     private fun hasLicenceExpired() : Boolean {

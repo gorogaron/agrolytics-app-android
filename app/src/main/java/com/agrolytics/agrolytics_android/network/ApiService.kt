@@ -25,13 +25,11 @@ interface ApiService {
 
 	companion object Factory : KoinComponent{
 
-		private val sessionManager : SessionManager by inject()
-
 		private fun getBaseUrl(): String {
 			return BuildConfig.BASE_URL
 		}
 
-		fun create(): ApiService {
+		fun create(token : String): ApiService {
 			val header = Interceptor { chain ->
 				val request = chain.request().newBuilder()
 					.addHeader(
@@ -40,7 +38,7 @@ interface ApiService {
 					)
 					.addHeader(
 						"Authorization",
-						"Bearer ${sessionManager.userIdToken}"
+						"Bearer $token"
 					)
 					.addHeader(
 						"Accept",
