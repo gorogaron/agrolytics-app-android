@@ -143,6 +143,9 @@ class SessionActivity : BaseActivity() {
     }
 
     private fun finishWithClear() {
+        if (correspondingApproveMeasurementActivity != null) {
+            correspondingApproveMeasurementActivity!!.finish()
+        }
         MeasurementManager.clearMeasurementSession()
         setResult(Activity.RESULT_OK)
         finish()
