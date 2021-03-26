@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="24dp"
-    android:paddingRight="24dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
     android:paddingTop="8dp">
 
     <com.github.chrisbanes.photoview.PhotoView
@@ -17,26 +17,93 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <ImageView
-        android:id="@+id/btn_delete"
+    <LinearLayout
+        android:id="@+id/linear_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_delete"
-        app:layout_constraintTop_toBottomOf="@id/image"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="25dp"
-        android:padding="5dp"
-        android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackgroundBorderless"/>
+        app:layout_constraintTop_toBottomOf="@id/image">
 
-    <TextView
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/darkGrey"
+                android:fontFamily="@font/roboto_bold"
+                android:text="Térfogat"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/darkGrey"
+                android:fontFamily="@font/roboto_bold"
+                android:text="Hossz"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/darkGrey"
+                android:fontFamily="@font/roboto_bold"
+                android:text="Faj"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/darkGrey"
+                android:fontFamily="@font/roboto_bold"
+                android:text="Dátum"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="20dp">
+            <TextView
+                android:id="@+id/volume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto"
+                android:text="1m3"/>
+            <TextView
+                android:id="@+id/length"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto"
+                android:text="1m"/>
+            <TextView
+                android:id="@+id/species"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto"
+                android:text="Tölgy"/>
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto"
+                android:text="2020.12.21 12:12:10"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/btn_delete"
-        app:layout_constraintStart_toStartOf="@id/btn_delete"
-        app:layout_constraintEnd_toEndOf="@id/btn_delete"
-        android:text="Törlés"/>
+        app:layout_constraintTop_toTopOf="@id/linear_layout"
+        app:layout_constraintBottom_toBottomOf="@id/linear_layout"
+        app:layout_constraintStart_toEndOf="@id/linear_layout"
+        app:layout_constraintEnd_toEndOf="parent">
+            <ImageView
+                android:id="@+id/btn_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_delete"
+                android:padding="5dp"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"/>
 
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

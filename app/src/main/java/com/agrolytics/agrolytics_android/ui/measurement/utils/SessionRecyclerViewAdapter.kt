@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -30,6 +31,7 @@ import com.agrolytics.agrolytics_android.ui.measurement.activity.RodSelectorActi
 import com.agrolytics.agrolytics_android.utils.ImageUtils
 import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.agrolytics.agrolytics_android.utils.Util.Companion.getFormattedDateTime
+import com.agrolytics.agrolytics_android.utils.Util.Companion.round
 import com.github.chrisbanes.photoview.PhotoView
 import kotlinx.android.synthetic.main.recycler_view_measurement_item.view.*
 import kotlinx.coroutines.*
@@ -141,6 +143,14 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
         builder.setView(view)
         val dialog = builder.create()
 
+        view.findViewById<TextView>(R.id.volume).text = when (imageItem.getItemType()) {
+            ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> (imageItem as CachedImageItem).woodVolume.round(2).toString()
+            ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> (imageItem as ProcessedImageItem).woodVolume.round(2).toString()
+            ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> "Mérésre vár"
+        }
+        view.findViewById<TextView>(R.id.length).text = imageItem.woodLength.toString()
+        view.findViewById<TextView>(R.id.species).text = imageItem.woodType
+        view.findViewById<TextView>(R.id.date).text = getFormattedDateTime(imageItem.timestamp)
         view.findViewById<PhotoView>(R.id.image).setImageBitmap(imageItem.image)
         view.findViewById<ImageView>(R.id.btn_delete).setOnClickListener{
             if (itemStateList[index] == ConfigInfo.IMAGE_ITEM_STATE.BEING_UPLOADED ||
