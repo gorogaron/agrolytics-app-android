@@ -1,149 +1,119 @@
 package com.agrolytics.agrolytics_android.ui.map
 
-import android.graphics.BitmapFactory
+import android.app.AlertDialog
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.data.DataClient
+import com.agrolytics.agrolytics_android.data.local.tables.BaseImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
-import com.agrolytics.agrolytics_android.ui.base.BaseActivity
-import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
-import com.agrolytics.agrolytics_android.ui.info.InfoActivity
-import com.agrolytics.agrolytics_android.ui.main.MainActivity
+import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo
-import com.agrolytics.agrolytics_android.ui.map.utils.MarkerInfoBottomSheetDialog
-import com.agrolytics.agrolytics_android.types.MenuItem
-import com.agrolytics.agrolytics_android.utils.SessionManager
+import com.agrolytics.agrolytics_android.ui.base.BaseActivity
+import com.agrolytics.agrolytics_android.utils.Util
+import com.agrolytics.agrolytics_android.utils.Util.Companion.round
+import com.github.chrisbanes.photoview.PhotoView
 import com.mapbox.mapboxsdk.Mapbox
-import com.mapbox.mapboxsdk.annotations.IconFactory
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
+import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.geometry.LatLngBounds
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.style.expressions.Expression.zoom
 import kotlinx.android.synthetic.main.activity_map.*
-import kotlinx.android.synthetic.main.nav_bar.*
-import org.koin.android.ext.android.inject
 
 
-class MapActivity : BaseActivity(), MapScreen, View.OnClickListener {
-
-    private val TAG = "MapActivity"
-
-    private val sessionManager: SessionManager by inject()
-    private val dataClient: DataClient by inject()
+class MapActivity : BaseActivity() {
 
     private lateinit var mapboxMap: MapboxMap
+    private var numOfNullLocations = 0
+
+    companion object {
+        var ImageItemList = ArrayList<BaseImageItem>()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Mapbox.getInstance(this, ConfigInfo.MAP_BOX_KEY)
         setContentView(R.layout.activity_map)
 
-        //presenter.addView(this)
-        //presenter.addInjections(arrayListOf(sessionManager, dataClient))
 
         btn_back.setOnClickListener { onBackPressed() }
 
         setUpMap()
-
-        container_profile.setOnClickListener(this)
-        container_guide.setOnClickListener(this)
-        container_impressum.setOnClickListener(this)
-        container_logout.setOnClickListener(this)
-
     }
 
     private fun setUpMap() {
-        Mapbox.getInstance(this, ConfigInfo.MAP_BOX_KEY)
         mapView.getMapAsync { map ->
             mapboxMap = map
-            mapboxMap.setStyle(Style.MAPBOX_STREETS) {
-                mapboxMap = map
+            mapboxMap.setStyle(Style.MAPBOX_STREETS)
 
-                mapboxMap.clear()
+            val locations = setupMarkers()
+            moveCamera(locations)
 
-                //presenter.getAllUploadedImage()
-                //presenter.getAllLocalImage()
-
-                map.setOnMarkerClickListener {
-                    val id = it.id
-                    //presenter.getItemFromList(id.toInt())
-                    true
-                }
+            mapboxMap.setOnMarkerClickListener { marker ->
+                val timestamp = marker.title
+                val imageItemIndex = ImageItemList.indexOfFirst { it.timestamp.toString() == timestamp }
+                val imageItem = ImageItemList[imageItemIndex]
+                showImageItemDetails(imageItem)
+                true
             }
         }
     }
 
-    override fun showDetails(imageItem: CachedImageItem) {
-        val ins = MarkerInfoBottomSheetDialog.instance()
-        ins.initData(imageItem)
-        ins.show(supportFragmentManager, "TAG")
-    }
-
-    override fun loadImages(images: ArrayList<CachedImageItem>, isOnline: Boolean) {
-        val latLngBounds = LatLngBounds.Builder()
-
-        var latLng = LatLng()
-        for (mMarker in images) {
-            latLng = LatLng(mMarker.location.latitude, mMarker.location.longitude)
-            latLngBounds.include(latLng)
-
-            val options = MarkerOptions()
-            options.position(latLng)
-            options.title = mMarker.timestamp.toString()
-            options.marker.id = images.indexOf(mMarker).toLong()
-            if (!isOnline) {
-                val iconFactory = IconFactory.getInstance(this)
-                //val iconDrawable = ContextCompat.getDrawable(this, R.drawable.ic_location)
-                val bitmap = BitmapFactory.decodeResource(resources, R.drawable.gray_poi)
-                val icon = iconFactory.fromBitmap(bitmap)
-
-                options.icon = icon
+    private fun moveCamera(locations : List<LatLng>) {
+        if (locations.size > 1) {
+            val locationBound = LatLngBounds.Builder()
+            for (location in locations) {
+                locationBound.include(location)
             }
-            mapboxMap.addMarker(options)
-
-            try {
-                mapboxMap.easeCamera(CameraUpdateFactory.newLatLngBounds(latLngBounds.build(), 50))
-            } catch (e: Exception) {
-                mapboxMap.easeCamera(CameraUpdateFactory.newLatLng(latLng))
-            }
+            mapboxMap.easeCamera(CameraUpdateFactory.newLatLngBounds(locationBound.build(), 50), 1000)
+        }
+        else if (locations.size == 1) {
+            val position = CameraPosition.Builder().target(locations[0]).zoom(10.0).build()
+            mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), 1000);
         }
     }
 
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.container_profile -> {/*TODO*/}
-            R.id.container_impressum -> openActivity(MenuItem.INFO)
-            R.id.container_guide -> openActivity(MenuItem.GUIDE)
-            R.id.container_logout -> {/*TODO*/}
+    private fun setupMarkers() : List<LatLng>{
+        val locations = ArrayList<LatLng>()
+        for (imageItem in ImageItemList) {
+            val itemLocation = LatLng(imageItem.location.latitude, imageItem.location.longitude)
+            if (itemLocation.latitude != 0.0 && itemLocation.longitude != 0.0) {
+                mapboxMap.addMarker(MarkerOptions().position(itemLocation).title(imageItem.timestamp.toString()))
+                locations.add(itemLocation)
+            }
+            else {
+                numOfNullLocations += 1
+            }
         }
+        return locations
     }
 
-    private fun openActivity(menuItem: MenuItem) {
-        when (menuItem) {
-            MenuItem.MAIN -> {
-                if (MenuItem.MAIN.tag != TAG) {
-                    startActivity(MainActivity::class.java, Bundle(), false)
-                }
-            }
-            MenuItem.IMAGES -> {
-                if (MenuItem.IMAGES.tag != TAG) {
-                    startActivity(ImagesActivity::class.java, Bundle(), false)
-                }
-            }
-            MenuItem.MAP -> {
-                if (MenuItem.MAP.tag != TAG) {
-                    startActivity(MapActivity::class.java, Bundle(), false)
-                }
-            }
-            MenuItem.INFO -> {
-                if (MenuItem.INFO.tag != TAG) {
-                    startActivity(InfoActivity::class.java, Bundle(), false)
-                }
-            }
+    //TODO: Egyesíteni ezt a függvényt a SessionRecyclerViewAdapter-ben lévővel
+    private fun showImageItemDetails(imageItem: BaseImageItem) {
+        val builder = AlertDialog.Builder(this)
+        builder.setCancelable(true)
+        val view = LayoutInflater.from(this).inflate(R.layout.dialog_image_item, null, false)
+        builder.setView(view)
+        val dialog = builder.create()
+
+        view.findViewById<TextView>(R.id.volume).text = when (imageItem.getItemType()) {
+            ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> (imageItem as CachedImageItem).woodVolume.round(2).toString()
+            ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> (imageItem as ProcessedImageItem).woodVolume.round(2).toString()
+            ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> "Mérésre vár"
         }
-        drawer_layout.closeDrawers()
+        view.findViewById<TextView>(R.id.length).text = imageItem.woodLength.toString()
+        view.findViewById<TextView>(R.id.species).text = imageItem.woodType
+        view.findViewById<TextView>(R.id.date).text = Util.getFormattedDateTime(imageItem.timestamp)
+        view.findViewById<PhotoView>(R.id.image).setImageBitmap(imageItem.image)
+        view.findViewById<ImageView>(R.id.btn_delete).visibility = View.GONE
+        dialog.window!!.setBackgroundDrawableResource(R.drawable.bg_white_round)
+        dialog.show()
     }
 
 }

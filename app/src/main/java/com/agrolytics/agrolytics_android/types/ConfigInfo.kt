@@ -16,7 +16,7 @@ object ConfigInfo {
 	const val PROCESSED_IMAGE_ITEM = "processed.image.item"
 	const val METHOD = "method"
 	const val UPLOAD_RESPONSE = "upload_response"
-	const val MAP_BOX_KEY = "pk.eyJ1IjoidGhlMDExMWRlbW9wcm9qZWN0IiwiYSI6ImNqeXVlaDdiNTBlMjUzaW9iYXpwN21lazIifQ.UT3O8C9YAocVt-zvExjbAQ"
+	const val MAP_BOX_KEY = "sk.eyJ1IjoiZ29yb2dhcm9uIiwiYSI6ImNrbXFiaDlhcTJtbWEydnFvNXl4OWplcTMifQ.GxtuYq8wqkuHU8S3GD2-qg"
 	const val PROCESSED_IMAGE_ITEM_TIMESTAMP = "processed_image_item_timestamp"
 	const val CACHED_IMAGE_ITEM_FIRESTORE_ID = "cached_image_item_firestore_id"
 
