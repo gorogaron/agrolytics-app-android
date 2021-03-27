@@ -39,7 +39,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|center_horizontal"
-                    android:text="Wifi OK"
+                    android:text="Internet"
                     android:textColor="@color/darkGrey" />
             </FrameLayout>
 
@@ -60,7 +60,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|center_horizontal"
-                    android:text="GPS OK"
+                    android:text="GPS"
                     android:textColor="@color/darkGrey" />
             </FrameLayout>
 

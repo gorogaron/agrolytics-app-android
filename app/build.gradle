@@ -139,13 +139,17 @@ dependencies {
     implementation 'jp.wasabeef:blurry:4.0.0'
 
     // viewModelScope and lifecycleScope
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.1"
 
     // Zoomable imageview
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 
     // WorkManager
     implementation "androidx.work:work-runtime-ktx:$work_version"
+
+    // Location turn on request
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+
 }
 apply plugin: 'com.google.gms.google-services'
