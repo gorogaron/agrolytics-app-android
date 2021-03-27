@@ -26,7 +26,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Útmutató"
+                    android:text="@string/guide"
                     android:textColor="@color/darkGrey"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -58,7 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="20dp"
-                    android:text="Tanácsok a mérés pontosságának növeléséhez"
+                    android:text="@string/guide_for_accuracy"
                     android:fontFamily="@font/roboto_bold"
                     android:textColor="@color/darkGrey"/>
 
@@ -69,7 +69,7 @@
                     android:fontFamily="@font/roboto"
                     android:textSize="16dp"
                     android:layout_marginTop="15dp"
-                    android:text="@string/guide"
+                    android:text="@string/guide_text"
                     android:textColor="@color/darkGrey"
                 />
 

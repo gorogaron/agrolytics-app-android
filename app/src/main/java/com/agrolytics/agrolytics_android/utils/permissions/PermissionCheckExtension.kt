@@ -53,6 +53,7 @@ fun Activity.requestForAllPermissions(activity: Activity, listener : MultiplePer
         ).withListener(listener).check()
 }
 
+//TODO: Lehet, hogy ez nem is kell, mert a main activity-t bezárjuk, ha nem kapunk meg valameilyen engedélyt
 fun createPermissionCheckListener(onPermissionCheckedAction : ((Activity) -> Unit)? = null, callingActivity: Activity) : MultiplePermissionsListener{
     return object : MultiplePermissionsListener {
         override fun onPermissionsChecked(report: MultiplePermissionsReport) {

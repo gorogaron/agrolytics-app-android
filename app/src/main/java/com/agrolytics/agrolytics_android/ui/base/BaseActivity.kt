@@ -128,4 +128,5 @@ abstract class BaseActivity : AppCompatActivity(), BaseScreen {
         dialog.window!!.setBackgroundDrawableResource(R.drawable.bg_white_round)
         dialog.show()
     }
+
 }

@@ -43,9 +43,9 @@ class ImagesRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arra
 
     override fun onBindViewHolder(holder: SessionViewHolder, position: Int) {
         val sessionItem = itemList[position]
-        holder.lengthTextView.text = if (sessionItem.woodLength >= 0) sessionItem.woodLength.toString() else "Változó"
-        holder.typeTextView.text = if (sessionItem.woodType != "") sessionItem.woodType else "Változó"
-        holder.volumeTextView.text = if (sessionItem.woodVolume >= 0) sessionItem.woodVolume.toString() else "Nincs kész"
+        holder.lengthTextView.text = if (sessionItem.woodLength >= 0) sessionItem.woodLength.toString() else activity.getString(R.string.varies)
+        holder.typeTextView.text = if (sessionItem.woodType != "") sessionItem.woodType else activity.getString(R.string.varies)
+        holder.volumeTextView.text = if (sessionItem.woodVolume >= 0) sessionItem.woodVolume.toString() else activity.getString(R.string.not_done)
         holder.dateTextView.text = getFormattedDateTime(sessionItem.sessionId)
         holder.sessionImage.setImageBitmap(sessionItem.sessionImage)
     }

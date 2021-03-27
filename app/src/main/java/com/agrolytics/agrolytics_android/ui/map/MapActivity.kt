@@ -126,7 +126,7 @@ class MapActivity : BaseActivity() {
                 numOfNullLocations += 1
             }
         }
-        img_without_coordinate.text = "Koordináta nélküli kép: ${numOfNullLocations} db"
+        img_without_coordinate.text = getString(R.string.images_without_coordinates, numOfNullLocations)
         return locations
     }
 

@@ -155,7 +155,7 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
         view.findViewById<ImageView>(R.id.btn_delete).setOnClickListener{
             if (itemStateList[index] == ConfigInfo.IMAGE_ITEM_STATE.BEING_UPLOADED ||
                 itemStateList[index] == ConfigInfo.IMAGE_ITEM_STATE.UNDEFINED) {
-                activity.toast("Feltöltés alatt lévő kép nem törölhető.")
+                activity.toast(activity.getString(R.string.upload_delete_error))
             }
             else {
                 showDeleteConfirmation(dialog, imageItem, index)
@@ -267,13 +267,13 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
                 } else {
                     //TODO: Normális exception kezelés
                     activity.hideLoading()
-                    activity.toast("Hiba történt, próbáld újra.")
+                    activity.toast(activity.getString(R.string.error_retry))
                 }
             }
             catch (e : Exception){
                 //TODO: Normális exception kezelés
                 activity.hideLoading()
-                activity.toast("Hiba történt, próbáld újra.")
+                activity.toast(activity.getString(R.string.error_retry))
             }
         }
     }

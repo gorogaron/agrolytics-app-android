@@ -44,7 +44,7 @@ class ApproveMeasurementActivity : BaseActivity() {
 			uiThread {
 				btn_save_for_later.visibility = View.GONE
 				btn_save_for_later.isClickable = false
-				toast("A kép mentésre került.")
+				toast(getString(R.string.image_saved))
 			}
 		} }
 

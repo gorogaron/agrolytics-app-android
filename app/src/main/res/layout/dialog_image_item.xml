@@ -36,25 +36,25 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/darkGrey"
                 android:fontFamily="@font/roboto_bold"
-                android:text="Térfogat"/>
+                android:text="@string/volume"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/darkGrey"
                 android:fontFamily="@font/roboto_bold"
-                android:text="Hossz"/>
+                android:text="@string/length"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/darkGrey"
                 android:fontFamily="@font/roboto_bold"
-                android:text="Faj"/>
+                android:text="@string/species"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/darkGrey"
                 android:fontFamily="@font/roboto_bold"
-                android:text="Dátum"/>
+                android:text="@string/date"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -65,26 +65,22 @@
                 android:id="@+id/volume"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto"
-                android:text="1m3"/>
+                android:fontFamily="@font/roboto"/>
             <TextView
                 android:id="@+id/length"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto"
-                android:text="1m"/>
+                android:fontFamily="@font/roboto"/>
             <TextView
                 android:id="@+id/species"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto"
-                android:text="Tölgy"/>
+                android:fontFamily="@font/roboto"/>
             <TextView
                 android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto"
-                android:text="2020.12.21 12:12:10"/>
+                android:fontFamily="@font/roboto"/>
         </LinearLayout>
     </LinearLayout>
 

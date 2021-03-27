@@ -69,14 +69,14 @@ class LoginActivity: BaseActivity(), LoginScreen {
                 loginResultCode = ConfigInfo.LOGIN.WRONG_INPUT
             }
             when (loginResultCode) {
-                ConfigInfo.LOGIN.NO_INTERNET -> showToast("Nincs internetkapcsolat")
-                ConfigInfo.LOGIN.AUTH_FAILED -> showToast("Hibás email cím vagy jelszó")
-                ConfigInfo.LOGIN.USER_EXPIRED -> showToast("A felhasználóhoz tartozó licensz lejárt, kérjük vegye fel velünk a kapcsolatot")
+                ConfigInfo.LOGIN.NO_INTERNET -> showToast(getString(R.string.no_internet))
+                ConfigInfo.LOGIN.AUTH_FAILED -> showToast(getString(R.string.auth_failed))
+                ConfigInfo.LOGIN.USER_EXPIRED -> showToast(getString(R.string.licence_expired))
                 ConfigInfo.LOGIN.UNDEFINED ->  {/*DO NOTHING*/}
-                ConfigInfo.LOGIN.WRONG_INPUT -> showToast("Írja be a felhasználónevet és jelszót.")
-                ConfigInfo.LOGIN.ERROR -> showToast("Váratlan hiba történt a bejelentkezés során")
+                ConfigInfo.LOGIN.WRONG_INPUT -> showToast(getString(R.string.write_email_password))
+                ConfigInfo.LOGIN.ERROR -> showToast(getString(R.string.unexpected_login_error))
                 ConfigInfo.LOGIN.SUCCESS -> {
-                    showToast("Sikeres bejelentkezés")
+                    showToast(getString(R.string.succesful_login))
                     loginSuccess()
                 }
             }

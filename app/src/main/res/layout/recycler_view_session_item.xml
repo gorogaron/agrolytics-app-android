@@ -40,7 +40,7 @@
             app:layout_constraintTop_toBottomOf="@id/roundedImageView"
             app:layout_constraintStart_toStartOf="@id/roundedImageView"
             android:layout_marginTop="5dp"
-            android:text="Hossz"/>
+            android:text="@string/length"/>
         <TextView
             android:id="@+id/wood_type_text"
             android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
             app:layout_constraintTop_toBottomOf="@id/length_text"
             app:layout_constraintStart_toStartOf="@id/roundedImageView"
             android:layout_marginTop="5dp"
-            android:text="Faj"/>
+            android:text="@string/species"/>
         <TextView
             android:id="@+id/wood_volume_text"
             android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
             app:layout_constraintTop_toBottomOf="@id/wood_type_text"
             app:layout_constraintStart_toStartOf="@id/roundedImageView"
             android:layout_marginTop="5dp"
-            android:text="Térfogat"/>
+            android:text="@string/volume"/>
         <TextView
             android:id="@+id/date_value"
             android:layout_height="wrap_content"
@@ -64,8 +64,7 @@
             app:layout_constraintTop_toBottomOf="@id/wood_volume_text"
             app:layout_constraintStart_toStartOf="@id/roundedImageView"
             android:layout_marginTop="5dp"
-            android:textSize="10sp"
-            android:text="2020.01.02 11:32"/>
+            android:textSize="10sp"/>
 
         <TextView
             android:id="@+id/length_value"
@@ -73,24 +72,21 @@
             android:layout_width="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/roundedImageView"
             app:layout_constraintEnd_toEndOf="@id/roundedImageView"
-            android:layout_margin="5dp"
-            android:text="1 m"/>
+            android:layout_margin="5dp"/>
         <TextView
             android:id="@+id/wood_type_value"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/length_text"
             app:layout_constraintEnd_toEndOf="@id/roundedImageView"
-            android:layout_margin="5dp"
-            android:text="Akác"/>
+            android:layout_margin="5dp"/>
         <TextView
             android:id="@+id/wood_volume_value"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/wood_type_text"
             app:layout_constraintEnd_toEndOf="@id/roundedImageView"
-            android:layout_margin="5dp"
-            android:text="15 m3"/>
+            android:layout_margin="5dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

@@ -81,7 +81,7 @@ class RodSelectorActivity : BaseActivity(){
 
 	private fun setupSaveForLaterButton(view : View, dialog: AlertDialog){
 		view.findViewById<ConstraintLayout>(R.id.button_1).apply {
-			findViewById<TextView>(R.id.buttonText).text = "Kép mentése későbbi feldolgozásra"
+			findViewById<TextView>(R.id.buttonText).text = getString(R.string.save_image_for_later)
 			if (unprocessedImageItem == null) {
 				findViewById<TextView>(R.id.buttonText).setTextColor(ContextCompat.getColor(this@RodSelectorActivity, R.color.mediumGrey))
 				this.isEnabled = false
@@ -99,7 +99,7 @@ class RodSelectorActivity : BaseActivity(){
 
 	private fun setupNewImageButton(view : View, dialog: AlertDialog) {
 		view.findViewById<ConstraintLayout>(R.id.button_2).apply {
-			findViewById<TextView>(R.id.buttonText).text = "Új kép"
+			findViewById<TextView>(R.id.buttonText).text = getString(R.string.new_image)
 			setOnClickListener {
 				MeasurementManager.addNewMeasurementForSession(this@RodSelectorActivity, MeasurementManager.currentSessionId)
 				dialog.dismiss()
@@ -109,7 +109,7 @@ class RodSelectorActivity : BaseActivity(){
 
 	private fun setupShowCurrentSessionButton(view: View, dialog: AlertDialog) {
 		view.findViewById<ConstraintLayout>(R.id.button_3).apply {
-			findViewById<TextView>(R.id.buttonText).text = "Munkamenet áttekintése"
+			findViewById<TextView>(R.id.buttonText).text = getString(R.string.show_session)
 			setOnClickListener {
 				MeasurementManager.showSession(this@RodSelectorActivity, MeasurementManager.currentSessionId)
 				dialog.dismiss()
@@ -119,7 +119,7 @@ class RodSelectorActivity : BaseActivity(){
 
 	private fun setupMeasureOfflineButton(view: View, dialog: AlertDialog, clickable : Boolean) {
 		view.findViewById<ConstraintLayout>(R.id.button_4).apply {
-			findViewById<TextView>(R.id.buttonText).text = "Offline mérés"
+			findViewById<TextView>(R.id.buttonText).text = getString(R.string.measure_offline)
 			if (!clickable) {
 				findViewById<TextView>(R.id.buttonText).setTextColor(ContextCompat.getColor(this@RodSelectorActivity, R.color.mediumGrey))
 				this.isEnabled = false
@@ -139,7 +139,7 @@ class RodSelectorActivity : BaseActivity(){
 			MeasurementManager.recentlyAddedItemTimestamps.add(unprocessedImageItem!!.timestamp)
 			unprocessedImageItem = null
 			unprocessedImageItemSaved = true
-			uiThread { showToast("A kép mentésre került.") }
+			uiThread { showToast(getString(R.string.image_saved)) }
 		}
 	}
 

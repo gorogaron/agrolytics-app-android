@@ -16,7 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:textSize="18sp"
         android:padding="15dp"
-        android:text="Nem megfelelő az internetkapcsolat. Hogyan szeretné folytatni?"/>
+        android:text="@string/no_internet_how_to_proceed"/>
 
     <FrameLayout
         android:id="@+id/button_frame_1"

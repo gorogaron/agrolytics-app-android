@@ -27,7 +27,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Információ"
+                    android:text="@string/information"
                     android:textColor="@android:color/white"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:text="Információk, kapcsolat"
+            android:text="@string/information_contact"
             android:layout_marginTop="40dp"
             android:layout_marginLeft="10dp"/>
 
@@ -67,48 +67,48 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:text="Cégnév"/>
+                    android:text="@string/company_name"/>
                 <TextView
                     android:textSize="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Agrolytics Kft."/>
-                <TextView
-                    android:textSize="16dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:layout_marginTop="10dp"
-                    android:text="Email cím"/>
-                <TextView
-                    android:textSize="16dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="contact@agrolytics.hu"/>
+                    android:text="@string/agrolytics_kft"/>
                 <TextView
                     android:textSize="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:layout_marginTop="10dp"
-                    android:text="Telefonszám"/>
+                    android:text="@string/agrolytics_kft"/>
                 <TextView
                     android:textSize="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="+36 30 612 2653"/>
+                    android:text="@string/contact_email_address"/>
                 <TextView
                     android:textSize="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:layout_marginTop="10dp"
-                    android:text="Web"/>
+                    android:text="@string/phone_number"/>
                 <TextView
                     android:textSize="16dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="agrolytics.hu"/>
+                    android:text="@string/contact_phone_number"/>
+                <TextView
+                    android:textSize="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/web"/>
+                <TextView
+                    android:textSize="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/web_url"/>
 
             </LinearLayout>
         </LinearLayout>

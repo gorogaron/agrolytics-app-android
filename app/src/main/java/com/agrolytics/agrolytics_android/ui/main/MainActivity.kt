@@ -60,11 +60,9 @@ import kotlin.system.exitProcess
 
 class MainActivity : BaseActivity(), View.OnClickListener {
 
-    private val appServer: AppServer by inject()
     private val sessionManager: SessionManager by inject()
     private val dataClient: DataClient by inject()
 
-    private var locationManager: LocationManager? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     /** FAB and animations*/
@@ -159,7 +157,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         val permissionListener = object : MultiplePermissionsListener {
             override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                 if (report.deniedPermissionResponses.size != 0) {
-                    toast("Az alkalmazás nem használható engedélyek nélkül.")
+                    toast(getString(R.string.permission_error))
                     finishAndRemoveTask()
                 }
                 else {
@@ -377,7 +375,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         }
         if (resultCode == RESULT_CANCELED && requestCode == GPS_TURN_ON_REQUEST) {
             setupLocationUpdates()
-            toast("GPS nélkül az alkalmazás nem fog lokációt menteni méréskor.")
+            toast(getString(R.string.gps_off_message))
         }
     }
 }

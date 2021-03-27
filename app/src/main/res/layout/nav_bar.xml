@@ -21,7 +21,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:drawablePadding="14dp"
-                android:text="Menü"
+                android:text="@string/menu"
                 android:textColor="@android:color/black"
                 android:textSize="30sp"
                 android:fontFamily="@font/roboto_bold"/>
@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:drawablePadding="14dp"
-                android:text="Profil"
+                android:text="@string/profile"
                 android:textColor="@android:color/black"
                 android:textSize="20sp"
                 android:fontFamily="@font/roboto_bold"/>
@@ -66,7 +66,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:drawablePadding="14dp"
-                android:text="Útmutató"
+                android:text="@string/guide"
                 android:textColor="@android:color/black"
                 android:textSize="20sp"
                 android:fontFamily="@font/roboto_bold"/>
@@ -92,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:drawablePadding="14dp"
-                android:text="Impresszum"
+                android:text="@string/impressum"
                 android:textColor="@android:color/black"
                 android:textSize="20sp"
                 android:fontFamily="@font/roboto_bold"/>
@@ -118,7 +118,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:drawablePadding="14dp"
-                android:text="Kijelentkezés"
+                android:text="@string/logout"
                 android:textColor="@android:color/black"
                 android:textSize="20sp"
                 android:fontFamily="@font/roboto_bold"/>

@@ -3,6 +3,7 @@ package com.agrolytics.agrolytics_android.ui.measurement
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.UnprocessedImageItem
@@ -50,13 +51,13 @@ object MeasurementManager : KoinComponent{
         else {
             /**Ide nem szabadna jutnunk, új sessiont csak akkor indíthatunk ha az előzőt lezártuk,
              * tehát currentSessionId = 0.*/
-            callingActivity.toast("Váratlan hiba történt, próbálja meg újraindítani az alkalmazást")
+            callingActivity.toast(callingActivity.getString(R.string.unexpected_error))
         }
     }
 
     fun addNewMeasurementForSession(callingActivity : BaseActivity, sessionId: Long?) {
         if (sessionId == null || sessionId == 0L) {
-            callingActivity.toast("Váratlan hiba történt, próbálja meg újraindítani az alkalmazást")
+            callingActivity.toast(callingActivity.getString(R.string.unexpected_error))
             return
         }
 

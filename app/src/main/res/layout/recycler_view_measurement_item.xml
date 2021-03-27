@@ -43,8 +43,7 @@
             app:layout_constraintStart_toEndOf="@id/roundedImageView"
             app:layout_constraintBottom_toTopOf="@id/date_text"
             android:layout_marginTop="25dp"
-            android:layout_marginLeft="25dp"
-            android:text="Volume"/>
+            android:layout_marginLeft="25dp"/>
 
         <Button
             android:id="@+id/upload_button"
@@ -57,7 +56,7 @@
             android:textSize="10sp"
             android:fontFamily="@font/roboto_bold"
             android:textColor="@color/darkGrey"
-            android:text="Feldolgozás"
+            android:text="@string/process"
             android:visibility="gone"/>
 
         <TextView
@@ -70,8 +69,7 @@
             app:layout_constraintBottom_toBottomOf="@id/roundedImageView"
             app:layout_constraintStart_toEndOf="@id/roundedImageView"
             android:layout_marginLeft="25dp"
-            android:layout_marginTop="5dp"
-            android:text="2021.02.20 21:39"/>
+            android:layout_marginTop="5dp"/>
 
         <TextView
             android:id="@+id/state"
@@ -82,7 +80,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="6dp"
-            android:text="Állapot"/>
+            android:text="@string/state"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

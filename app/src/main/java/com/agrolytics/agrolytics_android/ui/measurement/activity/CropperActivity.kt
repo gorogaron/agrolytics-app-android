@@ -10,6 +10,7 @@ import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_cropper.*
 import kotlinx.android.synthetic.main.activity_info.btn_back
 import android.provider.MediaStore
+import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import org.jetbrains.anko.toast
 
@@ -66,7 +67,7 @@ class CropperActivity: BaseActivity(), View.OnClickListener {
             MeasurementManager.startRodSelectorActivity(this, croppedImgBlackBg!!, croppedImgBlurredBg!!)
         }
         else {
-            toast("Jelöljön ki megfelelő területet a képen.")
+            toast(getString(R.string.select_area))
         }
     }
 

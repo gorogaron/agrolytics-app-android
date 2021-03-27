@@ -39,7 +39,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|center_horizontal"
-                    android:text="Internet"
+                    android:text="@string/internet"
                     android:textColor="@color/darkGrey" />
             </FrameLayout>
 
@@ -60,7 +60,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|center_horizontal"
-                    android:text="GPS"
+                    android:text="@string/gps"
                     android:textColor="@color/darkGrey" />
             </FrameLayout>
 
@@ -85,8 +85,8 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginTop="15dp"
-                    android:layout_marginLeft="15dp"
-                    android:text="Legutóbbi mérés"
+                    android:layout_marginStart="15dp"
+                    android:text="@string/latest_measurement"
                     android:textSize="25sp"
                     android:fontFamily="@font/roboto_bold"
                     android:textColor="@color/darkGrey"/>
@@ -118,7 +118,7 @@
                     android:id="@+id/no_measurement_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Nincs megjeleníthető mérés"
+                    android:text="@string/no_available_measurement"
                     android:textSize="20sp"
                     android:fontFamily="@font/roboto"
                     android:textColor="@color/darkGrey"
@@ -154,7 +154,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:elevation="1dp"
-                            android:text="Teljes csoport megjelenítése"
+                            android:text="@string/show_full_session"
                             android:layout_marginTop="-65dp"
                             android:textSize="10sp"
                             android:fontFamily="@font/roboto_bold"
@@ -210,7 +210,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="bottom|center_horizontal"
                                 android:clickable="false"
-                                android:text="MENÜ"
+                                android:text="@string/menu"
                                 android:textColor="@color/darkGrey" />
                         </FrameLayout>
 
@@ -239,7 +239,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="bottom|center_horizontal"
                                 android:clickable="false"
-                                android:text="RÚD"
+                                android:text="@string/parameters"
                                 android:textColor="@color/darkGrey" />
                         </FrameLayout>
 
@@ -277,7 +277,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="bottom|center_horizontal"
                                 android:clickable="false"
-                                android:text="MÉRÉSEK"
+                                android:text="@string/measurements"
                                 android:textColor="@color/darkGrey" />
                         </FrameLayout>
 
@@ -306,7 +306,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="bottom|center_horizontal"
                                 android:clickable="false"
-                                android:text="TÉRKÉP"
+                                android:text="@string/map"
                                 android:textColor="@color/darkGrey" />
                         </FrameLayout>
 
