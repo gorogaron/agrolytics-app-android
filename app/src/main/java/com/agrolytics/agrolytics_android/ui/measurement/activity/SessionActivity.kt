@@ -18,6 +18,7 @@ import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
+import com.agrolytics.agrolytics_android.ui.map.MapActivity
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.presenter.SessionViewModel
 import com.agrolytics.agrolytics_android.ui.measurement.utils.SessionRecyclerViewAdapter
@@ -28,6 +29,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
 import org.koin.core.component.KoinApiExtension
 
@@ -51,7 +54,7 @@ class SessionActivity : BaseActivity() {
 
         save.setOnClickListener{ saveBtnClicked() }
         add.setOnClickListener { MeasurementManager.addNewMeasurementForSession(this, sessionId) }
-        location.setOnClickListener { /**TODO*/ }
+        location.setOnClickListener { MapActivity.openMapForSession(this, sessionId) }
 
         viewModel = ViewModelProvider(this).get(SessionViewModel::class.java)
         AgrolyticsApp.databaseChanged.observe(this, Observer {
@@ -71,6 +74,7 @@ class SessionActivity : BaseActivity() {
             recyclerViewAdapter.notifyDataSetChanged()
         })
     }
+
 
     private fun calculateVolume(imageItemList : ArrayList<BaseImageItem>) : String {
         var sum = 0.0

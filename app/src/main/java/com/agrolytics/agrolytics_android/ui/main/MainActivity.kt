@@ -221,7 +221,7 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
 
             R.id.show_full_session -> MeasurementManager.showSession(this, viewModel.lastSessionId.value)
             R.id.session_add -> MeasurementManager.addNewMeasurementForSession(this, viewModel.lastSessionId.value!!)
-            R.id.session_location -> { this.toast("TODO") }
+            R.id.session_location -> MapActivity.openMapForSession(this, viewModel.lastSessionId.value!!)
         }
     }
 
@@ -230,23 +230,11 @@ class MainActivity : BaseActivity(), View.OnClickListener, MainScreen{
             MenuItem.INFO -> startActivity(InfoActivity::class.java, Bundle(), true)
             MenuItem.GUIDE -> startActivity(GuideActivity::class.java, Bundle(), true)
             MenuItem.IMAGES -> startActivity(ImagesActivity::class.java, Bundle(), true)
-            MenuItem.MAP -> {
-                doAsync {
-                    val itemList = ArrayList<BaseImageItem>()
-                    itemList.addAll(dataClient.local.processed.getAll())
-                    itemList.addAll(dataClient.local.unprocessed.getAll())
-                    itemList.addAll(dataClient.local.cache.getAll())
-                    MapActivity.ImageItemList = itemList
-                    uiThread {
-                        startActivity(MapActivity::class.java, Bundle(), true)
-                    }
-                }
-            }
+            MenuItem.MAP -> MapActivity.openMapForAllImages(this)
             MenuItem.MAIN -> startActivity(MainActivity::class.java, Bundle(), true)
         }
         drawer_layout.closeDrawers()
     }
-
 
     private fun signOut() {
         viewModel.stopFirebaseUpdateListener()
