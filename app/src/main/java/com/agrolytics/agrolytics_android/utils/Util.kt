@@ -94,5 +94,13 @@ class Util {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(context, R.color.darkGrey))
         }
 
+        fun meter(context: Context, value : Double) : String {
+            return value.toString() + " " + context.getString(R.string.meter)
+        }
+
+        fun cubicMeter(context: Context, value : Double) : String {
+            return value.toString() + " " + context.getString(R.string.cubic_meter)
+        }
+
     }
 }

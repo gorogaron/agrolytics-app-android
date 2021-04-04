@@ -6,7 +6,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.IntentSender
 import android.content.res.ColorStateList
-import android.location.LocationManager
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
@@ -23,10 +22,10 @@ import com.agrolytics.agrolytics_android.AgrolyticsApp
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
-import com.agrolytics.agrolytics_android.network.AppServer
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.types.ConfigInfo.GPS_TURN_ON_REQUEST
 import com.agrolytics.agrolytics_android.types.MenuItem
+import com.agrolytics.agrolytics_android.ui.profile.ProfileActivity
 import com.agrolytics.agrolytics_android.ui.guide.GuideActivity
 import com.agrolytics.agrolytics_android.ui.images.ImagesActivity
 import com.agrolytics.agrolytics_android.ui.info.InfoActivity
@@ -36,7 +35,6 @@ import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.utils.SessionRecyclerViewAdapter
 import com.agrolytics.agrolytics_android.utils.*
 import com.agrolytics.agrolytics_android.utils.Util.Companion.showParameterSettingsWindow
-import com.agrolytics.agrolytics_android.utils.permissions.locationPermGiven
 import com.agrolytics.agrolytics_android.utils.permissions.requestForAllPermissions
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
@@ -240,7 +238,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
             R.id.images_frame -> openActivity(MenuItem.IMAGES)
             R.id.map_frame -> openActivity(MenuItem.MAP)
 
-            R.id.container_profile -> {/*TODO*/}
+            R.id.container_profile -> {openActivity(MenuItem.PROFILE)}
             R.id.container_guide -> openActivity(MenuItem.GUIDE)
             R.id.container_impressum -> openActivity(MenuItem.INFO)
             R.id.container_logout -> signOut()
@@ -258,6 +256,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
             MenuItem.IMAGES -> startActivity(ImagesActivity::class.java, Bundle(), true)
             MenuItem.MAP -> MapActivity.openMapForAllImages(this)
             MenuItem.MAIN -> startActivity(MainActivity::class.java, Bundle(), true)
+            MenuItem.PROFILE -> startActivity(ProfileActivity::class.java, Bundle(), true)
         }
         drawer_layout.closeDrawers()
     }

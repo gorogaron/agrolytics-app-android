@@ -71,7 +71,11 @@ object MeasurementManager : KoinComponent{
             hookImage(callingActivity, ImagePickerID.ID_CAMERA)
         }
 
-        callingActivity.show2OptionDialog("Kép választása", "Kamera", "Tallózás", cameraListener, browseListener)
+        callingActivity.show2OptionDialog(callingActivity.getString(R.string.select_image),
+                callingActivity.getString(R.string.camera),
+                callingActivity.getString(R.string.browse),
+                cameraListener,
+                browseListener)
     }
 
     fun hookImage(callingActivity : BaseActivity, imagePickerID : ImagePickerID){
@@ -172,9 +176,9 @@ object MeasurementManager : KoinComponent{
 
         if (recentlyAddedItemTimestamps.isNotEmpty()) {
             callingActivity.show2OptionDialog(
-                "Biztosan ki szeretne lépni mentés nélkül? ${recentlyAddedItemTimestamps.size} újonnan hozzáadott kép törlésre kerül.",
-                "Kilépés",
-                "Mégse",
+                callingActivity.getString(R.string.quit_confirm, recentlyAddedItemTimestamps.size),
+                    callingActivity.getString(R.string.exit),
+                    callingActivity.getString(R.string.cancel),
                 exitListener,
                 cancelListener)
         }

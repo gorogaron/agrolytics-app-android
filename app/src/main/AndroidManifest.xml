@@ -52,6 +52,9 @@
             android:name=".ui.guide.GuideActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.profile.ProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.measurement.activity.CropperActivity"
             android:screenOrientation="portrait" />
         <activity

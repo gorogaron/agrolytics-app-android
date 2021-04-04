@@ -23,6 +23,7 @@ import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.presenter.SessionViewModel
 import com.agrolytics.agrolytics_android.ui.measurement.utils.SessionRecyclerViewAdapter
 import com.agrolytics.agrolytics_android.ui.measurement.utils.UploadWorker
+import com.agrolytics.agrolytics_android.utils.Util
 import com.agrolytics.agrolytics_android.utils.Util.Companion.round
 import kotlinx.android.synthetic.main.activity_session.*
 import kotlinx.coroutines.Dispatchers
@@ -70,22 +71,23 @@ class SessionActivity : BaseActivity() {
             else {
                 recyclerViewAdapter.itemList = it
             }
-            sum_volume.text = calculateVolume(it)
+            val sumVolumeValue = calculateVolume(it)
+            sum_volume.text = if (sumVolumeValue == 0.0) getString(R.string.not_done) else Util.cubicMeter(this, sumVolumeValue)
             recyclerViewAdapter.notifyDataSetChanged()
         })
     }
 
 
-    private fun calculateVolume(imageItemList : ArrayList<BaseImageItem>) : String {
+    private fun calculateVolume(imageItemList : ArrayList<BaseImageItem>) : Double {
         var sum = 0.0
         for (imageItem in imageItemList) {
             when (imageItem.getItemType()) {
                 ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> sum += (imageItem as ProcessedImageItem).woodVolume
-                ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> return "Nincs kész"
+                ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> return 0.0
                 ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> sum += (imageItem as CachedImageItem).woodVolume
             }
         }
-        return sum.round(2).toString()
+        return sum.round(2)
     }
 
     private fun saveBtnClicked() {
@@ -130,10 +132,9 @@ class SessionActivity : BaseActivity() {
 
         withContext(Dispatchers.Main) {
             show2OptionDialog(
-                "A méréscsoport tartalmaz még nem feldolgozott elemeket. A legutóbb hozzáadott mérések" +
-                        "feltöltése akkor kezdődik meg, ha a csoportban minden mérés fel lett dolgozva.",
-                "Kilépés",
-                "Mégse",
+                getString(R.string.unprocessed_warning),
+                getString(R.string.exit),
+                getString(R.string.cancel),
                 exitListener,
                 cancelListener)
         }

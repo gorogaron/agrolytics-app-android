@@ -43,13 +43,73 @@
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_margin="25dp"
-                android:text="@string/email"/>
+        <TextView
+            android:id="@+id/email_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:fontFamily="@font/roboto_bold"
+            android:layout_margin="25dp"
+            android:text="@string/email"/>
+
+        <TextView
+            android:id="@+id/email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/email_text"
+            app:layout_constraintTop_toBottomOf="@id/email_text"
+            android:fontFamily="@font/roboto"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:id="@+id/forestry_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/email"
+            android:fontFamily="@font/roboto_bold"
+            android:layout_margin="25dp"
+            android:text="@string/forestry"/>
+
+        <TextView
+            android:id="@+id/forestry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/forestry_text"
+            app:layout_constraintTop_toBottomOf="@id/forestry_text"
+            android:fontFamily="@font/roboto"
+            android:layout_marginTop="10dp"/>
+
+        <TextView
+            android:id="@+id/expiration_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/forestry"
+            android:fontFamily="@font/roboto_bold"
+            android:layout_margin="25dp"
+            android:text="@string/licence_expiration"/>
+
+        <TextView
+            android:id="@+id/expiration_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/expiration_text"
+            app:layout_constraintTop_toBottomOf="@id/expiration_text"
+            android:fontFamily="@font/roboto"
+            android:layout_marginTop="10dp"/>
+
+        <Button
+            android:id="@+id/btn_change_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/change_password"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:textColor="@color/darkGrey"
+            app:layout_constraintTop_toBottomOf="@id/expiration_date"
+            android:layout_marginTop="25dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

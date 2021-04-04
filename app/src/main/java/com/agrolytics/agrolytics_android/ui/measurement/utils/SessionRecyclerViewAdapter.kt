@@ -30,6 +30,7 @@ import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.activity.RodSelectorActivity
 import com.agrolytics.agrolytics_android.utils.ImageUtils
 import com.agrolytics.agrolytics_android.utils.SessionManager
+import com.agrolytics.agrolytics_android.utils.Util.Companion.cubicMeter
 import com.agrolytics.agrolytics_android.utils.Util.Companion.getFormattedDateTime
 import com.agrolytics.agrolytics_android.utils.Util.Companion.round
 import com.github.chrisbanes.photoview.PhotoView
@@ -109,13 +110,13 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
                 val processedImageItem = imageItem as ProcessedImageItem
                 holder.volumeTextView.visibility = View.VISIBLE
                 holder.uploadButton.visibility = View.GONE
-                holder.volumeTextView.text = processedImageItem.woodVolume.toString()
+                holder.volumeTextView.text = cubicMeter(activity, processedImageItem.woodVolume)
             }
             ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> {
                 val cachedImageItem = imageItem as CachedImageItem
                 holder.volumeTextView.visibility = View.VISIBLE
                 holder.uploadButton.visibility = View.GONE
-                holder.volumeTextView.text = cachedImageItem.woodVolume.toString()
+                holder.volumeTextView.text = cubicMeter(activity, cachedImageItem.woodVolume)
             }
             ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> {
                 holder.volumeTextView.visibility = View.GONE

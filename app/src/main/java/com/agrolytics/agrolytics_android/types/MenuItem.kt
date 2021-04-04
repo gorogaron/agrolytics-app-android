@@ -6,5 +6,5 @@ enum class MenuItem(var tag: String) {
 	MAP("MapActivity"),
 	INFO("InfoActivity"),
 	GUIDE("GuideActivity"),
-	ROD("RodSettingsPopup")
+	PROFILE("ProfileActivity")
 }

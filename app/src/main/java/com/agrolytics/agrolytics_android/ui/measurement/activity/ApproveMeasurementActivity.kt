@@ -14,6 +14,7 @@ import com.agrolytics.agrolytics_android.types.ConfigInfo.IMAGE_BROWSE
 import com.agrolytics.agrolytics_android.types.ConfigInfo.IMAGE_CAPTURE
 import com.agrolytics.agrolytics_android.types.ConfigInfo.SESSION
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
+import com.agrolytics.agrolytics_android.utils.Util
 import kotlinx.android.synthetic.main.activity_upload_finished.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
@@ -59,6 +60,8 @@ class ApproveMeasurementActivity : BaseActivity() {
 				//Új mérés vagy session áttekintése?
 				container_selection.animate().alpha(0f).duration = 300
 				container_after_selection.visibility = View.VISIBLE
+				tv_inaccurate.visibility = View.VISIBLE
+				tv_sum.visibility = View.GONE
 				container_selection.visibility = View.GONE
 			}
 			"offline" -> {
@@ -73,8 +76,9 @@ class ApproveMeasurementActivity : BaseActivity() {
 	private fun onAcceptClicked() {
 		container_selection.animate().alpha(0f).duration = 300
 		container_after_selection.visibility = View.VISIBLE
+		tv_inaccurate.visibility = View.GONE
 		container_selection.visibility = View.GONE
-		tv_result.text = processedImageItem.woodVolume.toString()
+		tv_result.text = Util.cubicMeter(this, processedImageItem.woodVolume)
 		doAsync {
 			dataClient.local.processed.add(processedImageItem)
 			dataClient.local.unprocessed.delete(unprocessedImageItem) //Ez csak az utólagos feldolgozás miatt kell

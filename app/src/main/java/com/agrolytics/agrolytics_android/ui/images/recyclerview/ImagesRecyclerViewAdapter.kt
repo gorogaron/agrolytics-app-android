@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
+import com.agrolytics.agrolytics_android.utils.Util
 import com.agrolytics.agrolytics_android.utils.Util.Companion.getFormattedDateTime
 import kotlinx.android.synthetic.main.recycler_view_session_item.view.*
 import kotlin.collections.ArrayList
@@ -43,9 +44,9 @@ class ImagesRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arra
 
     override fun onBindViewHolder(holder: SessionViewHolder, position: Int) {
         val sessionItem = itemList[position]
-        holder.lengthTextView.text = if (sessionItem.woodLength >= 0) sessionItem.woodLength.toString() else activity.getString(R.string.varies)
+        holder.lengthTextView.text = if (sessionItem.woodLength >= 0) Util.meter(activity, sessionItem.woodLength) else activity.getString(R.string.varies)
         holder.typeTextView.text = if (sessionItem.woodType != "") sessionItem.woodType else activity.getString(R.string.varies)
-        holder.volumeTextView.text = if (sessionItem.woodVolume >= 0) sessionItem.woodVolume.toString() else activity.getString(R.string.not_done)
+        holder.volumeTextView.text = if (sessionItem.woodVolume >= 0) Util.cubicMeter(activity, sessionItem.woodVolume) else activity.getString(R.string.not_done)
         holder.dateTextView.text = getFormattedDateTime(sessionItem.sessionId)
         holder.sessionImage.setImageBitmap(sessionItem.sessionImage)
     }

@@ -210,6 +210,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="bottom|center_horizontal"
                                 android:clickable="false"
+                                android:textSize="10sp"
                                 android:text="@string/menu"
                                 android:textColor="@color/darkGrey" />
                         </FrameLayout>
@@ -239,6 +240,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="bottom|center_horizontal"
                                 android:clickable="false"
+                                android:textSize="10sp"
                                 android:text="@string/parameters"
                                 android:textColor="@color/darkGrey" />
                         </FrameLayout>
@@ -277,6 +279,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="bottom|center_horizontal"
                                 android:clickable="false"
+                                android:textSize="10sp"
                                 android:text="@string/measurements"
                                 android:textColor="@color/darkGrey" />
                         </FrameLayout>
@@ -306,6 +309,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="bottom|center_horizontal"
                                 android:clickable="false"
+                                android:textSize="10sp"
                                 android:text="@string/map"
                                 android:textColor="@color/darkGrey" />
                         </FrameLayout>
