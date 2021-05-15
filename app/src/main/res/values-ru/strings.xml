@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Agrolytics</string>
+    <string name="unexpected_error">Произошла непредвиденная ошибка. Попробуйте перезапустить приложение</string>
+    <string name="error_retry">Произошла ошибка. Повторите попытку.</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="cancel">Отменить</string>
+    <string name="exit">Выход</string>
+    <string name="no_internet">Нет доступа в интернет</string>
+    <string name="auth_failed">Неправильный адрес электронной почты или пароль</string>
+    <string name="licence_expired">Срок действия пользовательской лицензии истек. Просим связаться с нами.</string>
+    <string name="write_email_password">Введите свой логин и пароль</string>
+    <string name="unexpected_login_error">При входе в систему произошла непредвиденная ошибка</string>
+    <string name="succesful_login">Вход успешно завершен</string>
+    <string name="hint_password">Пароль</string>
+    <string name="btn_login">Войти</string>
+    <string name="logout">Выйти</string>
+    <string name="map">Карта</string>
+    <string name="image_saved">Изображение сохранено</string>
+    <string name="select_area">Выделите необходимую</string>
+    <string name="upload_delete_error">Невозможно удаление изображения во время загрузки</string>
+    <string name="crop">Вырезать</string>
+    <string name="done">Готово</string>
+    <string name="more_declined">Неправильное выделение. Изображение удалено с телефона</string>
+    <string name="length_of_rod">Укажите размер метрового стерженя (м)</string>
+    <string name="length_of_wood">Укажите длинну штабеля бревн</string>
+    <string name="is_fill_correct_message">Правильно выделен объект на изображении?</string>
+    <string name="logs_volume">Объем штабеля бревн</string>
+    <string name="show_session_broken">Просмотр\nгрупп\nизмерений</string>
+    <string name="finish_session">финиш</string>
+    <string name="new_image">Новое\nизображение</string>
+    <string name="confirmation">Подтверждение</string>
+    <string name="inaccurate_measurement">Неточное измерение</string>
+    <string name="show_session">Обзор рабочего процесса</string>
+    <string name="save_for_online">Сохранить для онлайн обработки</string>
+    <string name="confirm_delete">Вы уверены, что хотите удалить этот элемент?</string>
+    <string name="volume">Объем</string>
+    <string name="length">Длина</string>
+    <string name="species">Вид дерева</string>
+    <string name="date">Дата</string>
+    <string name="no_internet_how_to_proceed">Интернет-соединение неверное. Как вы хотите продолжить?</string>
+    <string name="select_species">Выберите вид дерева</string>
+    <string name="process">Процесс обработки</string>
+    <string name="state">Состояние</string>
+    <string name="varies">Переменная</string>
+    <string name="not_done">Не готово</string>
+    <string name="save_image_for_later">Сохранить изображение для последующей обработки</string>
+    <string name="measure_offline">Измерение оффлайн</string>
+    <string name="select_image">Выбор изображения</string>
+    <string name="camera">Камера</string>
+    <string name="browse">Вырезать</string>
+    <string name="quit_confirm">Вы уверены, что хотите выйти без сохранения? %d Новое добавленное изображение будет удалено.</string>
+    <string name="unprocessed_warning">Группа мзмерений содержит не обработанные элементы. Загрузка полседних добавленных измерений начнется после того, как завершится обработка всех измерений в группе.</string>
+    <string name="impressum">Импрессум</string>
+    <string name="information">Информация</string>
+    <string name="information_contact">Информация, контакты</string>
+    <string name="company_name">Название компании</string>
+    <string name="email_address">Адрес электронной почты</string>
+    <string name="phone_number">Телефонный номер</string>
+    <string name="web">Веб</string>
+    <string name="guide_text">
+        Повысить точность измерения можно сведя к минимуму при съемке эффекты происходящые от искажения изображения.
+        Для этого необходимо следить за следующем: \n \n
+        \u0009 &#8226; Штабели бревн следует фотографировать спереди\n
+        \u0009 &#8226; FНе фотографируйте против света или в словиях плохой видимости\n
+        \u0009 &#8226; В качестве эталонного объекта, по возможности используйте метровой стержень\n
+        \u0009 &#8226; Выделение на изоброжение должно быть как можно меньше (содержать только штабель)\n
+        \u0009 &#8226; Следите за правильным выделением метрового стерженя\n
+    </string>
+    <string name="guide">Гид</string>
+    <string name="guide_for_accuracy">Советы</string>
+    <string name="toolbar_images">Группы измерений</string>
+    <string name="toolbar_map">Карта</string>
+    <string name="images_without_coordinates">Изображения без координат: %d</string>
+    <string name="profile">Профиль</string>
+    <string name="forestry">Лесное хозяйство</string>
+    <string name="licence_expiration">Срок лицензии</string>
+    <string name="change_password">Изменить пароль</string>
+    <string name="current_password">Текущий пароль</string>
+    <string name="new_password">Новый пароль</string>
+    <string name="new_password_again">Новый пароль еще раз</string>
+</resources>

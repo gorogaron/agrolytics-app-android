@@ -4,10 +4,10 @@ import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.agrolytics.agrolytics_android.types.ConfigInfo
+import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageSegmentation
 import com.google.common.truth.Truth.assertThat
 import com.google.firebase.FirebaseApp
-import io.mockk.coEvery
-import io.mockk.spyk
+import io.mockk.*
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -24,6 +24,10 @@ class LoginPresenterTest : KoinTest {
     @Before
     fun setUp() {
         MockitoAnnotations.openMocks(this)
+
+        //Mock ImageSegmentation
+        mockkObject(ImageSegmentation)
+        every { ImageSegmentation.init(any()) } returns Unit
     }
 
     @Test
@@ -37,7 +41,7 @@ class LoginPresenterTest : KoinTest {
         val password = "password"
 
         coEvery { loginPresenter.signInFirebaseUser(email, password) } returns ConfigInfo.LOGIN.SUCCESS
-        coEvery { loginPresenter.hasLoggedInUserExpired() } returns ConfigInfo.LOGIN.USER_EXPIRED
+        coEvery { loginPresenter.checkLicence() } returns ConfigInfo.LOGIN.USER_EXPIRED
         coEvery { loginPresenter.saveCurrentUser() } returns Unit
 
         val loginReturnCode = loginPresenter.login(email, password)
@@ -56,7 +60,7 @@ class LoginPresenterTest : KoinTest {
         val password = "password"
 
         coEvery { loginPresenter.signInFirebaseUser(email, password) } returns ConfigInfo.LOGIN.SUCCESS
-        coEvery { loginPresenter.hasLoggedInUserExpired() } returns ConfigInfo.LOGIN.SUCCESS
+        coEvery { loginPresenter.checkLicence() } returns ConfigInfo.LOGIN.SUCCESS
         coEvery { loginPresenter.saveCurrentUser() } returns Unit
 
         val loginReturnCode = loginPresenter.login(email, password)

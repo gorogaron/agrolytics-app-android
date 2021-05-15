@@ -9,8 +9,8 @@
     <string name="no">Nem</string>
     <string name="cancel">Mégse</string>
     <string name="exit">Kilépés</string>
-    <string name="meter">m</string>
-    <string name="cubic_meter">m³</string>
+    <string name="meter" translatable="false">m</string>
+    <string name="cubic_meter" translatable="false">m³</string>
 
     <!-- Login -->
     <string name="no_internet">Nincs internetkapcsolat</string>
@@ -19,7 +19,7 @@
     <string name="write_email_password">Írja be a felhasználónevet és jelszót</string>
     <string name="unexpected_login_error">Váratlan hiba történt a bejelentkezés során</string>
     <string name="succesful_login">Sikeres bejelentkezés</string>
-    <string name="hint_email">Email</string>
+    <string name="hint_email" translatable="false">E-mail</string>
     <string name="hint_password">Jelszó</string>
     <string name="btn_login">Bejelentkezés</string>
     <string name="logout">Kijelentkezés</string>
@@ -81,13 +81,13 @@
     <string name="information">Információ</string>
     <string name="information_contact">Információk, kapcsolat</string>
     <string name="company_name">Cégnév</string>
-    <string name="agrolytics_kft">Agrolytics Kft.</string>
-    <string name="email_address">Email cím</string>
-    <string name="contact_email_address">contact@agrolytics.hu</string>
+    <string name="agrolytics_kft" translatable="false">Agrolytics Kft.</string>
+    <string name="email_address">E-mail cím</string>
+    <string name="contact_email_address" translatable="false">contact@agrolytics.hu</string>
     <string name="phone_number">Telefonszám</string>
-    <string name="contact_phone_number">+36 30 612 2653</string>
+    <string name="contact_phone_number" translatable="false">+36 30 612 2653</string>
     <string name="web">Web</string>
-    <string name="web_url">www.agrolytics.hu</string>
+    <string name="web_url" translatable="false">www.agrolytics.hu</string>
 
     <!-- Guide -->
     <string name="guide_text">
@@ -111,7 +111,7 @@
 
     <!-- Profile -->
     <string name="profile">Profil</string>
-    <string name="email">E-mail</string>
+    <string name="email" translatable="false">E-mail</string>
     <string name="forestry">Erdészet</string>
     <string name="licence_expiration">Licenc érvényessége</string>
     <string name="change_password">Jelszó megváltoztatása</string>
