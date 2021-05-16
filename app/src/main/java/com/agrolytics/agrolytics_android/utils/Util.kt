@@ -4,6 +4,8 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -100,6 +102,15 @@ class Util {
 
         fun cubicMeter(context: Context, value : Double) : String {
             return value.toString() + " " + context.getString(R.string.cubic_meter)
+        }
+
+        fun setLocale(context: Context, languageCode: String) {
+            val locale = Locale(languageCode)
+            Locale.setDefault(locale)
+            val resources: Resources = context.resources
+            val config: Configuration = resources.configuration
+            config.setLocale(locale)
+            resources.updateConfiguration(config, resources.displayMetrics)
         }
 
     }

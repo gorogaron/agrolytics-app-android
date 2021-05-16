@@ -17,6 +17,7 @@ class SessionManager(var context: Context) {
 	private val ROD_LENGTH = "wood.rod.length"
 	private val SESSION_FILE_NAME = "session.filename"
 	private val START_MEASUREMENT = "start.measurement"
+	private val LANGUAGE = "language"
 
 	private val sharedPreferences: SharedPreferences =
 		context.getSharedPreferences(SESSION_FILE_NAME, Context.MODE_PRIVATE)
@@ -66,6 +67,9 @@ class SessionManager(var context: Context) {
 		get() = sharedPreferences.getLong(START_MEASUREMENT, 0L)
 		set(start) = sharedPreferences.edit().putLong(START_MEASUREMENT, start).apply()
 
+	var language: String
+		get() = sharedPreferences.getString(LANGUAGE, "")!!
+		set(language) = sharedPreferences.edit().putString(LANGUAGE, language).apply()
 
 	fun clearSession() {
 		sharedPreferences.edit()

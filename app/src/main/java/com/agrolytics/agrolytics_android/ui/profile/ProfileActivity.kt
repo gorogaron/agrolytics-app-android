@@ -10,6 +10,7 @@ import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import com.agrolytics.agrolytics_android.ui.main.MainActivity
 import com.agrolytics.agrolytics_android.utils.SessionManager
+import com.agrolytics.agrolytics_android.utils.Util
 import com.agrolytics.agrolytics_android.utils.Util.Companion.getFormattedDateTime
 import kotlinx.android.synthetic.main.activity_profile.*
 import org.koin.android.ext.android.inject
@@ -41,15 +42,15 @@ class ProfileActivity : BaseActivity() {
         val dialog = builder.create()
 
         view.findViewById<TextView>(R.id.btn_english).setOnClickListener {
-            setLocale("en")
+            changeAppLanguage("en")
             dialog.cancel()
         }
         view.findViewById<TextView>(R.id.btn_russian).setOnClickListener {
-            setLocale("ru")
+            changeAppLanguage("ru")
             dialog.cancel()
         }
         view.findViewById<TextView>(R.id.btn_hungarian).setOnClickListener {
-            setLocale("hu")
+            changeAppLanguage("hu")
             dialog.cancel()
         }
 
@@ -57,13 +58,9 @@ class ProfileActivity : BaseActivity() {
         dialog.show()
     }
 
-    private fun setLocale(languageCode: String?) {
-        val locale = Locale(languageCode)
-        Locale.setDefault(locale)
-        val resources: Resources = this.resources
-        val config: Configuration = resources.configuration
-        config.setLocale(locale)
-        resources.updateConfiguration(config, resources.displayMetrics)
+    private fun changeAppLanguage(languageCode : String) {
+        sessionManager.language = languageCode
+        Util.setLocale(this@ProfileActivity, languageCode)
 
         //Új MainActivity indítása, hogy érvénybe lépjen a nyelv változtatás
         val intent = Intent(this, MainActivity::class.java)
