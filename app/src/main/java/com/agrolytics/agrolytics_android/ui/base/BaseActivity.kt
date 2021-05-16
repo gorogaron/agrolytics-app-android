@@ -18,7 +18,6 @@ import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
 import com.agrolytics.agrolytics_android.utils.connection.ConnectionLiveData
-import org.jetbrains.anko.contentView
 
 abstract class BaseActivity : AppCompatActivity(), BaseScreen {
 

@@ -62,18 +62,24 @@ class SessionActivity : BaseActivity() {
             viewModel.getAllLocalImagesInSession(sessionId)
         })
         viewModel.imageItemsInSession.observe(this, Observer {
-            if (!::recyclerViewAdapter.isInitialized) {
-                recyclerViewAdapter = SessionRecyclerViewAdapter(this@SessionActivity, it)
-                recyclerViewLayoutManager = LinearLayoutManager(this@SessionActivity)
-                recycler_view.layoutManager = recyclerViewLayoutManager
-                recycler_view.adapter = recyclerViewAdapter
+            if (it.size > 0) {
+                if (!::recyclerViewAdapter.isInitialized) {
+                    recyclerViewAdapter = SessionRecyclerViewAdapter(this@SessionActivity, it)
+                    recyclerViewLayoutManager = LinearLayoutManager(this@SessionActivity)
+                    recycler_view.layoutManager = recyclerViewLayoutManager
+                    recycler_view.adapter = recyclerViewAdapter
+                }
+                else {
+                    recyclerViewAdapter.itemList = it
+                }
+                val sumVolumeValue = calculateVolume(it)
+                sum_volume.text = if (viewModel.isSessionDone()) Util.cubicMeter(this, sumVolumeValue) else getString(R.string.not_done)
+                recyclerViewAdapter.notifyDataSetChanged()
             }
             else {
-                recyclerViewAdapter.itemList = it
+                showToast(getString(R.string.empty_session))
+                finish()
             }
-            val sumVolumeValue = calculateVolume(it)
-            sum_volume.text = if (sumVolumeValue == 0.0) getString(R.string.not_done) else Util.cubicMeter(this, sumVolumeValue)
-            recyclerViewAdapter.notifyDataSetChanged()
         })
     }
 

@@ -74,7 +74,7 @@ class Util {
             spinner.adapter = spinnerAdapter
 
             builder.setView(view)
-            builder.setPositiveButton("Ok") { dialog, which ->
+            builder.setPositiveButton("Ok") { _, _ ->
                 if (et_length_rod.text.isNotEmpty()) {
                     sessionManager.rodLength = et_length_rod.text.toString().toFloat()
                     sessionManager.woodType = spinner.selectedItem.toString()

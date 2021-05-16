@@ -47,4 +47,18 @@ class SessionViewModel: ViewModel(), KoinComponent {
         imageItemsInSession.postValue(imageItemList)
     }
 
+    fun isSessionDone() : Boolean {
+        if (imageItemsInSession.value != null) {
+            for (imageItem in imageItemsInSession.value!!) {
+                if (imageItem.getItemType() == ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED) {
+                    return false
+                }
+            }
+        }
+        else {
+            return false
+        }
+        return true
+    }
+
 }

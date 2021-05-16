@@ -1,8 +1,10 @@
 package com.agrolytics.agrolytics_android.ui.measurement
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import androidx.appcompat.app.AppCompatActivity
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
@@ -190,6 +192,10 @@ object MeasurementManager : KoinComponent{
     fun clearMeasurementSession(){
         currentSessionId = 0
         recentlyAddedItemTimestamps.clear()
+    }
+
+    fun deleteFromRecentlyAddedItemTimestamps(timeStampToDelete : Long) {
+        recentlyAddedItemTimestamps.remove(timeStampToDelete)
     }
 
 }

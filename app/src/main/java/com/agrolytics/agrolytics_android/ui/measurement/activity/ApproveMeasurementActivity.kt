@@ -55,7 +55,9 @@ class ApproveMeasurementActivity : BaseActivity() {
 	private fun onDeclineClicked() {
 		when (method){
 			"online" -> {
-				doAsync { dataClient.local.unprocessed.delete(unprocessedImageItem) } //Ez csak az utólagos feldolgozás miatt kell
+				doAsync {
+				dataClient.local.unprocessed.delete(unprocessedImageItem) } //Ez csak az utólagos feldolgozás miatt kell
+				MeasurementManager.deleteFromRecentlyAddedItemTimestamps(unprocessedImageItem.timestamp)
 
 				//Új mérés vagy session áttekintése?
 				container_selection.animate().alpha(0f).duration = 300
@@ -82,6 +84,7 @@ class ApproveMeasurementActivity : BaseActivity() {
 		doAsync {
 			dataClient.local.processed.add(processedImageItem)
 			dataClient.local.unprocessed.delete(unprocessedImageItem) //Ez csak az utólagos feldolgozás miatt kell
+			MeasurementManager.deleteFromRecentlyAddedItemTimestamps(unprocessedImageItem.timestamp)
 			MeasurementManager.recentlyAddedItemTimestamps.add(processedImageItem.timestamp)
 		}
 	}

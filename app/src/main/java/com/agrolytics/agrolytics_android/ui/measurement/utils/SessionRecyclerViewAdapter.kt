@@ -191,9 +191,11 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
                     }
                     ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> {
                         dataClient.local.processed.delete(imageItem as ProcessedImageItem)
+                        MeasurementManager.deleteFromRecentlyAddedItemTimestamps(imageItem.timestamp)   //Ha egy aktív mérés folyik, töröljük ott is a képet
                     }
                     ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> {
                         dataClient.local.unprocessed.delete(imageItem as UnprocessedImageItem)
+                        MeasurementManager.deleteFromRecentlyAddedItemTimestamps(imageItem.timestamp)   //Ha egy aktív mérés folyik, töröljük ott is a képet
                     }
                 }
                 withContext(Dispatchers.Main){
