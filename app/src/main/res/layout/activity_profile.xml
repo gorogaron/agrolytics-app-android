@@ -100,16 +100,34 @@
             android:fontFamily="@font/roboto"
             android:layout_marginTop="10dp"/>
 
-        <Button
-            android:id="@+id/btn_change_password"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/change_password"
+            android:orientation="vertical"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:textColor="@color/darkGrey"
             app:layout_constraintTop_toBottomOf="@id/expiration_date"
-            android:layout_marginTop="25dp"/>
+            android:weightSum="1.0"
+            android:padding="10dp"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/btn_change_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/change_password"
+                android:textColor="@color/darkGrey"/>
+
+            <Button
+                android:id="@+id/btn_change_language"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/change_language"
+                android:textColor="@color/darkGrey"/>
+
+        </LinearLayout>
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

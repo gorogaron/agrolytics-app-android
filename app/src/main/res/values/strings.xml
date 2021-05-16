@@ -75,6 +75,7 @@
     <string name="quit_confirm">Biztosan ki szeretne lépni mentés nélkül? %d újonnan hozzáadott kép törlésre kerül.</string>
     <string name="unprocessed_warning">A méréscsoport tartalmaz még nem feldolgozott elemeket. A legutóbb hozzáadott mérések
         feltöltése akkor kezdődik meg, ha a csoportban minden mérés fel lett dolgozva.</string>
+    <string name="empty_session">A méréscsoport nem tartalmaz elemeket.</string>
 
     <!-- Information -->
     <string name="impressum">Impresszum</string>
@@ -118,5 +119,9 @@
     <string name="current_password">Jelenlegi jelszó</string>
     <string name="new_password">Új jelszó</string>
     <string name="new_password_again">Új jelszó mégegyszer</string>
+    <string name="change_language">Nyelv megváltoztatása</string>
+    <string name="english" translatable="false">English</string>
+    <string name="hungarian" translatable="false">Magyar</string>
+    <string name="russian" translatable="false">русский</string>
 
 </resources>

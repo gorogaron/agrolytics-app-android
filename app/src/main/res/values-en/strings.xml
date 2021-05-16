@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Agrolytics</string>
-    <string name="unexpected_error">An unexpected error has occured, try to restart the application</string>
-    <string name="error_retry">An error has occured, try again</string>
+    <string name="unexpected_error">An unexpected error has occurred, try to restart the application</string>
+    <string name="error_retry">An error has occurred, try again</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="cancel">Cancel</string>
@@ -11,7 +11,7 @@
     <string name="auth_failed">Wrong e-mail or password</string>
     <string name="licence_expired">The licence for this user has expired, please contact us</string>
     <string name="write_email_password">Type in the e-mail address and password</string>
-    <string name="unexpected_login_error">An unexpected error has occured while logging in</string>
+    <string name="unexpected_login_error">An unexpected error has occurred while logging in</string>
     <string name="succesful_login">Successful login</string>
     <string name="hint_password">Password</string>
     <string name="btn_login">Login</string>
@@ -85,9 +85,11 @@
         The accuracy of the measurement can be improved, if we intent to minimize the effects caused by perspective distortions.
         It is recommended to consider the following points: \n \n
         \u0009 &#8226; The wood pile image shall be capturent from exactly the front\n
-        \u0009 &#8226; Don not capture image in case of poor visibility\n
+        \u0009 &#8226; Do not capture image in case of poor visibility\n
         \u0009 &#8226; Use a meter rod as a reference object\n
         \u0009 &#8226; The cropped area on the image should have a minimal size (it should only contain the wood pile)\n
         \u0009 &#8226; Make sure to accurately select the 2 points of the meter rod\n
     </string>
+    <string name="change_language">Change language</string>
+    <string name="empty_session">The session does not contain any items.</string>
 </resources>
