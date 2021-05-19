@@ -132,8 +132,8 @@ object MeasurementManager : KoinComponent{
         return appServer.uploadImage(request)
     }
 
-    fun startOfflineMeasurement(unprocessedImageItem : UnprocessedImageItem) : ProcessedImageItem {
-        val (mask, numOfWoodPixels) = ImageSegmentation.segment(unprocessedImageItem.image!!)
+    fun startOfflineMeasurement(unprocessedImageItem : UnprocessedImageItem, croppedResizedImageBlackBg : Bitmap) : ProcessedImageItem {
+        val (mask, numOfWoodPixels) = ImageSegmentation.segment(croppedResizedImageBlackBg)
         //TODO: drawMaskOnInputImage és ImageSegmentation.segment egyesítése
         val (maskedImg, _) = ImageUtils.drawMaskOnInputImage(unprocessedImageItem.image!!, mask)
         return ProcessedImageItem(unprocessedImageItem, numOfWoodPixels, maskedImg)

@@ -158,7 +158,7 @@ class RodSelectorActivity : BaseActivity(){
 	private fun measureOffline(unprocessedImageItem: UnprocessedImageItem){
 		showLoading()
 		GlobalScope.launch {
-			val processedImageItem = MeasurementManager.startOfflineMeasurement(unprocessedImageItem)
+			val processedImageItem = MeasurementManager.startOfflineMeasurement(unprocessedImageItem, croppedResizedImageBlackBg!!)
 			MeasurementManager.startApproveMeasurementActivity(this@RodSelectorActivity, processedImageItem, unprocessedImageItem, "offline")
 			finish()
 			correspondingCropperActivity!!.finish()
