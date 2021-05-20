@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="wood_types">
+        <item>Бук</item>
+        <item>Рябина</item>
+        <item>Бузина</item>
+        <item>Черешня - Вишня</item>
+        <item>Ольха</item>
+        <item>Сосна</item>
+        <item>Ива</item>
+        <item>Боярышник</item>
+        <item>Граб</item>
+        <item>Липа</item>
+        <item>Пихта</item>
+        <item>Клён</item>
+        <item>Бересклет</item>
+        <item>Ясень обыкновенный</item>
+        <item>Можжевельник обыкновенный</item>
+        <item>Тополь</item>
+        <item>Береза</item>
+        <item>Лещина</item>
+        <item>Самшит</item>
+        <item>Палисандр</item>
+        <item>Каштан</item>
+        <item>Вяз</item>
+        <item>Дуб австрийский</item>
+        <item>Тис ягодный</item>
+        <item>Яблоня лесная</item>
+        <item>Груша лесная</item>
+        <item>Лиственница</item>
+    </string-array>
+</resources>
