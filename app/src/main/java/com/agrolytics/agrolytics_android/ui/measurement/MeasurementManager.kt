@@ -1,10 +1,8 @@
 package com.agrolytics.agrolytics_android.ui.measurement
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
@@ -17,7 +15,6 @@ import com.agrolytics.agrolytics_android.ui.measurement.activity.RodSelectorActi
 import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
-import com.agrolytics.agrolytics_android.ui.main.MainActivity
 import com.agrolytics.agrolytics_android.ui.measurement.activity.ApproveMeasurementActivity
 import com.agrolytics.agrolytics_android.ui.measurement.activity.SessionActivity
 import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageSegmentation
@@ -28,8 +25,6 @@ import org.jetbrains.anko.toast
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import retrofit2.Response
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 object MeasurementManager : KoinComponent{
 
@@ -45,7 +40,7 @@ object MeasurementManager : KoinComponent{
     }
 
     fun startNewMeasurementSession(callingActivity : BaseActivity, imagePickerID: ImagePickerID) {
-        val currentTimeStamp = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
+        val currentTimeStamp = System.currentTimeMillis() / 1000
         if (currentSessionId == 0L) {
             currentSessionId = currentTimeStamp
             hookImage(callingActivity, imagePickerID)
@@ -81,7 +76,7 @@ object MeasurementManager : KoinComponent{
     }
 
     fun hookImage(callingActivity : BaseActivity, imagePickerID : ImagePickerID){
-        val currentTimeStamp = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
+        val currentTimeStamp = System.currentTimeMillis() / 1000
         sessionManager.measurementStartTimestamp = currentTimeStamp
 
         if (imagePickerID == ImagePickerID.ID_CAMERA){

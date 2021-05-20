@@ -2,20 +2,12 @@ package com.agrolytics.agrolytics_android.data.firebase
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.net.Uri
 import com.agrolytics.agrolytics_android.data.firebase.model.FireBaseStorageItem
 import com.agrolytics.agrolytics_android.data.firebase.model.ImageDirectory
-import com.agrolytics.agrolytics_android.data.local.TypeConverter
 import com.agrolytics.agrolytics_android.utils.ImageUtils
-import com.agrolytics.agrolytics_android.utils.SessionManager
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageMetadata
 import com.google.firebase.storage.StorageReference
-import java.io.IOException
-import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
-import java.time.LocalDateTime
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine

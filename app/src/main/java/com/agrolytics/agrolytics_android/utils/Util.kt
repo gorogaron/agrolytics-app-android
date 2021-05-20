@@ -1,9 +1,9 @@
 package com.agrolytics.agrolytics_android.utils
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.view.LayoutInflater
@@ -14,22 +14,8 @@ import android.widget.EditText
 import android.widget.Spinner
 import androidx.core.content.ContextCompat
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.ui.main.MainActivity
-import com.agrolytics.agrolytics_android.ui.measurement.activity.SessionActivity
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import okhttp3.internal.UTC
-import java.io.IOException
-import java.net.*
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 import kotlin.math.round
 
 
@@ -44,10 +30,12 @@ class Util {
             inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
         }
 
+        @SuppressLint("SimpleDateFormat")
         fun getFormattedDateTime(epochSeconds : Long) : String {
-            val localDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(epochSeconds), ZoneId.of("UTC+1"))
-            val localDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-            return localDateTimeFormatter.format(localDateTime)
+            //A SimpleDateFormat objektum már a rendszer időzónáját kezelni fogja, és annak megfelelően
+            //konvertálja string-gé az unix timestampet.
+            val date = Date(epochSeconds * 1000)
+            return SimpleDateFormat("yyyy-MM-dd HH:mm").format(date)
         }
 
         fun Double.round(decimals: Int): Double {

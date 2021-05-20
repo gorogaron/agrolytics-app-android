@@ -2,18 +2,14 @@ package com.agrolytics.agrolytics_android.ui.login
 
 import android.content.Context
 import android.util.Log
-import com.agrolytics.agrolytics_android.data.firebase.model.FireStoreCollection
 import com.agrolytics.agrolytics_android.data.firebase.model.FireStoreForestryField
 import com.agrolytics.agrolytics_android.data.firebase.model.FireStoreUserField
 import com.agrolytics.agrolytics_android.ui.base.BasePresenter
 import com.agrolytics.agrolytics_android.types.ConfigInfo
-import com.agrolytics.agrolytics_android.utils.Util
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import org.jetbrains.anko.doAsync
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -97,7 +93,7 @@ class LoginPresenter(val context: Context) : BasePresenter<LoginScreen>() {
 
     private fun hasLicenceExpired() : Boolean {
         val expirationDate = forestryDocument[FireStoreForestryField.EXPIRATION.tag] as Timestamp
-        val currentTime = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
+        val currentTime = System.currentTimeMillis() / 1000
 
         return expirationDate.seconds < currentTime
     }
