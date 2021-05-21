@@ -128,12 +128,12 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
         }
 
         holder.stateTextView.text = when(itemStateList[position]) {
-            ConfigInfo.IMAGE_ITEM_STATE.BEING_UPLOADED -> {"Feltöltés alatt"}
-            ConfigInfo.IMAGE_ITEM_STATE.READY_TO_UPLOAD -> {"Feltöltésre kész"}
-            ConfigInfo.IMAGE_ITEM_STATE.UPLOADED -> {"Feltöltve"}
-            ConfigInfo.IMAGE_ITEM_STATE.WAITING_FOR_PROCESSING -> {"Feldolgozásra vár"}
+            ConfigInfo.IMAGE_ITEM_STATE.BEING_UPLOADED -> {activity.getString(R.string.item_state_being_uploaded)}
+            ConfigInfo.IMAGE_ITEM_STATE.READY_TO_UPLOAD -> {activity.getString(R.string.item_state_ready_to_upload)}
+            ConfigInfo.IMAGE_ITEM_STATE.UPLOADED -> {activity.getString(R.string.item_state_uploaded)}
+            ConfigInfo.IMAGE_ITEM_STATE.WAITING_FOR_PROCESSING -> {activity.getString(R.string.item_state_waiting_for_processing)}
             ConfigInfo.IMAGE_ITEM_STATE.UNDEFINED -> {""}
-            ConfigInfo.IMAGE_ITEM_STATE.BEING_DELETED -> {"Törlés alatt"}
+            ConfigInfo.IMAGE_ITEM_STATE.BEING_DELETED -> {activity.getString(R.string.item_state_being_deleted)}
         }
     }
 

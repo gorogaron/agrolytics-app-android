@@ -77,6 +77,12 @@
         feltöltése akkor kezdődik meg, ha a csoportban minden mérés fel lett dolgozva.</string>
     <string name="empty_session">A méréscsoport nem tartalmaz elemeket.</string>
 
+    <string name="item_state_being_uploaded">Feltöltés alatt</string>
+    <string name="item_state_ready_to_upload">Feltöltésre kész</string>
+    <string name="item_state_uploaded">Feltöltve</string>
+    <string name="item_state_waiting_for_processing">Feldolgozásra vár</string>
+    <string name="item_state_being_deleted">Törlés alatt</string>
+
     <!-- Information -->
     <string name="impressum">Impresszum</string>
     <string name="information">Információ</string>
