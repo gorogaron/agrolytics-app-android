@@ -1,6 +1,7 @@
 package com.agrolytics.agrolytics_android.data.firebase
 
 import com.agrolytics.agrolytics_android.data.firebase.model.FireStoreCollection
+import com.agrolytics.agrolytics_android.data.firebase.model.FireStoreDeletedImagesField
 import com.agrolytics.agrolytics_android.data.firebase.model.FireStoreImageItem
 import com.agrolytics.agrolytics_android.data.firebase.model.FireStoreImagesField
 import com.agrolytics.agrolytics_android.utils.SessionManager
@@ -22,10 +23,10 @@ class FireStore: KoinComponent {
     private lateinit var fireStoreUpdateListener : ListenerRegistration
     private lateinit var fireStoreDeleteListener : ListenerRegistration
 
-    suspend fun upload(fireStoreImageItem: FireStoreImageItem, collection: FireStoreCollection): String = suspendCoroutine { cont ->
+    suspend fun upload(fireStoreImageItem: FireStoreImageItem, collection: FireStoreCollection): DocumentReference = suspendCoroutine { cont ->
         firestore.collection(collection.tag).add(fireStoreImageItem.toHashMap())
             .addOnSuccessListener {
-                cont.resume(it.id)
+                cont.resume(it)
             }
             .addOnFailureListener {
                 cont.resumeWithException(it)
@@ -58,8 +59,7 @@ class FireStore: KoinComponent {
                 .addOnFailureListener { cont.resumeWithException(it) }
         }
 
-    //TODO: Ha nincs net, ez a végtelenségig blokkolni fog...
-    suspend fun deleteImage(firestoreId : String) : Boolean = suspendCoroutine {cont->
+    private suspend fun deleteImage(firestoreId : String) : Boolean = suspendCoroutine { cont->
         val imageRef = firestore.collection(FireStoreCollection.IMAGES.tag).document(firestoreId)
         imageRef.delete()
             .addOnSuccessListener { cont.resume(true) }
@@ -69,11 +69,13 @@ class FireStore: KoinComponent {
     suspend fun moveImageToDeletedCollection(fireStoreImageItem: FireStoreImageItem) : Boolean {
         val deleteResult = deleteImage(fireStoreImageItem.firestoreId)
         if (deleteResult) {
+            fireStoreImageItem.timestampOfDeletion = System.currentTimeMillis() / 1000
             upload(fireStoreImageItem, FireStoreCollection.DELETED_IMAGES)
             return true
         }
         return false
     }
+
 
     //TODO: listenForAddeditems és listenForDeletedItems egységesítése
     @ExperimentalCoroutinesApi

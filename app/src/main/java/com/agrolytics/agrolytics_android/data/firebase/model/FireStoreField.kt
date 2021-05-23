@@ -24,6 +24,11 @@ enum class FireStoreImagesField(var tag: String) {
     LOCATION("location")
 }
 
+//TODO: a deleted images collectionben benne van a többi field is, egységesíteni kéne valahogy az enum classokat
+enum class FireStoreDeletedImagesField(var tag: String){
+    TIMESTAMP_OF_DELETION("timestamp_of_deletion")
+}
+
 enum class FireStoreUserField(var tag: String) {
     EMAIL("email"),
     FORESTRY_ID("forestry_id"),

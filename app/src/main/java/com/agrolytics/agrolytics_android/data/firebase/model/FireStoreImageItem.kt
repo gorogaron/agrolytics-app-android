@@ -4,7 +4,7 @@ import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.QueryDocumentSnapshot
 
-data class FireStoreImageItem(
+open class FireStoreImageItem(
     val timestamp: Long,
     val sessionId: Long,
     val forestryId: String,
@@ -15,7 +15,8 @@ data class FireStoreImageItem(
     val woodLength: Double,
     val woodVolume: Double,
     val location: GeoPoint? = null,
-    var firestoreId: String
+    var firestoreId: String,
+    var timestampOfDeletion: Long? = null
 ) {
 
     constructor(document : QueryDocumentSnapshot) : this(
@@ -47,7 +48,7 @@ data class FireStoreImageItem(
     )
 
     fun toHashMap() : HashMap<String, Any?> {
-        return hashMapOf(
+        val hashMap : HashMap<String, Any?> =  hashMapOf(
             FireStoreImagesField.TIMESTAMP.tag to this.timestamp,
             FireStoreImagesField.SESSION_ID.tag to this.sessionId,
             FireStoreImagesField.FORESTRY_ID.tag to this.forestryId,
@@ -59,5 +60,9 @@ data class FireStoreImageItem(
             FireStoreImagesField.WOOD_VOLUME.tag to this.woodVolume,
             FireStoreImagesField.LOCATION.tag to this.location
             )
+        if (this.timestampOfDeletion != null) {
+            hashMap[FireStoreDeletedImagesField.TIMESTAMP_OF_DELETION.tag] = this.timestampOfDeletion
+        }
+        return hashMap
     }
 }

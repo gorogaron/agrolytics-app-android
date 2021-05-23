@@ -45,7 +45,7 @@ class FireBaseDataClient: KoinComponent {
             location = processedImageItem.location,
             firestoreId = ""
         )
-        firestoreImageItem.firestoreId = fireStore.upload(firestoreImageItem, FireStoreCollection.IMAGES)
+        firestoreImageItem.firestoreId = fireStore.upload(firestoreImageItem, FireStoreCollection.IMAGES).id
 
         return CachedImageItem(
             timestamp = firestoreImageItem.timestamp,
