@@ -55,7 +55,12 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
             itemStateList = ArrayList()
             for ((index, imageItem) in itemList.withIndex()) {
                 when (imageItem.getItemType()) {
-                    ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> itemStateList.add(ConfigInfo.IMAGE_ITEM_STATE.UPLOADED)
+                    ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> {
+                        itemStateList.add(ConfigInfo.IMAGE_ITEM_STATE.UPLOADED)
+
+                        //Csak cached itemnél kell delete worker observer, mert a többinél egyből megtörténik a törlés a local DB-ből
+                        startObserverForDeletedImageItem(imageItem, index)
+                    }
                     ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> itemStateList.add(ConfigInfo.IMAGE_ITEM_STATE.WAITING_FOR_PROCESSING)
                     ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> {
                         itemStateList.add(ConfigInfo.IMAGE_ITEM_STATE.UNDEFINED)
@@ -185,9 +190,6 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
                             .build()
 
                         workManager.enqueueUniqueWork(imageItem.timestamp.toString(), ExistingWorkPolicy.KEEP, uploadRequest)
-                        withContext(Dispatchers.Main) {
-                            startObserverForDeletedImageItem(imageItem, index)
-                        }
                     }
                     ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> {
                         dataClient.local.processed.delete(imageItem as ProcessedImageItem)
