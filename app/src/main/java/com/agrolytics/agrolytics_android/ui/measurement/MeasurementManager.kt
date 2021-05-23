@@ -189,8 +189,4 @@ object MeasurementManager : KoinComponent{
         recentlyAddedItemTimestamps.clear()
     }
 
-    fun deleteFromRecentlyAddedItemTimestamps(timeStampToDelete : Long) {
-        recentlyAddedItemTimestamps.remove(timeStampToDelete)
-    }
-
 }

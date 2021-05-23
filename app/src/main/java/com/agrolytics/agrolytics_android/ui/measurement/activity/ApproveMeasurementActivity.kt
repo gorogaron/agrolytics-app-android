@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import org.koin.android.ext.android.inject
@@ -16,6 +17,8 @@ import com.agrolytics.agrolytics_android.types.ConfigInfo.SESSION
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.utils.Util
 import kotlinx.android.synthetic.main.activity_upload_finished.*
+import kotlinx.android.synthetic.main.layout_approve_after_confirmation.*
+import kotlinx.android.synthetic.main.layout_approve_confirm.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
@@ -32,14 +35,16 @@ class ApproveMeasurementActivity : BaseActivity() {
 		btn_decline.setOnClickListener{ onDeclineClicked() }
 		btn_accept.setOnClickListener{ onAcceptClicked() }
 
-		/**Új kép, munkamenet áttekintése*/
+		/**Új kép, munkamenet áttekintése, mentés későbbre gombok*/
 		btn_new.setOnClickListener { newImage() }
 		btn_show_session.setOnClickListener { MeasurementManager.showSession(this, MeasurementManager.currentSessionId) }
+		btn_save_for_later.setOnClickListener { saveImageForLater() }
 
-		/**Új kép, munkamenet áttekintése, mentés későbbre*/
-		btn_new_offline.setOnClickListener { newImage() }
-		btn_show_session_offline.setOnClickListener { MeasurementManager.showSession(this, MeasurementManager.currentSessionId) }
-		btn_save_for_later.setOnClickListener { doAsync {
+		image.setImageBitmap(processedImageItem.image)
+	}
+
+	private fun saveImageForLater() {
+		doAsync {
 			dataClient.local.unprocessed.add(unprocessedImageItem)
 			MeasurementManager.recentlyAddedItemTimestamps.add(unprocessedImageItem.timestamp)
 			uiThread {
@@ -47,45 +52,40 @@ class ApproveMeasurementActivity : BaseActivity() {
 				btn_save_for_later.isClickable = false
 				toast(getString(R.string.image_saved))
 			}
-		} }
-
-		image.setImageBitmap(processedImageItem.image)
+		}
 	}
 
 	private fun onDeclineClicked() {
+		showAfterConfirmation()
+		tv_result.text = getString(R.string.inaccurate_measurement)
+
+		//Ezek az utólagos feldolgozás miatt kellenek
+		doAsync { dataClient.local.unprocessed.delete(unprocessedImageItem) }
+		MeasurementManager.recentlyAddedItemTimestamps.remove(unprocessedImageItem.timestamp)
+
 		when (method){
 			"online" -> {
-				doAsync {
-				dataClient.local.unprocessed.delete(unprocessedImageItem) } //Ez csak az utólagos feldolgozás miatt kell
-				MeasurementManager.deleteFromRecentlyAddedItemTimestamps(unprocessedImageItem.timestamp)
-
-				//Új mérés vagy session áttekintése?
-				container_selection.animate().alpha(0f).duration = 300
-				container_after_selection.visibility = View.VISIBLE
-				tv_inaccurate.visibility = View.VISIBLE
-				tv_sum.visibility = View.GONE
-				container_selection.visibility = View.GONE
+				btn_save_for_later.visibility = View.GONE
 			}
 			"offline" -> {
-				//Szeretnéd később online megpróbálni?
-				container_selection.animate().alpha(0f).duration = 300
-				container_after_selection_offline_declined.visibility = View.VISIBLE
-				container_selection.visibility = View.GONE
+				btn_save_for_later.visibility = View.VISIBLE
 			}
 		}
 	}
 
 	private fun onAcceptClicked() {
-		container_selection.animate().alpha(0f).duration = 300
-		container_after_selection.visibility = View.VISIBLE
-		tv_inaccurate.visibility = View.GONE
-		container_selection.visibility = View.GONE
+		showAfterConfirmation()
 		tv_result.text = Util.cubicMeter(this, processedImageItem.woodVolume)
+		btn_save_for_later.visibility = View.GONE
+
 		doAsync {
 			dataClient.local.processed.add(processedImageItem)
-			dataClient.local.unprocessed.delete(unprocessedImageItem) //Ez csak az utólagos feldolgozás miatt kell
-			MeasurementManager.deleteFromRecentlyAddedItemTimestamps(unprocessedImageItem.timestamp)
 			MeasurementManager.recentlyAddedItemTimestamps.add(processedImageItem.timestamp)
+
+			//Ezek csak az utólagos feldolgozás miatt kellenek
+			dataClient.local.unprocessed.delete(unprocessedImageItem)
+			MeasurementManager.recentlyAddedItemTimestamps.remove(unprocessedImageItem.timestamp)
+
 		}
 	}
 
@@ -104,6 +104,14 @@ class ApproveMeasurementActivity : BaseActivity() {
 				IMAGE_CAPTURE, IMAGE_BROWSE, SESSION -> finish()
 			}
 		}
+	}
+
+	private fun showAfterConfirmation() {
+		approve_confirm.animate().alpha(0f).duration = 300
+
+		after_confirmation.alpha = 0f
+		after_confirmation.visibility = View.VISIBLE
+		after_confirmation.animate().alpha(1f).duration = 300
 	}
 
 	companion object InputParameters {

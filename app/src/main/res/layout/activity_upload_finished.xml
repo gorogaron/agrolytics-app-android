@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -32,7 +31,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -42,7 +41,10 @@
         <ImageView
             android:id="@+id/image"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/selection_frame"
             android:scaleType="fitXY"
             android:adjustViewBounds="true"
             android:layout_alignParentTop="true"
@@ -50,231 +52,33 @@
             android:layout_marginTop="24dp"
             android:layout_marginEnd="12dp"/>
 
-        <RelativeLayout
-            android:id="@+id/container_selection"
+        <FrameLayout
+            android:id="@+id/selection_frame"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/image"
-            android:layout_margin="24dp"
-            android:background="@drawable/bg_white_round"
-            android:elevation="2dp">
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/image"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-            <TextView
-                app:fontFamily="@font/roboto"
-                android:id="@+id/tv_correction"
-                android:layout_width="290dp"
+            <include
+                android:id="@+id/approve_confirm"
+                layout="@layout/layout_approve_confirm"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:text="@string/is_fill_correct_message"
-                android:textColor="@color/darkGrey"
-                android:textSize="20sp"
-                android:padding="15dp"/>
+                android:layout_margin="12dp"
+                android:layout_gravity="center" />
 
-            <TextView
-                android:fontFamily="@font/roboto_bold"
-                android:id="@+id/btn_accept"
-                android:text="@string/yes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_correction"
-                android:layout_alignEnd="@+id/tv_correction"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="24dp"
-                android:textSize="20sp"
-                android:textColor="@color/darkGrey"
-                android:padding="15dp"
-                android:foreground="?android:attr/selectableItemBackgroundBorderless"/>
+            <include
+                android:id="@+id/after_confirmation"
+                layout="@layout/layout_approve_after_confirmation"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="12dp"
+                android:visibility="gone"/>
 
-            <TextView
-                android:fontFamily="@font/roboto_bold"
-                android:id="@+id/btn_decline"
-                android:text="@string/no"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_correction"
-                android:layout_alignStart="@+id/tv_correction"
-                android:layout_margin="20dp"
-                android:textSize="20sp"
-                android:textColor="@color/darkGrey"
-                android:padding="15dp"
-                android:foreground="?android:attr/selectableItemBackgroundBorderless"/>
+        </FrameLayout>
 
-        </RelativeLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/container_after_selection_offline_declined"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/image"
-            android:layout_marginTop="24dp"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/tv_inaccurate_offline"
-                android:layout_width="290dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="24dp"
-                android:textAlignment="center"
-                android:textColor="@color/darkGrey"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                android:fontFamily="@font/roboto_bold"
-                android:text="@string/inaccurate_measurement" />
-
-            <Button
-                android:id="@+id/btn_new_offline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:layout_constraintTop_toBottomOf="@id/tv_inaccurate_offline"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:background="@drawable/bg_dialog_button_clickable"
-                android:padding="12dp"
-                android:text="@string/new_image"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                android:textColor="@color/darkGrey"/>
-
-            <Button
-                android:id="@+id/btn_show_session_offline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btn_new_offline"
-                android:background="@drawable/bg_dialog_button_clickable"
-                android:padding="12dp"
-                android:text="@string/show_session"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                android:textColor="@color/darkGrey"
-                android:backgroundTint="@color/yellow"/>
-
-            <Button
-                android:id="@+id/btn_save_for_later"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btn_show_session_offline"
-                android:background="@drawable/bg_dialog_button_clickable"
-                android:padding="12dp"
-                android:text="Mentés online feldolgozásra"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                android:textColor="@color/darkGrey"
-                android:backgroundTint="@color/yellow"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/container_after_selection"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/image"
-            android:layout_marginTop="24dp"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/tv_result"
-                android:layout_width="290dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="24dp"
-                android:textAlignment="center"
-                android:textColor="@color/darkGrey"
-                android:textSize="38sp"
-                android:textStyle="bold"
-                app:fontFamily="sans-serif"
-                tools:text="" />
-
-            <TextView
-                android:id="@+id/tv_sum"
-                android:layout_width="290dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/tv_result"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:text="@string/logs_volume"
-                android:textAlignment="center"
-                android:textColor="@color/textColor"
-                android:textSize="16sp"
-                app:fontFamily="sans-serif-medium" />
-
-            <TextView
-                android:id="@+id/tv_inaccurate"
-                android:layout_width="290dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="24dp"
-                android:textAlignment="center"
-                android:textColor="@color/darkGrey"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                android:fontFamily="@font/roboto_bold"
-                android:text="@string/inaccurate_measurement" />
-
-            <Button
-                android:id="@+id/btn_new"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:layout_constraintTop_toBottomOf="@id/tv_sum"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:background="@drawable/bg_dialog_button_clickable"
-                android:padding="12dp"
-                android:text="@string/new_image"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                android:textColor="@color/darkGrey"/>
-
-            <Button
-                android:id="@+id/btn_show_session"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:layout_constraintTop_toBottomOf="@id/btn_new"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:background="@drawable/bg_dialog_button_clickable"
-                android:padding="12dp"
-                android:text="@string/show_session"
-                android:textAppearance="@style/TextAppearance.AppCompat.Button"
-                android:textColor="@color/darkGrey"
-                android:backgroundTint="@color/yellow"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <RelativeLayout
-            android:id="@+id/container_declined"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/image"
-            android:layout_marginTop="24dp"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/tv_message"
-                android:layout_width="290dp"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="24dp"
-                android:textAlignment="center"
-                android:textColor="@color/colorAccent"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                app:fontFamily="sans-serif"
-                android:text="@string/more_declined" />
-
-        </RelativeLayout>
-
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </RelativeLayout>
