@@ -35,7 +35,7 @@ android {
     defaultConfig {
         applicationId "com.agrolytics.agrolytics_android"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 28 //TODO: 30-as target felett máshogy kell kezelni a storage permissiont: https://developer.android.com/training/data-storage/use-cases
         versionCode 1
         versionName "1.0 Beta"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -43,12 +43,10 @@ android {
     buildTypes {
         debug {
             buildConfigField 'String', 'BASE_URL', '"http://agrolytics.ddns.net/"'
-            //buildConfigField 'String', 'BASE_URL', '"https://us-central1-webhost-7bf8f.cloudfunctions.net/"'
         }
         release {
             minifyEnabled true
             buildConfigField 'String', 'BASE_URL', '"http://agrolytics.ddns.net/"'
-            //buildConfigField 'String', 'BASE_URL', '"https://us-central1-webhost-7bf8f.cloudfunctions.net/"'
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.agrolytics
         }
