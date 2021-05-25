@@ -52,7 +52,7 @@ open class FireStoreImageItem(
             FireStoreImagesField.TIMESTAMP.tag to this.timestamp,
             FireStoreImagesField.SESSION_ID.tag to this.sessionId,
             FireStoreImagesField.FORESTRY_ID.tag to this.forestryId,
-            FireStoreImagesField.LEADER_ID.tag to this.userId,
+            FireStoreImagesField.LEADER_ID.tag to this.leaderId,
             FireStoreImagesField.USER_ID.tag to this.userId,
             FireStoreImagesField.USER_ROLE.tag to this.userRole,
             FireStoreImagesField.WOOD_TYPE.tag to this.woodType,
