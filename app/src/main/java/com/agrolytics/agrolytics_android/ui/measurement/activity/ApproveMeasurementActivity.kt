@@ -83,9 +83,10 @@ class ApproveMeasurementActivity : BaseActivity() {
 			MeasurementManager.recentlyAddedItemTimestamps.add(processedImageItem.timestamp)
 
 			//Ezek csak az utólagos feldolgozás miatt kellenek
-			dataClient.local.unprocessed.delete(unprocessedImageItem)
-			MeasurementManager.recentlyAddedItemTimestamps.remove(unprocessedImageItem.timestamp)
-
+			if (dataClient.local.unprocessed.get(unprocessedImageItem.timestamp).isNotEmpty()) {
+				dataClient.local.unprocessed.delete(unprocessedImageItem)
+				MeasurementManager.recentlyAddedItemTimestamps.remove(unprocessedImageItem.timestamp)
+			}
 		}
 	}
 

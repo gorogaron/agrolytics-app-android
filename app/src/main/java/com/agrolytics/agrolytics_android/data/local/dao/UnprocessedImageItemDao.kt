@@ -35,4 +35,8 @@ interface UnprocessedImageItemDao {
 
     @Query("DELETE FROM unprocessed_images")
     fun deleteAll()
+
+    @Query("SELECT * FROM unprocessed_images WHERE timestamp LIKE :timestamp")
+    fun get(timestamp : Long) : List<UnprocessedImageItem>
+
 }
