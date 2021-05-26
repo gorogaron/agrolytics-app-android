@@ -62,7 +62,7 @@ class RodSelectorActivity : BaseActivity(){
 
 	fun showOnlineMeasurementErrorDialog(){
 		val builder = AlertDialog.Builder(this)
-		builder.setTitle("Hiba")
+		builder.setTitle(getString(R.string.error))
 		builder.setCancelable(false)
 		val view = LayoutInflater.from(this).inflate(R.layout.dialog_online_measurement_error, null, false)
 		builder.setView(view)

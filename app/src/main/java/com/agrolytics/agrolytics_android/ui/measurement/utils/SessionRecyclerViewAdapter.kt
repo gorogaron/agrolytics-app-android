@@ -41,6 +41,7 @@ import org.jetbrains.anko.toast
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.bind
 import org.koin.core.component.inject
+import retrofit2.awaitResponse
 import kotlin.collections.ArrayList
 
 class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : ArrayList<BaseImageItem>) : RecyclerView.Adapter<SessionRecyclerViewAdapter.SessionViewHolder>(), KoinComponent {
@@ -262,7 +263,7 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
         activity.showLoading()
         activity.lifecycleScope.launch(Dispatchers.Main) {
             try {
-                val response = MeasurementManager.startOnlineMeasurement(unprocessedImageItem.image!!)
+                val response = MeasurementManager.startOnlineMeasurement(unprocessedImageItem.image!!).awaitResponse()
                 if (response.isSuccessful) {
                     val maskImg = response.body()!!.toBitmap()
                     val (maskedImg, numOfWoodPixels) = ImageUtils.drawMaskOnInputImage(unprocessedImageItem.image!!, maskImg)

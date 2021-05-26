@@ -10,6 +10,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -21,7 +22,7 @@ import java.util.concurrent.TimeUnit
 interface ApiService {
 	//@POST("processImage")
 	@POST("ww/process_auth")
-	suspend fun uploadImage(@Body body: ImageUploadRequest): Response<ImageUploadResponse>
+	fun uploadImage(@Body body: ImageUploadRequest): Call<ImageUploadResponse>
 
 	companion object Factory : KoinComponent{
 

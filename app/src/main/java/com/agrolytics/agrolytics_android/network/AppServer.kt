@@ -10,6 +10,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import retrofit2.Call
 import retrofit2.HttpException
 import retrofit2.Response
 import kotlin.coroutines.resume
@@ -18,7 +19,7 @@ import kotlin.coroutines.suspendCoroutine
 class AppServer : KoinComponent{
     private val auth = FirebaseAuth.getInstance()
 
-    private suspend fun getUserToken() : String = withTimeout(5000){
+    private suspend fun getUserToken() : String = withTimeout(10000){
         suspendCoroutine<String>{
             auth.currentUser?.getIdToken(false)
                     ?.addOnSuccessListener { userToken ->
@@ -30,7 +31,7 @@ class AppServer : KoinComponent{
         }
     }
 
-    suspend fun uploadImage(imageUploadRequest: ImageUploadRequest): Response<ImageUploadResponse> {
+    suspend fun uploadImage(imageUploadRequest: ImageUploadRequest): Call<ImageUploadResponse> {
         val userToken = getUserToken()
         if (userToken == "") {
             //TODO: Jobb hibakezelés

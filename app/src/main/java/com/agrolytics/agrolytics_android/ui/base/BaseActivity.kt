@@ -14,10 +14,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import com.agrolytics.agrolytics_android.R
+import com.agrolytics.agrolytics_android.network.model.ImageUploadResponse
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
 import com.agrolytics.agrolytics_android.utils.connection.ConnectionLiveData
+import org.jetbrains.anko.toast
+import retrofit2.Call
 
 abstract class BaseActivity : AppCompatActivity(), BaseScreen {
 
@@ -54,6 +57,21 @@ abstract class BaseActivity : AppCompatActivity(), BaseScreen {
     override fun hideLoading() {
         dialog?.dismiss()
         dialog = null
+    }
+
+    //TODO: Ennek jobb helyet kéne találni, mert nem minden activity-nél kell használni
+    fun showUploadProgressbar(apiCall: Call<ImageUploadResponse>) {
+        dialog = AlertDialog.Builder(this).create()
+        val factory = LayoutInflater.from(this)
+        val customView = factory.inflate(R.layout.custom_progress_bar, null)
+        dialog?.setCancelable(true)
+        dialog?.setView(customView)
+        dialog?.setOnCancelListener {
+            apiCall.cancel()
+            hideLoading()
+            toast(getString(R.string.processing_cancelled))
+        }
+        dialog?.show()
     }
 
     override fun exitApp() {
