@@ -49,7 +49,7 @@
     <string name="length">Length</string>
     <string name="species">Species</string>
     <string name="date">Date</string>
-    <string name="no_internet_how_to_proceed">There are issues with the internet connetion. How would you like to continue?</string>
+    <string name="no_internet_how_to_proceed">There are issues with the internet connection. How would you like to continue?</string>
     <string name="select_species">Select the wood species</string>
     <string name="process">Process</string>
     <string name="state">Status</string>
@@ -92,4 +92,10 @@
     </string>
     <string name="change_language">Change language</string>
     <string name="empty_session">The session does not contain any items.</string>
+    <string name="processing_cancelled">Processing cancelled</string>
+    <string name="item_state_being_deleted">Being deleted</string>
+    <string name="item_state_being_uploaded">Being uploaded</string>
+    <string name="item_state_ready_to_upload">Ready to upload</string>
+    <string name="item_state_uploaded">Uploaded</string>
+    <string name="item_state_waiting_for_processing">Waiting for processing</string>
 </resources>
