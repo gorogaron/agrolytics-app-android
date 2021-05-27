@@ -277,6 +277,10 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
                 }
             }
             catch (e : Exception){
+                try {
+                    Log.d("RecyclerView", "Exception during API call: $e")
+                    Log.d("RecyclerView", "Error message: ${e.message}")
+                } catch (e: java.lang.Exception) { }
                 //TODO: Normális exception kezelés
                 activity.hideLoading()
                 activity.toast(activity.getString(R.string.error_retry))

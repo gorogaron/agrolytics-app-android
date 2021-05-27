@@ -18,14 +18,22 @@ import kotlin.coroutines.suspendCoroutine
 
 class AppServer : KoinComponent{
     private val auth = FirebaseAuth.getInstance()
+    private val TAG = "AppServer"
 
     private suspend fun getUserToken() : String = withTimeout(10000){
         suspendCoroutine<String>{
+            Log.d(TAG, "Updating user token ID")
             auth.currentUser?.getIdToken(false)
                     ?.addOnSuccessListener { userToken ->
+                        Log.d(TAG, "User token ID updated successfully")
                         it.resume(userToken.token!!)
                     }
                     ?.addOnFailureListener { e ->
+                        //TODO: Try catch eltávolítása, csak a mecsek miatt raktam ide
+                        try {
+                            Log.d(TAG, "Couldn't update user token ID: $e")
+                            Log.d(TAG, "Error message: ${e.message}")
+                        } catch (e: Exception){}
                         it.resume("")
                     }
         }
@@ -42,6 +50,7 @@ class AppServer : KoinComponent{
         }
         else {
             val apiService = ApiService.create(userToken)
+            Log.d(TAG, "Started processing the image.")
             return apiService.uploadImage(imageUploadRequest)
         }
     }

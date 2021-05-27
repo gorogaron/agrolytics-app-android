@@ -42,7 +42,6 @@ class ConnectionLiveData(context: Context) : LiveData<Boolean>() {
         //TODO: Mi van akkor, ha callback regisztráláskor épp van mobilnet, de közben elmegy? Meghívódik az onLost?
         //TODO: Ha nem, akkor hamisan azt fogja hinni az Activity, hogy van még internet
         override fun onAvailable(network: Network) {
-            Log.d(TAG, "onAvailable: ${network}")
             val networkCapabilities = cm.getNetworkCapabilities(network)
             val hasInternetCapability = networkCapabilities?.hasCapability(NET_CAPABILITY_INTERNET)
             Log.d(TAG, "onAvailable: ${network}, $hasInternetCapability")
@@ -59,6 +58,9 @@ class ConnectionLiveData(context: Context) : LiveData<Boolean>() {
                             validNetworks.add(network)
                             checkValidNetworks()
                         }
+                    }
+                    else {
+                        Log.d(TAG, "onAvailable: No internet connection. ${network}")
                     }
                 }
             }
