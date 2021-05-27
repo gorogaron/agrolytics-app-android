@@ -20,8 +20,7 @@ import java.util.concurrent.TimeUnit
 
 
 interface ApiService {
-	//@POST("processImage")
-	@POST("ww/process_auth")
+	@POST("api/segment_image_auth")
 	fun uploadImage(@Body body: ImageUploadRequest): Call<ImageUploadResponse>
 
 	companion object Factory : KoinComponent{

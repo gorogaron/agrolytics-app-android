@@ -42,11 +42,11 @@ android {
     }
     buildTypes {
         debug {
-            buildConfigField 'String', 'BASE_URL', '"http://agrolytics.ddns.net/"'
+            buildConfigField 'String', 'BASE_URL', '"https://kenderak.com/"'
         }
         release {
             minifyEnabled true
-            buildConfigField 'String', 'BASE_URL', '"http://agrolytics.ddns.net/"'
+            buildConfigField 'String', 'BASE_URL', '"https://kenderak.com/"'
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.agrolytics
         }
