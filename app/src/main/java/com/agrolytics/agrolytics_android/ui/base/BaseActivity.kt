@@ -3,10 +3,10 @@ package com.agrolytics.agrolytics_android.ui.base
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
@@ -14,13 +14,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import com.agrolytics.agrolytics_android.R
-import com.agrolytics.agrolytics_android.network.model.ImageUploadResponse
 import com.agrolytics.agrolytics_android.types.ConfigInfo
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.ui.measurement.utils.ImageObtainer
 import com.agrolytics.agrolytics_android.utils.connection.ConnectionLiveData
-import org.jetbrains.anko.toast
-import retrofit2.Call
 
 abstract class BaseActivity : AppCompatActivity(), BaseScreen {
 
@@ -45,33 +42,23 @@ abstract class BaseActivity : AppCompatActivity(), BaseScreen {
         setContentView(mContentView)
     }
 
-    override fun showLoading() {
+    override fun showLoading(cancelable : Boolean, cancelListener : DialogInterface.OnCancelListener?) {
         dialog = AlertDialog.Builder(this).create()
         val factory = LayoutInflater.from(this)
         val customView = factory.inflate(R.layout.custom_progress_bar, null)
-        dialog?.setCancelable(false)
+        dialog?.setCancelable(cancelable)
         dialog?.setView(customView)
+
+        if (cancelListener != null) {
+            dialog?.setOnCancelListener(cancelListener)
+        }
+
         dialog?.show()
     }
 
     override fun hideLoading() {
         dialog?.dismiss()
         dialog = null
-    }
-
-    //TODO: Ennek jobb helyet kéne találni, mert nem minden activity-nél kell használni
-    fun showUploadProgressbar(apiCall: Call<ImageUploadResponse>) {
-        dialog = AlertDialog.Builder(this).create()
-        val factory = LayoutInflater.from(this)
-        val customView = factory.inflate(R.layout.custom_progress_bar, null)
-        dialog?.setCancelable(true)
-        dialog?.setView(customView)
-        dialog?.setOnCancelListener {
-            apiCall.cancel()
-            hideLoading()
-            toast(getString(R.string.processing_cancelled))
-        }
-        dialog?.show()
     }
 
     override fun exitApp() {

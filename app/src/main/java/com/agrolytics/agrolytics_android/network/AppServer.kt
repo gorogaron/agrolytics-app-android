@@ -29,11 +29,7 @@ class AppServer : KoinComponent{
                         it.resume(userToken.token!!)
                     }
                     ?.addOnFailureListener { e ->
-                        //TODO: Try catch eltávolítása, csak a mecsek miatt raktam ide
-                        try {
-                            Log.d(TAG, "Couldn't update user token ID: $e")
-                            Log.d(TAG, "Error message: ${e.message}")
-                        } catch (e: Exception){}
+                        Log.d(TAG, "Couldn't update user token ID: $e")
                         it.resume("")
                     }
         }

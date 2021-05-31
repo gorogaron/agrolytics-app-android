@@ -1,11 +1,8 @@
 package com.agrolytics.agrolytics_android.ui.measurement
 
-import android.app.Activity
-import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import android.view.LayoutInflater
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.data.DataClient
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
@@ -28,7 +25,6 @@ import org.jetbrains.anko.toast
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import retrofit2.Call
-import retrofit2.Response
 
 object MeasurementManager : KoinComponent{
 

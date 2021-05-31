@@ -1,6 +1,7 @@
 package com.agrolytics.agrolytics_android.ui.measurement.presenter
 
 import android.content.Context
+import android.content.DialogInterface.OnCancelListener
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -16,10 +17,9 @@ import com.agrolytics.agrolytics_android.utils.MeasurementUtils
 import com.agrolytics.agrolytics_android.utils.Util
 import com.agrolytics.agrolytics_android.utils.Util.Companion.round
 import com.google.firebase.firestore.GeoPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.awaitResponse
 
 
@@ -27,6 +27,7 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
 
     val TAG = "RodSelectorPresenter"
     private lateinit var activity: RodSelectorActivity
+    var apiCallCanceled = false
 
     fun setActivity(activity: RodSelectorActivity) {
         this.activity = activity
@@ -41,55 +42,63 @@ class RodSelectorPresenter(val context: Context) : BasePresenter<RodSelectorActi
         }
 
         activity.unprocessedImageItem = createUnprocessedImageItem(rodLength, rodLengthPixels)
+        val uploadJob = startUploadJob()
 
-        GlobalScope.launch(Dispatchers.Main) {
-            var apiCall : Call<ImageUploadResponse>? = null
-            try {
-                apiCall = MeasurementManager.startOnlineMeasurement(RodSelectorActivity.croppedResizedImageBlackBg!!)
-                activity.showUploadProgressbar(apiCall)
-                val response = apiCall.awaitResponse()
-                if (response.isSuccessful) {
-                    Log.d(TAG, "Response is successful")
-                    val maskImg = response.body()!!.toBitmap()
-                    val resizedImageToDraw = Bitmap.createScaledBitmap(RodSelectorActivity.croppedImageBlurredBg!!, 640, 480, true)
-                    val (maskedImg, numOfWoodPixels) = ImageUtils.drawMaskOnInputImage(resizedImageToDraw, maskImg)
-                    val processedImageItem = ProcessedImageItem(activity.unprocessedImageItem!!, numOfWoodPixels, maskedImg)
+        val loadingBarCancelListener = OnCancelListener{
+            apiCallCanceled = true
+            uploadJob.cancel()
+        }
+        activity.showLoading(true, loadingBarCancelListener)
 
-                    activity.hideLoading()
-                    MeasurementManager.startApproveMeasurementActivity(activity, processedImageItem, activity.unprocessedImageItem!!,"online")
-                    activity.finish()
-                    RodSelectorActivity.correspondingCropperActivity!!.finish()
-                    RodSelectorActivity.correspondingCropperActivity = null
+    }
 
-                } else {
-                    //TODO: Try catch eltávolítás, csak mecsek miatt raktam ide
-                    try {
-                        Log.d(TAG, "Response is not successful")
-                        Log.d(TAG, "Response: ${response.body().toString()}")
-                    } catch (e: java.lang.Exception){}
+    private fun startUploadJob() = GlobalScope.launch(Dispatchers.Main) {
+        try {
+            val response : Response<ImageUploadResponse>
+            withContext(Dispatchers.IO) {
+                val apiCall = MeasurementManager.startOnlineMeasurement(RodSelectorActivity.croppedResizedImageBlackBg!!)
 
-                    activity.hideLoading()
-                    activity.showOnlineMeasurementErrorDialog()
+                //TODO: okHttp timeout nem mindig működik, ezért a 'withTimeout'. (https://github.com/square/okhttp/issues/4455)
+                withTimeout(65000) {
+                    response = apiCall.awaitResponse()
                 }
             }
-            catch (e : Exception){
-                if (apiCall != null && apiCall.isCanceled) {
-                    //Ha ki lett nyomva a hívás a "vissza" gombbal
-                        Log.d(TAG, "API call has been cancelled")
-                    return@launch
-                }
-                else {
-                    //Ha hiba történt. Pl.: token request timeout, retrofit timeout
-                        try {
-                          Log.d(TAG, "Exception during API call: $e")
-                          Log.d(TAG, "Error message: ${e.message}")
-                        } catch (e: java.lang.Exception) { }
-                    activity.hideLoading()
-                    activity.showOnlineMeasurementErrorDialog()
-                }
+            processResponse(response)
+        }
+        catch (e : Exception){
+            activity.hideLoading()
+
+            Log.d(TAG, "Exception during API call: $e")
+            if (apiCallCanceled) {
+                apiCallCanceled = false
+            }
+            else {
+                activity.showOnlineMeasurementErrorDialog()
             }
         }
+    }
 
+    private fun processResponse(response : Response<ImageUploadResponse>) {
+        if (response.isSuccessful) {
+            Log.d(TAG, "Response is successful")
+            val maskImg = response.body()!!.toBitmap()
+            val resizedImageToDraw = Bitmap.createScaledBitmap(RodSelectorActivity.croppedImageBlurredBg!!, 640, 480, true)
+            val (maskedImg, numOfWoodPixels) = ImageUtils.drawMaskOnInputImage(resizedImageToDraw, maskImg)
+            val processedImageItem = ProcessedImageItem(activity.unprocessedImageItem!!, numOfWoodPixels, maskedImg)
+
+            activity.hideLoading()
+            MeasurementManager.startApproveMeasurementActivity(activity, processedImageItem, activity.unprocessedImageItem!!,"online")
+            activity.finish()
+            RodSelectorActivity.correspondingCropperActivity!!.finish()
+            RodSelectorActivity.correspondingCropperActivity = null
+
+        } else {
+            Log.d(TAG, "Response is not successful")
+            Log.d(TAG, "Response: ${response.body().toString()}")
+
+            activity.hideLoading()
+            activity.showOnlineMeasurementErrorDialog()
+        }
     }
 
     private fun createUnprocessedImageItem(rodLength: Double, rodLengthPixels: Double) : UnprocessedImageItem {

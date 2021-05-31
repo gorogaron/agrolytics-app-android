@@ -26,7 +26,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.koin.android.ext.android.inject
 
@@ -69,20 +68,20 @@ class RodSelectorActivity : BaseActivity(){
 		val dialog = builder.create()
 
 		/**Set text for included layout elements (buttons)*/
-		setupSaveForLaterButton(view, dialog)
+		setupSaveForLaterButton(view, dialog, !unprocessedImageItemSaved)
 		setupNewImageButton(view, dialog)
 		setupShowCurrentSessionButton(view, dialog)
-		setupMeasureOfflineButton(view, dialog, unprocessedImageItem != null)
+		setupMeasureOfflineButton(view, dialog, !unprocessedImageItemSaved)
 
 
 		dialog.window!!.setBackgroundDrawableResource(R.drawable.bg_white_round)
 		dialog.show()
 	}
 
-	private fun setupSaveForLaterButton(view : View, dialog: AlertDialog){
+	private fun setupSaveForLaterButton(view : View, dialog: AlertDialog, clickable: Boolean){
 		view.findViewById<ConstraintLayout>(R.id.button_1).apply {
 			findViewById<TextView>(R.id.buttonText).text = getString(R.string.save_image_for_later)
-			if (unprocessedImageItem == null) {
+			if (!clickable) {
 				findViewById<TextView>(R.id.buttonText).setTextColor(ContextCompat.getColor(this@RodSelectorActivity, R.color.mediumGrey))
 				this.isEnabled = false
 			}
@@ -102,7 +101,6 @@ class RodSelectorActivity : BaseActivity(){
 			findViewById<TextView>(R.id.buttonText).text = getString(R.string.new_image)
 			setOnClickListener {
 				MeasurementManager.addNewMeasurementForSession(this@RodSelectorActivity, MeasurementManager.currentSessionId)
-				dialog.dismiss()
 			}
 		}
 	}
