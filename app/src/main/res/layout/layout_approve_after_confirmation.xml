@@ -27,11 +27,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/tv_result"
-            app:layout_constraintBottom_toTopOf="@id/btn_show_session"
+            app:layout_constraintBottom_toTopOf="@id/btn_modify"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:background="@drawable/bg_dialog_button_clickable"
             android:text="@string/new_image"
+            android:textAppearance="@style/TextAppearance.AppCompat.Button"
+            android:textColor="@color/darkGrey"/>
+
+        <Button
+            android:id="@+id/btn_modify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/btn_new"
+            app:layout_constraintBottom_toTopOf="@id/btn_show_session"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@drawable/bg_dialog_button_clickable"
+            android:text="@string/manual_adaption"
             android:textAppearance="@style/TextAppearance.AppCompat.Button"
             android:textColor="@color/darkGrey"/>
 
@@ -41,7 +54,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_new"
+            app:layout_constraintTop_toBottomOf="@id/btn_modify"
             app:layout_constraintBottom_toTopOf="@id/btn_save_for_later"
             android:background="@drawable/bg_dialog_button_clickable"
             android:text="@string/show_session"

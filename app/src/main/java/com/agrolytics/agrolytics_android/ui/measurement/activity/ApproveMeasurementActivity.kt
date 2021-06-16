@@ -1,10 +1,13 @@
 package com.agrolytics.agrolytics_android.ui.measurement.activity
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import org.koin.android.ext.android.inject
@@ -17,6 +20,7 @@ import com.agrolytics.agrolytics_android.types.ConfigInfo.SESSION
 import com.agrolytics.agrolytics_android.ui.measurement.MeasurementManager
 import com.agrolytics.agrolytics_android.utils.Util
 import kotlinx.android.synthetic.main.activity_upload_finished.*
+import kotlinx.android.synthetic.main.dialog_manual_adaption.*
 import kotlinx.android.synthetic.main.layout_approve_after_confirmation.*
 import kotlinx.android.synthetic.main.layout_approve_confirm.*
 import org.jetbrains.anko.doAsync
@@ -39,6 +43,7 @@ class ApproveMeasurementActivity : BaseActivity() {
 		btn_new.setOnClickListener { newImage() }
 		btn_show_session.setOnClickListener { MeasurementManager.showSession(this, MeasurementManager.currentSessionId) }
 		btn_save_for_later.setOnClickListener { saveImageForLater() }
+		btn_modify.setOnClickListener { showManualAdaptionDialog() }
 
 		image.setImageBitmap(processedImageItem.image)
 	}
@@ -63,6 +68,7 @@ class ApproveMeasurementActivity : BaseActivity() {
 		doAsync { dataClient.local.unprocessed.delete(unprocessedImageItem) }
 		MeasurementManager.recentlyAddedItemTimestamps.remove(unprocessedImageItem.timestamp)
 
+		btn_modify.visibility = View.GONE
 		when (method){
 			"online" -> {
 				btn_save_for_later.visibility = View.GONE
@@ -77,6 +83,7 @@ class ApproveMeasurementActivity : BaseActivity() {
 		showAfterConfirmation()
 		tv_result.text = Util.cubicMeter(this, processedImageItem.woodVolume)
 		btn_save_for_later.visibility = View.GONE
+		btn_modify.visibility = View.VISIBLE
 
 		doAsync {
 			dataClient.local.processed.add(processedImageItem)
@@ -113,6 +120,22 @@ class ApproveMeasurementActivity : BaseActivity() {
 		after_confirmation.alpha = 0f
 		after_confirmation.visibility = View.VISIBLE
 		after_confirmation.animate().alpha(1f).duration = 300
+	}
+
+	private fun showManualAdaptionDialog() {
+		val view = LayoutInflater.from(this).inflate(R.layout.dialog_manual_adaption, null, false)
+		val volumeToAddEditText = view.findViewById<EditText>(R.id.volume_to_add_edit_text)
+		val justificationEditText = view.findViewById<EditText>(R.id.justification_edit_text)
+
+		val dialog = AlertDialog.Builder(this)
+			.setCancelable(true)
+			.setView(view)
+			.setPositiveButton(getString(R.string.ok)) { _, _ ->
+				val volumeToAdd = volumeToAddEditText.text.toString().toDouble()
+				val justification = justificationEditText.text.toString()
+			}
+			.create()
+			.show()
 	}
 
 	companion object InputParameters {
