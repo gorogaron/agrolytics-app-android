@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import androidx.core.content.ContextCompat
 import com.agrolytics.agrolytics_android.R
 import com.agrolytics.agrolytics_android.ui.base.BaseActivity
 import org.koin.android.ext.android.inject
@@ -133,9 +134,14 @@ class ApproveMeasurementActivity : BaseActivity() {
 			.setPositiveButton(getString(R.string.ok)) { _, _ ->
 				val volumeToAdd = volumeToAddEditText.text.toString().toDouble()
 				val justification = justificationEditText.text.toString()
+
+				//TODO: processedImageItem frissítése ezekkel a mezőkkel
 			}
 			.create()
-			.show()
+
+		dialog.window!!.setBackgroundDrawableResource(R.drawable.bg_white_round)
+		dialog.show()
+		dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this, R.color.darkGrey))
 	}
 
 	companion object InputParameters {
