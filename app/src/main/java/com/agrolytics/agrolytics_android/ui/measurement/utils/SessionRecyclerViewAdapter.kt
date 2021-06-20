@@ -150,11 +150,23 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
         builder.setView(view)
         val dialog = builder.create()
 
-        view.findViewById<TextView>(R.id.volume).text = when (imageItem.getItemType()) {
-            ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> (imageItem as CachedImageItem).woodVolume.round(2).toString()
-            ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> (imageItem as ProcessedImageItem).woodVolume.round(2).toString()
-            ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> "Mérésre vár"
+        when (imageItem.getItemType()) {
+            ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> {
+                view.findViewById<TextView>(R.id.volume).text = (imageItem as CachedImageItem).woodVolume.round(2).toString()
+                view.findViewById<TextView>(R.id.correction).text = (imageItem as CachedImageItem).addedWoodVolume.round(2).toString()
+                view.findViewById<TextView>(R.id.justification).text = (imageItem as CachedImageItem).addedWoodVolumeJustification
+            }
+            ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> {
+                view.findViewById<TextView>(R.id.volume).text = (imageItem as ProcessedImageItem).woodVolume.round(2).toString()
+                view.findViewById<TextView>(R.id.correction).text = (imageItem as ProcessedImageItem).addedWoodVolume.round(2).toString()
+                view.findViewById<TextView>(R.id.justification).text = (imageItem as ProcessedImageItem).addedWoodVolumeJustification
+            }
+            ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> {
+                view.findViewById<TextView>(R.id.volume).text = activity.getString(R.string.item_state_waiting_for_processing)
+                //TODO: correction és justification elrejtése
+            }
         }
+
         view.findViewById<TextView>(R.id.length).text = imageItem.woodLength.toString()
         view.findViewById<TextView>(R.id.species).text = imageItem.woodType
         view.findViewById<TextView>(R.id.date).text = getFormattedDateTime(imageItem.timestamp)

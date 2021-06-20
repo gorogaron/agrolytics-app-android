@@ -18,7 +18,9 @@ data class ProcessedImageItem(
     @ColumnInfo(name = "wood_type") override var woodType: String,
     @ColumnInfo(name = "wood_length") override var woodLength: Double,
     @ColumnInfo(name = "location") override var location : GeoPoint,
-    @ColumnInfo(name = "wood_volume") var woodVolume: Double
+    @ColumnInfo(name = "wood_volume") var woodVolume: Double,
+    @ColumnInfo(name = "added_wood_volume") var addedWoodVolume: Double,
+    @ColumnInfo(name = "added_wood_volume_justification") var addedWoodVolumeJustification: String
 ) : BaseImageItem {
 
     constructor(unprocessedImageItem : UnprocessedImageItem, numOfWoodPixels : Int, maskedImage : Bitmap): this(
@@ -28,7 +30,9 @@ data class ProcessedImageItem(
         unprocessedImageItem.woodType,
         unprocessedImageItem.woodLength,
         unprocessedImageItem.location,
-        0.0)
+        0.0,
+        0.0,
+        "")
     {
         val volume = MeasurementUtils.calculateWoodVolume(
             numOfWoodPixels,

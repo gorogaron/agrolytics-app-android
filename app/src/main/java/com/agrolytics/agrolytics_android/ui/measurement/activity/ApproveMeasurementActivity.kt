@@ -132,10 +132,19 @@ class ApproveMeasurementActivity : BaseActivity() {
 			.setCancelable(true)
 			.setView(view)
 			.setPositiveButton(getString(R.string.ok)) { _, _ ->
-				val volumeToAdd = volumeToAddEditText.text.toString().toDouble()
-				val justification = justificationEditText.text.toString()
+				if (volumeToAddEditText.text.isNotEmpty() && justificationEditText.text.isNotEmpty()) {
+					val addedWoodVoume = volumeToAddEditText.text.toString().toDouble()
+					val addedWoodVolumeJustification = justificationEditText.text.toString()
 
-				//TODO: processedImageItem frissítése ezekkel a mezőkkel
+					processedImageItem.addedWoodVolume = addedWoodVoume
+					processedImageItem.addedWoodVolumeJustification = addedWoodVolumeJustification
+					doAsync {
+						dataClient.local.processed.update(processedImageItem)
+					}
+				}
+				else {
+					toast(getString(R.string.manual_adaption_warning))
+				}
 			}
 			.create()
 

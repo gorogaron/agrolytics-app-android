@@ -22,7 +22,7 @@
         android:id="@+id/volume_to_add_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="number"
+        android:inputType="numberDecimal|numberSigned"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/volume_to_add_text"/>
 

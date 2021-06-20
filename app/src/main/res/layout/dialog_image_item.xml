@@ -55,6 +55,18 @@
                 android:textColor="@color/darkGrey"
                 android:fontFamily="@font/roboto_bold"
                 android:text="@string/date"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/darkGrey"
+                android:fontFamily="@font/roboto_bold"
+                android:text="@string/correction"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/darkGrey"
+                android:fontFamily="@font/roboto_bold"
+                android:text="@string/justification"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -78,6 +90,16 @@
                 android:fontFamily="@font/roboto"/>
             <TextView
                 android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto"/>
+            <TextView
+                android:id="@+id/correction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto"/>
+            <TextView
+                android:id="@+id/justification"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto"/>

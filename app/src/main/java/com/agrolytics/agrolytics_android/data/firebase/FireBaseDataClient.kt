@@ -43,7 +43,9 @@ class FireBaseDataClient: KoinComponent {
             woodLength = processedImageItem.woodLength,
             woodVolume = processedImageItem.woodVolume,
             location = processedImageItem.location,
-            firestoreId = ""
+            firestoreId = "",
+            addedWoodVolume = processedImageItem.addedWoodVolume,
+            addedWoodVolumeJustification = processedImageItem.addedWoodVolumeJustification
         )
         firestoreImageItem.firestoreId = fireStore.upload(firestoreImageItem, FireStoreCollection.IMAGES).id
 
@@ -59,7 +61,9 @@ class FireBaseDataClient: KoinComponent {
             woodVolume = firestoreImageItem.woodVolume,
             location = firestoreImageItem.location!!,
             firestoreId = firestoreImageItem.firestoreId,
-            image = processedImageItem.image
+            image = processedImageItem.image,
+            addedWoodVolume = processedImageItem.addedWoodVolume,
+            addedWoodVolumeJustification = processedImageItem.addedWoodVolumeJustification
         )
     }
 }

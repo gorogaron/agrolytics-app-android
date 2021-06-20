@@ -1,9 +1,6 @@
 package com.agrolytics.agrolytics_android.data.local.dao
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import com.agrolytics.agrolytics_android.data.local.tables.CachedImageItem
 import com.agrolytics.agrolytics_android.data.local.tables.ProcessedImageItem
 
@@ -39,4 +36,7 @@ interface ProcessedImageItemDao {
 
     @Query("DELETE FROM processed_images")
     fun deleteAll()
+
+    @Update
+    fun update(processedImageItem: ProcessedImageItem)
 }

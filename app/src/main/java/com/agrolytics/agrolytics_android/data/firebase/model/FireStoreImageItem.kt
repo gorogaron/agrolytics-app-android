@@ -16,7 +16,9 @@ open class FireStoreImageItem(
     val woodVolume: Double,
     val location: GeoPoint? = null,
     var firestoreId: String,
-    var timestampOfDeletion: Long? = null
+    var timestampOfDeletion: Long? = null,
+    var addedWoodVolume: Double,
+    var addedWoodVolumeJustification: String
 ) {
 
     constructor(document : QueryDocumentSnapshot) : this(
@@ -30,6 +32,8 @@ open class FireStoreImageItem(
         woodVolume = document.data[FireStoreImagesField.WOOD_VOLUME.tag] as Double,
         woodLength = document.data[FireStoreImagesField.WOOD_LENGTH.tag] as Double,
         location = document.data[FireStoreImagesField.LOCATION.tag] as GeoPoint,
+        addedWoodVolume = document.data[FireStoreImagesField.ADDED_WOOD_VOLUME.tag] as Double,
+        addedWoodVolumeJustification = document.data[FireStoreImagesField.ADDED_WOOD_VOLUME_JUSTIFICATION.tag] as String,
         firestoreId = document.id
     )
 
@@ -44,7 +48,9 @@ open class FireStoreImageItem(
         woodLength = cachedImageItem.woodLength,
         woodVolume = cachedImageItem.woodVolume,
         location = cachedImageItem.location,
-        firestoreId = cachedImageItem.firestoreId
+        firestoreId = cachedImageItem.firestoreId,
+        addedWoodVolume = cachedImageItem.addedWoodVolume,
+        addedWoodVolumeJustification = cachedImageItem.addedWoodVolumeJustification
     )
 
     fun toHashMap() : HashMap<String, Any?> {

@@ -21,7 +21,9 @@ data class CachedImageItem (
     @ColumnInfo(name = "user_id") var userId: String,
     @ColumnInfo(name = "user_role") var userRole: String,
     @ColumnInfo(name = "wood_volume") var woodVolume: Double,
-    @ColumnInfo(name = "firestore_id") var firestoreId: String
+    @ColumnInfo(name = "firestore_id") var firestoreId: String,
+    @ColumnInfo(name = "added_wood_volume") var addedWoodVolume: Double,
+    @ColumnInfo(name = "added_wood_volume_justification") var addedWoodVolumeJustification: String
 ) : BaseImageItem {
 
     constructor(firestoreItem: FireStoreImageItem) : this(
@@ -36,7 +38,9 @@ data class CachedImageItem (
         woodVolume = firestoreItem.woodVolume,
         location = firestoreItem.location!!,
         image = null,
-        firestoreId = firestoreItem.firestoreId
+        firestoreId = firestoreItem.firestoreId,
+        addedWoodVolume = firestoreItem.addedWoodVolume,
+        addedWoodVolumeJustification = firestoreItem.addedWoodVolumeJustification
     )
 
     override fun getItemType(): ConfigInfo.IMAGE_ITEM_TYPE {

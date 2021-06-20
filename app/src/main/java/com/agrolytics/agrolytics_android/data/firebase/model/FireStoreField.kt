@@ -21,7 +21,9 @@ enum class FireStoreImagesField(var tag: String) {
     WOOD_TYPE("wood_type"),
     WOOD_LENGTH("wood_length"),
     WOOD_VOLUME("wood_volume"),
-    LOCATION("location")
+    LOCATION("location"),
+    ADDED_WOOD_VOLUME("added_wood_volume"),
+    ADDED_WOOD_VOLUME_JUSTIFICATION("added_wood_volume_justification")
 }
 
 //TODO: a deleted images collectionben benne van a többi field is, egységesíteni kéne valahogy az enum classokat
