@@ -58,6 +58,7 @@
     <string name="volume_to_add">Hozzáadandó térfogatmennyiség</string>
     <string name="justification">Indoklás</string>
     <string name="manual_adaption_warning">Írd be a hozzáadandó térfogatot és az indoklást!</string>
+    <string name="saved">Mentve</string>
     <string name="confirmation">Megerősítés</string>
     <string name="inaccurate_measurement">Pontatlan mérés</string>
     <string name="show_session">Munkament áttekintése</string>

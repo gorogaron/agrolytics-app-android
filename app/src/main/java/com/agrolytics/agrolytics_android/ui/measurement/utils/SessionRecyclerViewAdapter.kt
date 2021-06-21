@@ -10,6 +10,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -116,13 +117,27 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
                 val processedImageItem = imageItem as ProcessedImageItem
                 holder.volumeTextView.visibility = View.VISIBLE
                 holder.uploadButton.visibility = View.GONE
-                holder.volumeTextView.text = cubicMeter(activity, processedImageItem.woodVolume)
+                holder.volumeTextView.text = cubicMeter(activity, processedImageItem.woodVolume + processedImageItem.addedWoodVolume)
+                //Ha volt manuális korrekció, a térfogat text színe legyen piros, egyébként sötétszürke
+                if (processedImageItem.addedWoodVolume > 0) {
+                    holder.volumeTextView.setTextColor(ContextCompat.getColor(activity,R.color.red))
+                }
+                else {
+                    holder.volumeTextView.setTextColor(ContextCompat.getColor(activity,R.color.textColor))
+                }
             }
             ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> {
                 val cachedImageItem = imageItem as CachedImageItem
                 holder.volumeTextView.visibility = View.VISIBLE
                 holder.uploadButton.visibility = View.GONE
-                holder.volumeTextView.text = cubicMeter(activity, cachedImageItem.woodVolume)
+                holder.volumeTextView.text = cubicMeter(activity, cachedImageItem.woodVolume + cachedImageItem.addedWoodVolume)
+                //Ha volt manuális korrekció, a térfogat text színe legyen piros, egyébként sötétszürke
+                if (cachedImageItem.addedWoodVolume > 0) {
+                    holder.volumeTextView.setTextColor(ContextCompat.getColor(activity,R.color.red))
+                }
+                else {
+                    holder.volumeTextView.setTextColor(ContextCompat.getColor(activity,R.color.textColor))
+                }
             }
             ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> {
                 holder.volumeTextView.visibility = View.GONE
@@ -152,14 +167,16 @@ class SessionRecyclerViewAdapter(var activity : BaseActivity, var itemList : Arr
 
         when (imageItem.getItemType()) {
             ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> {
-                view.findViewById<TextView>(R.id.volume).text = (imageItem as CachedImageItem).woodVolume.round(2).toString()
-                view.findViewById<TextView>(R.id.correction).text = (imageItem as CachedImageItem).addedWoodVolume.round(2).toString()
-                view.findViewById<TextView>(R.id.justification).text = (imageItem as CachedImageItem).addedWoodVolumeJustification
+                imageItem as CachedImageItem
+                view.findViewById<TextView>(R.id.volume).text = (imageItem.woodVolume + imageItem.addedWoodVolume).round(2).toString()
+                view.findViewById<TextView>(R.id.correction).text = imageItem.addedWoodVolume.round(2).toString()
+                view.findViewById<TextView>(R.id.justification).text = imageItem.addedWoodVolumeJustification
             }
             ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> {
-                view.findViewById<TextView>(R.id.volume).text = (imageItem as ProcessedImageItem).woodVolume.round(2).toString()
-                view.findViewById<TextView>(R.id.correction).text = (imageItem as ProcessedImageItem).addedWoodVolume.round(2).toString()
-                view.findViewById<TextView>(R.id.justification).text = (imageItem as ProcessedImageItem).addedWoodVolumeJustification
+                imageItem as ProcessedImageItem
+                view.findViewById<TextView>(R.id.volume).text = (imageItem.woodVolume + imageItem.addedWoodVolume).round(2).toString()
+                view.findViewById<TextView>(R.id.correction).text = imageItem.addedWoodVolume.round(2).toString()
+                view.findViewById<TextView>(R.id.justification).text = imageItem.addedWoodVolumeJustification
             }
             ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> {
                 view.findViewById<TextView>(R.id.volume).text = activity.getString(R.string.item_state_waiting_for_processing)

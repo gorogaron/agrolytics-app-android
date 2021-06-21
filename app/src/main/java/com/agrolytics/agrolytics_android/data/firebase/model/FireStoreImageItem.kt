@@ -64,7 +64,9 @@ open class FireStoreImageItem(
             FireStoreImagesField.WOOD_TYPE.tag to this.woodType,
             FireStoreImagesField.WOOD_LENGTH.tag to this.woodLength,
             FireStoreImagesField.WOOD_VOLUME.tag to this.woodVolume,
-            FireStoreImagesField.LOCATION.tag to this.location
+            FireStoreImagesField.LOCATION.tag to this.location,
+            FireStoreImagesField.ADDED_WOOD_VOLUME.tag to this.addedWoodVolume,
+            FireStoreImagesField.ADDED_WOOD_VOLUME_JUSTIFICATION.tag to this.addedWoodVolumeJustification
             )
         if (this.timestampOfDeletion != null) {
             hashMap[FireStoreDeletedImagesField.TIMESTAMP_OF_DELETION.tag] = this.timestampOfDeletion

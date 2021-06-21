@@ -132,19 +132,15 @@ class ApproveMeasurementActivity : BaseActivity() {
 			.setCancelable(true)
 			.setView(view)
 			.setPositiveButton(getString(R.string.ok)) { _, _ ->
-				if (volumeToAddEditText.text.isNotEmpty() && justificationEditText.text.isNotEmpty()) {
-					val addedWoodVoume = volumeToAddEditText.text.toString().toDouble()
-					val addedWoodVolumeJustification = justificationEditText.text.toString()
+				val addedWoodVoume = if(volumeToAddEditText.text.isNotEmpty()) volumeToAddEditText.text.toString().toDouble() else 0.0
+				val addedWoodVolumeJustification = justificationEditText.text.toString()
 
-					processedImageItem.addedWoodVolume = addedWoodVoume
-					processedImageItem.addedWoodVolumeJustification = addedWoodVolumeJustification
-					doAsync {
-						dataClient.local.processed.update(processedImageItem)
-					}
+				processedImageItem.addedWoodVolume = addedWoodVoume
+				processedImageItem.addedWoodVolumeJustification = addedWoodVolumeJustification
+				doAsync {
+					dataClient.local.processed.update(processedImageItem)
 				}
-				else {
-					toast(getString(R.string.manual_adaption_warning))
-				}
+				toast(getString(R.string.saved)) //TODO: ez igazából doAsync-on belül kéne legyen, csak ott nem jelenik meg a toast
 			}
 			.create()
 

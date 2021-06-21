@@ -3,7 +3,7 @@
     <color name="colorPrimary">@color/gradientEnd</color>
     <color name="colorAccent">#405370</color>
 
-    <color name="textColor">#949DAB</color>
+    <color name="textColor">#808080</color>
 
     <color name="gradientEnd">#363B4D</color>
 

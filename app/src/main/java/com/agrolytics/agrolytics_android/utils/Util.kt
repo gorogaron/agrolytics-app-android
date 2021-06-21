@@ -85,11 +85,11 @@ class Util {
         }
 
         fun meter(context: Context, value : Double) : String {
-            return value.toString() + " " + context.getString(R.string.meter)
+            return value.round(2).toString() + " " + context.getString(R.string.meter)
         }
 
         fun cubicMeter(context: Context, value : Double) : String {
-            return value.toString() + " " + context.getString(R.string.cubic_meter)
+            return value.round(2).toString() + " " + context.getString(R.string.cubic_meter)
         }
 
         fun setLocale(context: Context, languageCode: String) {
