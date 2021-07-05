@@ -88,9 +88,9 @@ class SessionActivity : BaseActivity() {
         var sum = 0.0
         for (imageItem in imageItemList) {
             when (imageItem.getItemType()) {
-                ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> sum += (imageItem as ProcessedImageItem).woodVolume
+                ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED -> sum += (imageItem as ProcessedImageItem).woodVolume + imageItem.addedWoodVolume
                 ConfigInfo.IMAGE_ITEM_TYPE.UNPROCESSED -> return 0.0
-                ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> sum += (imageItem as CachedImageItem).woodVolume
+                ConfigInfo.IMAGE_ITEM_TYPE.CACHED -> sum += (imageItem as CachedImageItem).woodVolume + imageItem.addedWoodVolume
             }
         }
         return sum.round(2)

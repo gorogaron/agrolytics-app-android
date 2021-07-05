@@ -82,7 +82,7 @@ class ApproveMeasurementActivity : BaseActivity() {
 
 	private fun onAcceptClicked() {
 		showAfterConfirmation()
-		tv_result.text = Util.cubicMeter(this, processedImageItem.woodVolume)
+		tv_result.text = Util.cubicMeter(this, processedImageItem.woodVolume + processedImageItem.addedWoodVolume)
 		btn_save_for_later.visibility = View.GONE
 		btn_modify.visibility = View.VISIBLE
 

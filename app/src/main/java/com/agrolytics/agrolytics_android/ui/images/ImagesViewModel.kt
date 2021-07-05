@@ -55,10 +55,10 @@ class ImagesViewModel: ViewModel(), KoinComponent {
                 woodTypes.add(imageItem.woodType)
 
                 if (imageItem.getItemType() == ConfigInfo.IMAGE_ITEM_TYPE.PROCESSED) {
-                    woodVolumes.add((imageItem as ProcessedImageItem).woodVolume)
+                    woodVolumes.add((imageItem as ProcessedImageItem).woodVolume + imageItem.addedWoodVolume)
                 }
                 else if (imageItem.getItemType() == ConfigInfo.IMAGE_ITEM_TYPE.CACHED) {
-                    woodVolumes.add((imageItem as CachedImageItem).woodVolume)
+                    woodVolumes.add((imageItem as CachedImageItem).woodVolume + imageItem.addedWoodVolume)
                 }
                 else {
                     sessionContainsUnprocessedImageItem = true
