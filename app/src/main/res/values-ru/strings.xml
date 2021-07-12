@@ -80,4 +80,26 @@
     <string name="current_password">Текущий пароль</string>
     <string name="new_password">Новый пароль</string>
     <string name="new_password_again">Новый пароль еще раз</string>
+    <string name="permission_error">Приложение невозможно импользовать без разрешения</string>
+    <string name="gps_off_message">"Местоположение не будет сохранено в приложении при  измерении без GPS "</string>
+    <string name="internet">Интернет</string>
+    <string name="latest_measurement">Последнее измерение</string>
+    <string name="no_available_measurement">Нет измерений для отображения</string>
+    <string name="show_full_session">Показать всю группу измерений</string>
+    <string name="menu">Меню</string>
+    <string name="parameters">Параметры</string>
+    <string name="measurements">Измерения</string>
+    <string name="manual_adaption">Ручное изиенение</string>
+    <string name="volume_to_add">Добавляемый объем</string>
+    <string name="justification">Обоснование</string>
+    <string name="manual_adaption_warning">Введите добавляемый объем, и обоснование!</string>
+    <string name="saved">сохранен</string>
+    <string name="change_language">изменение языка</string>
+    <string name="empty_session">Группа измерений не содержит элементов</string>
+    <string name="item_state_being_uploaded">Под загрузкой</string>
+    <string name="item_state_ready_to_upload">Готов(о) к загрузке</string>
+    <string name="item_state_uploaded">Загружен(о)</string>
+    <string name="item_state_waiting_for_processing">Ожидает обработки</string>
+    <string name="item_state_being_deleted">Процес удаления</string>
+    <string name="processing_cancelled">Обработка прервана</string>
 </resources>

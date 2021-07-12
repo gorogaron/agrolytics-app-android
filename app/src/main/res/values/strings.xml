@@ -31,7 +31,7 @@
     <string name="permission_error">Az alkalmazás nem használható engedélyek nélkül</string>
     <string name="gps_off_message">GPS nélkül az alkalmazás nem fog lokációt menteni méréskor</string>
     <string name="internet">Internet</string>
-    <string name="gps">GPS</string>
+    <string name="gps" translatable="false">GPS</string>
     <string name="latest_measurement">Legutóbbi mérés</string>
     <string name="no_available_measurement">Nincs megjeleníthető mérés</string>
     <string name="show_full_session">Teljes csoport megjelenítése</string>

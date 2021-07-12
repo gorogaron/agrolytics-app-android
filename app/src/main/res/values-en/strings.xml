@@ -19,7 +19,6 @@
     <string name="permission_error">The application can not be used without permissions</string>
     <string name="gps_off_message">Without GPS, the application will not save location data for the measurements</string>
     <string name="internet">Internet</string>
-    <string name="gps">GPS</string>
     <string name="latest_measurement">Last measurement</string>
     <string name="no_available_measurement">No available measurements</string>
     <string name="show_full_session">Show whole session</string>
@@ -98,4 +97,10 @@
     <string name="item_state_ready_to_upload">Ready to upload</string>
     <string name="item_state_uploaded">Uploaded</string>
     <string name="item_state_waiting_for_processing">Waiting for processing</string>
+    <string name="manual_adaption">Manual correction</string>
+    <string name="volume_to_add">Volume to be added</string>
+    <string name="justification">Justification</string>
+    <string name="manual_adaption_warning">Type in the volume to be added, and the justification!</string>
+    <string name="saved">Saved</string>
+    <string name="correction">Correction</string>
 </resources>
